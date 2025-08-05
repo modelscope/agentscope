@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**04:15.263** total execution time for 21 files **from build_tutorial**:
+**04:16.179** total execution time for 21 files **from build_tutorial**:
 
 .. container::
 
@@ -33,52 +33,52 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_build_tutorial_prompt_optimization.py` (``prompt_optimization.py``)
-     - 01:17.395
-     - 0.0
-   * - :ref:`sphx_glr_build_tutorial_conversation.py` (``conversation.py``)
-     - 00:40.458
-     - 0.0
-   * - :ref:`sphx_glr_build_tutorial_rag.py` (``rag.py``)
-     - 00:35.946
+     - 01:19.910
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_builtin_agent.py` (``builtin_agent.py``)
-     - 00:34.971
+     - 00:38.248
      - 0.0
-   * - :ref:`sphx_glr_build_tutorial_structured_output.py` (``structured_output.py``)
-     - 00:18.597
+   * - :ref:`sphx_glr_build_tutorial_rag.py` (``rag.py``)
+     - 00:36.589
+     - 0.0
+   * - :ref:`sphx_glr_build_tutorial_conversation.py` (``conversation.py``)
+     - 00:29.940
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_tool.py` (``tool.py``)
-     - 00:13.151
+     - 00:21.924
+     - 0.0
+   * - :ref:`sphx_glr_build_tutorial_structured_output.py` (``structured_output.py``)
+     - 00:19.764
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_multimodality.py` (``multimodality.py``)
-     - 00:10.438
-     - 0.0
-   * - :ref:`sphx_glr_build_tutorial_monitor.py` (``monitor.py``)
-     - 00:10.420
-     - 0.0
-   * - :ref:`sphx_glr_build_tutorial_hook.py` (``hook.py``)
-     - 00:03.213
-     - 0.0
-   * - :ref:`sphx_glr_build_tutorial_streaming.py` (``streaming.py``)
-     - 00:02.979
+     - 00:09.046
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_quickstart.py` (``quickstart.py``)
-     - 00:02.320
+     - 00:03.959
+     - 0.0
+   * - :ref:`sphx_glr_build_tutorial_hook.py` (``hook.py``)
+     - 00:03.681
+     - 0.0
+   * - :ref:`sphx_glr_build_tutorial_monitor.py` (``monitor.py``)
+     - 00:03.430
+     - 0.0
+   * - :ref:`sphx_glr_build_tutorial_streaming.py` (``streaming.py``)
+     - 00:03.107
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_prompt.py` (``prompt.py``)
-     - 00:02.259
+     - 00:02.835
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_model.py` (``model.py``)
-     - 00:01.769
+     - 00:02.020
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_agent.py` (``agent.py``)
-     - 00:01.313
+     - 00:01.693
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_MCP.py` (``MCP.py``)
-     - 00:00.030
+     - 00:00.028
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_message.py` (``message.py``)
-     - 00:00.002
+     - 00:00.003
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_visual.py` (``visual.py``)
      - 00:00.001

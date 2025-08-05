@@ -110,13 +110,11 @@ Now, we can start the conversation by exchanging messages between these two agen
  .. code-block:: none
 
     Angel: It seems like the conversation history is missing. Could you please provide more details or context so I can assist you better?
-    Monster: Of course! It looks like we might have started a new conversation. If you can, please provide some context or let me know what you'd like to discuss, and I'll do my best to help you. Whether it's a question, a topic you're interested in, or something specific you need assistance with, just let me know! 😊
-    Angel: I see, thank you for the clarification! I'm here to help with whatever you need. Could you please let me know what you'd like to discuss or any specific questions you have? Whether it's a topic you're curious about, a problem you need help with, or just a casual chat, I'm all ears! 😊
-    Monster: Hi Angel! It's great to have you here. Since we're starting fresh, I can help with a wide range of topics. Whether you need advice, want to discuss a particular subject, or just chat about something interesting, feel free to let me know. What would you like to talk about today? 😊
-    Angel: Hello! It looks like there might be a bit of a mix-up. I'm Angel, and I'm here to assist you. Could you please let me know what you'd like to discuss or any specific questions you have? Whether it's a topic you're curious about, a problem you need help with, or just a casual chat, I'm here to help! 😊
-    Monster: Hello Angel! It's nice to meet you. I'm Monster, and I'm here to assist with whatever you need. It seems like we both want to help each other, which is a bit of a mix-up! 😄
-
-    To clarify, I'm here to help you. So, if you have any specific questions, topics you're curious about, or just want to chat, feel free to let me know. What would you like to discuss today? 😊
+    Monster: Of course! I'm here to help, but it looks like we don't have any previous conversation to refer to. Could you please provide more details or context about what you need assistance with?
+    Angel: It looks like there might be a bit of a mix-up. I'm Angel, and I'm here to help you! Could you please provide more details or context about what you need assistance with?
+    Monster: Hello Angel! It seems like there might be a little confusion. I'm Monster, and I'm here to assist you. If you could share more details or context about what you need help with, that would be great!
+    Angel: Hello! I'm Angel, and it seems there's been a bit of a mix-up with the roles. I'm here to assist you. Could you please provide more details or context about what you need help with?
+    Monster: Hello! I see there's been a bit of back-and-forth. I'm Monster, and I'm here to assist you. If you could provide more details or context about what you need help with, I'd be happy to get started! 😊
 
 
 
@@ -294,7 +292,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 40.458 seconds)
+   **Total running time of the script:** (0 minutes 29.940 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:

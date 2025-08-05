@@ -315,6 +315,9 @@
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span>
+        <span class="c1"># Force the use of the OpenAI formatter for models not in the</span>
+        <span class="c1"># default supported list (e.g. vllm-hosted models).</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_openai_formatter</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;use_openai_formatter&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -457,6 +460,9 @@
                     <span class="s2">&quot;tool_calls&quot;</span><span class="p">,</span>
                     <span class="kc">None</span><span class="p">,</span>
                 <span class="p">)</span>
+                <span class="c1"># vllm models return [] instead of None</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">tool_calls</span><span class="p">:</span>
+                    <span class="n">tool_calls</span> <span class="o">=</span> <span class="kc">None</span>
 
                 <span class="k">if</span> <span class="n">tool_calls</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">tool_calls</span> <span class="o">=</span> <span class="p">[</span>
@@ -548,13 +554,19 @@
         <span class="c1"># Multi agent scenario</span>
         <span class="k">if</span> <span class="n">multi_agent_mode</span><span class="p">:</span>
             <span class="c1"># Format messages according to the model name</span>
-            <span class="k">if</span> <span class="n">OpenAIFormatter</span><span class="o">.</span><span class="n">is_supported_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">OpenAIFormatter</span><span class="o">.</span><span class="n">is_supported_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_openai_formatter</span>
+            <span class="p">):</span>
                 <span class="k">return</span> <span class="n">OpenAIFormatter</span><span class="o">.</span><span class="n">format_multi_agent</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">CommonFormatter</span><span class="o">.</span><span class="n">format_multi_agent</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
         <span class="c1"># Chat scenario</span>
-        <span class="k">if</span> <span class="n">OpenAIFormatter</span><span class="o">.</span><span class="n">is_supported_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">OpenAIFormatter</span><span class="o">.</span><span class="n">is_supported_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_openai_formatter</span>
+        <span class="p">):</span>
             <span class="k">return</span> <span class="n">OpenAIFormatter</span><span class="o">.</span><span class="n">format_chat</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">CommonFormatter</span><span class="o">.</span><span class="n">format_chat</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>

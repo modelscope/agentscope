@@ -245,7 +245,8 @@
 
     <span class="k">if</span> <span class="n">last</span><span class="p">:</span>
         <span class="c1"># Remove the prefix from the dictionary</span>
-        <span class="k">del</span> <span class="n">_PREFIX_DICT</span><span class="p">[</span><span class="n">msg</span><span class="o">.</span><span class="n">id</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">_PREFIX_DICT</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">_PREFIX_DICT</span><span class="p">[</span><span class="n">msg</span><span class="o">.</span><span class="n">id</span><span class="p">]</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="n">print_str</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>

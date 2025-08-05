@@ -397,18 +397,23 @@ Now let's test the `speak` hooks:
 
  .. code-block:: none
 
-    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1
-    TestAgent: id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2
-    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2, 3
-    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2, 3, 4
-    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2, 3, 4, 5, 6
-    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8
-    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 1
-    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1
-    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
-    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  True content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+    id:  37ecced862b746bfa1d5045b099f68d4 stream:  True last:  False content:  1
+    TestAgent: id:  37ecced862b746bfa1d5045b099f68d4 stream:  True last:  False content:  1,
+    id:  37ecced862b746bfa1d5045b099f68d4 stream:  True last:  False content:  1, 
+    id:  37ecced862b746bfa1d5045b099f68d4 stream:  True last:  False content:  1, 2
+    id:  37ecced862b746bfa1d5045b099f68d4 stream:  True last:  False content:  1, 2, 3,
+    id:  37ecced862b746bfa1d5045b099f68d4 stream:  True last:  False content:  1, 2, 3, 4, 
+    id:  37ecced862b746bfa1d5045b099f68d4 stream:  True last:  False content:  1, 2, 3, 4, 5, 6
+    id:  37ecced862b746bfa1d5045b099f68d4 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7,
+    id:  37ecced862b746bfa1d5045b099f68d4 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 
+    id:  37ecced862b746bfa1d5045b099f68d4 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 1
+    id:  37ecced862b746bfa1d5045b099f68d4 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1
+    id:  37ecced862b746bfa1d5045b099f68d4 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 1
+    id:  37ecced862b746bfa1d5045b099f68d4 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1
+    id:  37ecced862b746bfa1d5045b099f68d4 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 1
+    id:  37ecced862b746bfa1d5045b099f68d4 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
+    id:  37ecced862b746bfa1d5045b099f68d4 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+    id:  37ecced862b746bfa1d5045b099f68d4 stream:  True last:  True content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 
     The cnt of calling the speak function: 1
 
@@ -480,12 +485,12 @@ below:
         {
             "__module__": "agentscope.message.msg",
             "__name__": "Msg",
-            "id": "2bf6cd69799042f5afb30bf9f05da5f0",
+            "id": "39656cfea08d4f878c9ef1410c7f5e39",
             "name": "user",
             "role": "user",
             "content": "Observe: The sun is shining.",
             "metadata": null,
-            "timestamp": "2025-07-15 03:12:06"
+            "timestamp": "2025-08-05 12:19:30"
         }
     ]
     The cnt of calling the observe function: 1
@@ -570,7 +575,7 @@ that class.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 3.213 seconds)
+   **Total running time of the script:** (0 minutes 3.681 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_hook.py:

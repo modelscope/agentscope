@@ -212,12 +212,12 @@ Message can be serialized to a string in JSON format.
     {
         "__module__": "agentscope.message.msg",
         "__name__": "Msg",
-        "id": "aa5a58eb10ca4334bce4c8269084403c",
+        "id": "e375ba2d0ce146ff95b5c7bfe158cfd6",
         "name": "Jarvis",
         "role": "assistant",
         "content": "Hi! How can I help you?",
         "metadata": null,
-        "timestamp": "2025-07-15 03:09:22"
+        "timestamp": "2025-08-05 12:16:47"
     }
 
 
@@ -248,7 +248,7 @@ Deserialize a message from a string in JSON format.
 
  .. code-block:: none
 
-    id='aa5a58eb10ca4334bce4c8269084403c' name='Jarvis' role='assistant' content='Hi! How can I help you?' metadata=None timestamp='2025-07-15 03:09:22'
+    id='e375ba2d0ce146ff95b5c7bfe158cfd6' name='Jarvis' role='assistant' content='Hi! How can I help you?' metadata=None timestamp='2025-08-05 12:16:47'
     The sender of the message: "Jarvis"
     The role of the sender: "assistant"
     The content of the message: "Hi! How can I help you?"
@@ -259,7 +259,7 @@ Deserialize a message from a string in JSON format.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.002 seconds)
+   **Total running time of the script:** (0 minutes 0.003 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_message.py:
