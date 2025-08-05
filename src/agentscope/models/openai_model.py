@@ -169,6 +169,9 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         )
 
         self.stream = stream
+        # force the use of openai formatter on other vllm models
+        # apart from the model name saved in `supported_model`
+        self.use_openai_formater = kwargs.get("use_openai_formater", False)
 
     def __call__(
         self,
@@ -311,6 +314,9 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                     "tool_calls",
                     None,
                 )
+                # vllm models return [] instead of None
+                if isinstance(tool_calls, list) and len(tool_calls) == 0:
+                    tool_calls = None
 
                 if tool_calls is not None:
                     tool_calls = [
@@ -400,13 +406,19 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         # Multi agent scenario
         if multi_agent_mode:
             # Format messages according to the model name
-            if OpenAIFormatter.is_supported_model(self.model_name):
+            if (
+                OpenAIFormatter.is_supported_model(self.model_name)
+                or self.use_openai_formater
+            ):
                 return OpenAIFormatter.format_multi_agent(*args)
 
             return CommonFormatter.format_multi_agent(*args)
 
         # Chat scenario
-        if OpenAIFormatter.is_supported_model(self.model_name):
+        if (
+            OpenAIFormatter.is_supported_model(self.model_name)
+            or self.use_openai_formater
+        ):
             return OpenAIFormatter.format_chat(*args)
 
         return CommonFormatter.format_chat(*args)
