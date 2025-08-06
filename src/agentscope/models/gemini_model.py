@@ -247,6 +247,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
             completion_tokens = self.client.models.count_tokens(
                 model=self.model_name,
                 contents=response.candidates[0].content.parts,
+                config=kwargs.get("config", {}),
             ).total_tokens
 
         formatted_usage = ChatUsage(
