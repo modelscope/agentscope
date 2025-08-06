@@ -109,7 +109,6 @@ extra_full_requires = (
     extra_distribute_requires
     + extra_service_requires
     + extra_dev_requires
-    + extra_gradio_requires
     + extra_rag_requires
     + extra_gemini_requires
     + extra_litellm_requires
