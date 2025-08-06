@@ -146,7 +146,6 @@ class GeminiChatWrapper(GeminiWrapperBase):
 
         self.stream = stream
 
-
     def __call__(
         self,
         contents: Union[Sequence, str],
@@ -186,7 +185,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
             "contents": contents,
             "model": self.model_name,
             **self.generate_args,
-            **kwargs
+            **kwargs,
         }
 
         if stream:
@@ -207,7 +206,6 @@ class GeminiChatWrapper(GeminiWrapperBase):
                 last_chunk.candidates[0].content.parts[0].text = text
 
                 self._save_model_invocation_and_update_monitor(
-                    contents,
                     kwargs,
                     last_chunk,
                 )
@@ -220,7 +218,6 @@ class GeminiChatWrapper(GeminiWrapperBase):
             response = self.client.models.generate_content(**kwargs)
 
             self._save_model_invocation_and_update_monitor(
-                contents,
                 kwargs,
                 response,
             )
@@ -233,7 +230,6 @@ class GeminiChatWrapper(GeminiWrapperBase):
 
     def _save_model_invocation_and_update_monitor(
         self,
-        contents: Union[Sequence[Any], str],
         kwargs: dict,
         response: Any,
     ) -> None:
@@ -243,7 +239,9 @@ class GeminiChatWrapper(GeminiWrapperBase):
             prompt_tokens = response.usage_metadata.prompt_token_count
             completion_tokens = response.usage_metadata.candidates_token_count
         else:
-            prompt_tokens = self.client.models.count_tokens(**kwargs).total_tokens
+            prompt_tokens = self.client.models.count_tokens(
+                **kwargs
+            ).total_tokens
             completion_tokens = self.client.models.count_tokens(
                 **kwargs,
             ).total_tokens
@@ -439,7 +437,7 @@ class GeminiEmbeddingWrapper(GeminiWrapperBase):
                 "task_type": task_type,
                 "title": title,
                 **kwargs,
-            }
+            },
         )
 
         # step2: record the api invocation if needed
@@ -450,7 +448,7 @@ class GeminiEmbeddingWrapper(GeminiWrapperBase):
                     "task_type": task_type,
                     "title": title,
                     **kwargs,
-                }
+                },
             },
             response=response.model_dump(),
         )
