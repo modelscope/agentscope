@@ -82,7 +82,7 @@ class GeminiModelWrapperTest(unittest.TestCase):
         mock_embedding_obj.values = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]
         mock_response.embeddings = [mock_embedding_obj]
         mock_response.model_dump.return_value = {
-            "embeddings": [{"values": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]}]
+            "embeddings": [{"values": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]}],
         }
 
         mock_model.return_value.models.embed_content.return_value = (
