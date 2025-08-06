@@ -41,7 +41,9 @@ class GeminiFormatter(FormatterBase):
                     {
                         "role": "model",
                         "parts": [
-                            {"text": msg.get_text_content()},
+                            {
+                                "text": msg.get_text_content(),
+                            },
                         ],
                     },
                 )

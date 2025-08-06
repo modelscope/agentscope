@@ -12,7 +12,11 @@ __register_models = {}
 # TODO: a more elegant way to store the model names and functions.
 
 
-def count(model_name: str, messages: list[dict[str, str]]) -> int:
+def count(
+    model_name: str,
+    messages: list[dict[str, str]],
+    api_key: Optional[str] = None,
+) -> int:
     """Count the number of tokens for the given model and messages.
 
     Args:
@@ -48,7 +52,7 @@ def count(model_name: str, messages: list[dict[str, str]]) -> int:
 
     # Gemini
     elif model_name.startswith("gemini-"):
-        return count_gemini_tokens(model_name, messages)
+        return count_gemini_tokens(model_name, messages, api_key=api_key)
 
     # Dashscope
     elif model_name.startswith("qwen-"):
@@ -219,6 +223,7 @@ def count_openai_tokens(  # pylint: disable=too-many-branches
 def count_gemini_tokens(
     model_name: str,
     messages: list[dict[str, str]],
+    api_key: Optional[str] = None,
 ) -> int:
     """Count the number of tokens for the given Gemini model and messages.
 
@@ -226,21 +231,29 @@ def count_gemini_tokens(
         model_name (`str`):
             The name of the Gemini model, e.g. "gemini-1.5-pro".
         messages (`list[dict[str, str]]`):
+            The list of messages, each message is a dict with the key 'text'.
+        api_key (`Optional[str]`, default `None`):
+            The API key for Gemini.
     """
     try:
-        import google.generativeai as genai
+        from google import genai
     except ImportError as exc:
         raise ImportError(
-            "The package `google.generativeai` is required for token counting "
+            "The package `google-genai` is required for token counting "
             "for Gemini models. Install it with "
-            "`pip install -q -U google-generativeai` and refer to "
-            "https://ai.google.dev/gemini-api/docs/get-started/"
-            "tutorial?lang=python for details.",
+            "`pip install -q -U google-genai` and refer to "
+            "https://ai.google.dev/gemini-api/docs/tokens?lang=python"
+            " for details.",
         ) from exc
 
-    model = genai.GenerativeModel(model_name)
-    tokens_count = model.count_tokens(messages).total_tokens
-    return tokens_count
+    client = genai.Client(
+        api_key=api_key,
+    )
+    res = client.models.count_tokens(
+        model=model_name,
+        contents=messages,
+    )
+    return res.total_tokens
 
 
 def count_dashscope_tokens(

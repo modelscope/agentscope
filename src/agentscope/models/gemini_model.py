@@ -184,8 +184,10 @@ class GeminiChatWrapper(GeminiWrapperBase):
         kwargs = {
             "contents": contents,
             "model": self.model_name,
-            **self.generate_args,
-            **kwargs,
+            "config": {
+                **self.generate_args,
+                **kwargs,
+            },
         }
 
         if stream:
