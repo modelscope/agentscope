@@ -130,9 +130,9 @@ class GeminiChatWrapper(GeminiWrapperBase):
             stream (`bool`, defaults to `False`):
                 Whether to use stream mode.
             client_args (`dict`, default `None`):
-                The extra keyword arguments to initialize the OpenAI client.
+                The extra keyword arguments to initialize the Gemini client.
             generate_args (`dict`, default `None`):
-                The extra keyword arguments used in openai api generation,
+                The extra keyword arguments used in Gemini api generation,
                 e.g. `temperature`, `seed`.
         """
         super().__init__(
@@ -240,7 +240,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
             completion_tokens = response.usage_metadata.candidates_token_count
         else:
             prompt_tokens = self.client.models.count_tokens(
-                **kwargs
+                **kwargs,
             ).total_tokens
             completion_tokens = self.client.models.count_tokens(
                 **kwargs,

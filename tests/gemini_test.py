@@ -54,7 +54,9 @@ class GeminiModelWrapperTest(unittest.TestCase):
 
         # connect
         mock_model.return_value.model_name = "gemini-pro"
-        mock_model.return_value.models.generate_content.return_value = DummyResponse()
+        mock_model.return_value.models.generate_content.return_value = (
+            DummyResponse()
+        )
         mock_model.return_value.models.count_tokens.return_value = mock_counter
 
         agentscope.init(
@@ -79,9 +81,13 @@ class GeminiModelWrapperTest(unittest.TestCase):
         mock_embedding_obj = MagicMock()
         mock_embedding_obj.values = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]
         mock_response.embeddings = [mock_embedding_obj]
-        mock_response.model_dump.return_value = {"embeddings": [{"values": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]}]}
+        mock_response.model_dump.return_value = {
+            "embeddings": [{"values": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]}]
+        }
 
-        mock_model.return_value.models.embed_content.return_value = mock_response
+        mock_model.return_value.models.embed_content.return_value = (
+            mock_response
+        )
 
         agentscope.init(
             model_configs={
