@@ -155,7 +155,11 @@
 
 <div class="viewcode-block" id="count">
 <a class="viewcode-back" href="../../build_api/agentscope.tokens.html#agentscope.tokens.count">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span>
+    <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+    <span class="n">api_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Count the number of tokens for the given model and messages.</span>
 
 <span class="sd">    Args:</span>
@@ -191,7 +195,7 @@
 
     <span class="c1"># Gemini</span>
     <span class="k">elif</span> <span class="n">model_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;gemini-&quot;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">count_gemini_tokens</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">messages</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">count_gemini_tokens</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
 
     <span class="c1"># Dashscope</span>
     <span class="k">elif</span> <span class="n">model_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;qwen-&quot;</span><span class="p">):</span>
@@ -368,6 +372,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">count_gemini_tokens</span><span class="p">(</span>
     <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+    <span class="n">api_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Count the number of tokens for the given Gemini model and messages.</span>
 
@@ -375,21 +380,29 @@
 <span class="sd">        model_name (`str`):</span>
 <span class="sd">            The name of the Gemini model, e.g. &quot;gemini-1.5-pro&quot;.</span>
 <span class="sd">        messages (`list[dict[str, str]]`):</span>
+<span class="sd">            The list of messages, each message is a dict with the key &#39;text&#39;.</span>
+<span class="sd">        api_key (`Optional[str]`, default `None`):</span>
+<span class="sd">            The API key for Gemini.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">google.generativeai</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">genai</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">google</span><span class="w"> </span><span class="kn">import</span> <span class="n">genai</span>
     <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
-            <span class="s2">&quot;The package `google.generativeai` is required for token counting &quot;</span>
+            <span class="s2">&quot;The package `google-genai` is required for token counting &quot;</span>
             <span class="s2">&quot;for Gemini models. Install it with &quot;</span>
-            <span class="s2">&quot;`pip install -q -U google-generativeai` and refer to &quot;</span>
-            <span class="s2">&quot;https://ai.google.dev/gemini-api/docs/get-started/&quot;</span>
-            <span class="s2">&quot;tutorial?lang=python for details.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;`pip install -q -U google-genai` and refer to &quot;</span>
+            <span class="s2">&quot;https://ai.google.dev/gemini-api/docs/tokens?lang=python&quot;</span>
+            <span class="s2">&quot; for details.&quot;</span><span class="p">,</span>
         <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
-    <span class="n">model</span> <span class="o">=</span> <span class="n">genai</span><span class="o">.</span><span class="n">GenerativeModel</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
-    <span class="n">tokens_count</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">count_tokens</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span><span class="o">.</span><span class="n">total_tokens</span>
-    <span class="k">return</span> <span class="n">tokens_count</span></div>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">genai</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span>
+        <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">count_tokens</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
+        <span class="n">contents</span><span class="o">=</span><span class="n">messages</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">total_tokens</span></div>
 
 
 

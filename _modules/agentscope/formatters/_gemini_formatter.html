@@ -176,14 +176,20 @@
                 <span class="n">formatted_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="p">{</span>
                         <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;parts&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_text_content</span><span class="p">(),</span>
+                        <span class="s2">&quot;parts&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_text_content</span><span class="p">()},</span>
+                        <span class="p">],</span>
                     <span class="p">},</span>
                 <span class="p">)</span>
             <span class="k">elif</span> <span class="n">msg</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="s2">&quot;assistant&quot;</span><span class="p">:</span>
                 <span class="n">formatted_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="p">{</span>
                         <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;model&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;parts&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_text_content</span><span class="p">(),</span>
+                        <span class="s2">&quot;parts&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_text_content</span><span class="p">(),</span>
+                            <span class="p">},</span>
+                        <span class="p">],</span>
                     <span class="p">},</span>
                 <span class="p">)</span>
         <span class="k">return</span> <span class="n">formatted_msgs</span></div>
@@ -253,7 +259,9 @@
             <span class="p">{</span>
                 <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;parts&quot;</span><span class="p">:</span> <span class="p">[</span>
-                    <span class="n">user_prompt</span><span class="p">,</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">user_prompt</span><span class="p">,</span>
+                    <span class="p">},</span>
                 <span class="p">],</span>
             <span class="p">},</span>
         <span class="p">]</span>
