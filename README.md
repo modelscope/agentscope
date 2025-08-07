@@ -65,6 +65,23 @@ Easy for beginners, powerful for experts.
 - **Highly Customizable**: Tools, prompt, agent, workflow, third-party libs & visualization, customization is encouraged everywhere.
 - **Developer-friendly**: Low-code development, visual tracing & monitoring. From developing to deployment, all in one place.
 
+> **📢 Important Notice: Version Migration Plan**
+>
+> AgentScope is currently preparing to migrate to v1. As this is a major update, we will make the following adjustments to maintain both v0 and v1 versions:
+>
+> 1. The current `main` branch will be copied to a new `v0` branch
+> 2. A new `main` branch will be created with v1 code, which will become the default branch of this repository
+>
+> > **Note for v0 Users**
+> >
+> > The v0 version will enter maintenance mode after the migration. We will:
+> > - Continue to fix bugs in the v0 version
+> > - Release updates to PyPI with v0.x.x version numbers
+> >
+> > Therefore, users currently using v0 can continue to use it without concerns. We are committed to maintaining the stability of the v0 version.
+> >
+> > However, we strongly recommend users to migrate to v1 when it becomes available to benefit from new features and improvements. The v1 version will bring significant enhancements to your development experience.
+
 ## 📢 News
 - **[2025-07-01]** A new version AgentScope is under development. In this new version, AgentScope will be more powerful and flexible, with a new architecture and more features. Refer to our [Roadmap](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md) for more details!
 - **[2025-04-27]** A new 💻 AgentScope Studio is online now. Refer [here](https://doc.agentscope.io/build_tutorial/visual.html) for more details.
