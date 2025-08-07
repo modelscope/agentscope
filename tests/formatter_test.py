@@ -351,10 +351,10 @@ class FormatTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             model.format(*self.wrong_inputs)  # type: ignore[arg-type]
 
-    @patch("google.generativeai.configure")
-    def test_gemini_chat(self, mock_configure: MagicMock) -> None:
+    @patch("google.genai.Client")
+    def test_gemini_chat(self, mock_client: MagicMock) -> None:
         """Unit test for the format function in gemini chat api wrapper."""
-        mock_configure.return_value = "client_dummy"
+        mock_client.models.return_value = "client_dummy"
 
         model = GeminiChatWrapper(
             config_name="",
@@ -367,9 +367,11 @@ class FormatTest(unittest.TestCase):
             {
                 "role": "user",
                 "parts": [
-                    "You are a helpful assistant\n\n## Conversation History\n"
-                    "user: What is the weather today?\nassistant: It is "
-                    "sunny today",
+                    {
+                        "text": "You are a helpful assistant\n\n## "
+                        "Conversation History\nuser: What is the weather "
+                        "today?\nassistant: It is sunny today",
+                    },
                 ],
             },
         ]
