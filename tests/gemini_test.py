@@ -45,7 +45,7 @@ class GeminiModelWrapperTest(unittest.TestCase):
         """Set up for GeminiModelWrapperTest."""
         self.model_manager = ModelManager.get_instance()
 
-    @patch("google.generativeai.GenerativeModel")
+    @patch("google.genai.Client")
     def test_gemini_chat(self, mock_model: MagicMock) -> None:
         """Test for chat API."""
         # prepare mock response
@@ -54,8 +54,10 @@ class GeminiModelWrapperTest(unittest.TestCase):
 
         # connect
         mock_model.return_value.model_name = "gemini-pro"
-        mock_model.return_value.generate_content.return_value = DummyResponse()
-        mock_model.return_value.count_tokens.return_value = mock_counter
+        mock_model.return_value.models.generate_content.return_value = (
+            DummyResponse()
+        )
+        mock_model.return_value.models.count_tokens.return_value = mock_counter
 
         agentscope.init(
             model_configs={
@@ -72,12 +74,20 @@ class GeminiModelWrapperTest(unittest.TestCase):
 
         self.assertEqual(str(response.raw), str(DummyResponse()))
 
-    @patch("google.generativeai.embed_content")
+    @patch("google.genai.Client")
     def test_gemini_embedding(self, mock_model: MagicMock) -> None:
         """Test gemini embedding API"""
-        mock_model.return_value = {
-            "embedding": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0],
+        mock_response = MagicMock()
+        mock_embedding_obj = MagicMock()
+        mock_embedding_obj.values = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]
+        mock_response.embeddings = [mock_embedding_obj]
+        mock_response.model_dump.return_value = {
+            "embeddings": [{"values": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]}],
         }
+
+        mock_model.return_value.models.embed_content.return_value = (
+            mock_response
+        )
 
         agentscope.init(
             model_configs={
@@ -92,13 +102,13 @@ class GeminiModelWrapperTest(unittest.TestCase):
         model = self.model_manager.get_model_by_config_name(
             "my_gemini_embedding",
         )
-        response = model(content="Hi!")
+        response = model(texts="Hi!")
 
-        self.assertDictEqual(
-            response.raw,
-            {
-                "embedding": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0],
-            },
+        self.assertEqual(
+            response.embedding,
+            [
+                [0.0, 1.0, 2.0, 3.0, 4.0, 5.0],
+            ],
         )
 
     def tearDown(self) -> None:

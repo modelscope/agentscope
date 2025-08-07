@@ -89,17 +89,20 @@ class TokenCountTest(unittest.TestCase):
         n_tokens = count_dashscope_tokens("qwen-max", self.messages)
         self.assertEqual(n_tokens, 21)
 
-    @patch("google.generativeai.GenerativeModel")
+    @patch("google.genai.Client")
     def test_gemini_token_counting(self, mock_model: MagicMock) -> None:
         """Test Gemini token counting functions."""
 
         mock_response = MagicMock()
         mock_response.total_tokens = 24
-        mock_model.return_value.count_tokens.return_value = mock_response
+        mock_model.return_value.models.count_tokens.return_value = (
+            mock_response
+        )
 
         n_tokens = count_gemini_tokens(
             "gemini-1.5-pro",
             self.messages_gemini,
+            api_key="xxx",
         )
         self.assertEqual(n_tokens, 24)
 

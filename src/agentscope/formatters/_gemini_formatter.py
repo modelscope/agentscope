@@ -31,14 +31,20 @@ class GeminiFormatter(FormatterBase):
                 formatted_msgs.append(
                     {
                         "role": "user",
-                        "parts": msg.get_text_content(),
+                        "parts": [
+                            {"text": msg.get_text_content()},
+                        ],
                     },
                 )
             elif msg.role == "assistant":
                 formatted_msgs.append(
                     {
                         "role": "model",
-                        "parts": msg.get_text_content(),
+                        "parts": [
+                            {
+                                "text": msg.get_text_content(),
+                            },
+                        ],
                     },
                 )
         return formatted_msgs
@@ -105,7 +111,9 @@ class GeminiFormatter(FormatterBase):
             {
                 "role": "user",
                 "parts": [
-                    user_prompt,
+                    {
+                        "text": user_prompt,
+                    },
                 ],
             },
         ]

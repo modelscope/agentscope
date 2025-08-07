@@ -13,13 +13,9 @@ from ..message import Msg
 from ..models import ModelWrapperBase, ModelResponse
 
 try:
-    import google.generativeai as genai
-
-    # This package will be installed when the google-generativeai is installed
-    import google.ai.generativelanguage as glm
+    from google import genai
 except ImportError:
     genai = None
-    glm = None
 
 
 class GeminiWrapperBase(ModelWrapperBase, ABC):
@@ -34,16 +30,25 @@ class GeminiWrapperBase(ModelWrapperBase, ABC):
         config_name: str,
         model_name: str,
         api_key: str = None,
+        client_args: dict = None,
+        generate_args: dict = None,
         **kwargs: Any,
     ) -> None:
         """Initialize the wrapper for Google Gemini model.
 
         Args:
+            config_name (`str`):
+                The name of the model config.
             model_name (`str`):
                 The name of the model.
             api_key (`str`, defaults to `None`):
                 The api_key for the model. If it is not provided, it will be
                 loaded from environment variable.
+            client_args (`dict`, default `None`):
+                The extra keyword arguments to initialize the Gemini client.
+            generate_args (`dict`, default `None`):
+                The extra keyword arguments used in Gemini api generation,
+                e.g. `temperature`, `seed`.
         """
         super().__init__(config_name=config_name, model_name=model_name)
 
@@ -63,9 +68,13 @@ class GeminiWrapperBase(ModelWrapperBase, ABC):
                 "environment variable.",
             )
 
-        genai.configure(api_key=api_key, **kwargs)
+        self.client = genai.Client(
+            api_key=api_key,
+            **(client_args or {}),
+        )
 
         self.model_name = model_name
+        self.generate_args = generate_args or {}
 
     def list_models(self) -> Sequence:
         """List all available models for this API calling."""
@@ -104,11 +113,15 @@ class GeminiChatWrapper(GeminiWrapperBase):
         model_name: str,
         api_key: str = None,
         stream: bool = False,
+        client_args: dict = None,
+        generate_args: dict = None,
         **kwargs: Any,
     ) -> None:
         """Initialize the wrapper for Google Gemini model.
 
         Args:
+            config_name (`str`):
+                The name of the model config.
             model_name (`str`):
                 The name of the model.
             api_key (`str`, defaults to `None`):
@@ -116,18 +129,22 @@ class GeminiChatWrapper(GeminiWrapperBase):
                 loaded from environment variable.
             stream (`bool`, defaults to `False`):
                 Whether to use stream mode.
+            client_args (`dict`, default `None`):
+                The extra keyword arguments to initialize the Gemini client.
+            generate_args (`dict`, default `None`):
+                The extra keyword arguments used in Gemini api generation,
+                e.g. `temperature`, `seed`.
         """
         super().__init__(
             config_name=config_name,
             model_name=model_name,
             api_key=api_key,
+            client_args=client_args,
+            generate_args=generate_args,
             **kwargs,
         )
 
         self.stream = stream
-
-        # Create the generative model
-        self.model = genai.GenerativeModel(model_name, **kwargs)
 
     def __call__(
         self,
@@ -164,16 +181,17 @@ class GeminiChatWrapper(GeminiWrapperBase):
             stream = self.stream
 
         # step2: forward to generate response
-        kwargs.update(
-            {
-                "contents": contents,
-                "stream": stream,
+        kwargs = {
+            "contents": contents,
+            "model": self.model_name,
+            "config": {
+                **self.generate_args,
+                **kwargs,
             },
-        )
-
-        response = self.model.generate_content(**kwargs)
+        }
 
         if stream:
+            response = self.client.models.generate_content_stream(**kwargs)
 
             def generator() -> Generator[str, None, None]:
                 text = ""
@@ -190,7 +208,6 @@ class GeminiChatWrapper(GeminiWrapperBase):
                 last_chunk.candidates[0].content.parts[0].text = text
 
                 self._save_model_invocation_and_update_monitor(
-                    contents,
                     kwargs,
                     last_chunk,
                 )
@@ -200,8 +217,9 @@ class GeminiChatWrapper(GeminiWrapperBase):
             )
 
         else:
+            response = self.client.models.generate_content(**kwargs)
+
             self._save_model_invocation_and_update_monitor(
-                contents,
                 kwargs,
                 response,
             )
@@ -214,7 +232,6 @@ class GeminiChatWrapper(GeminiWrapperBase):
 
     def _save_model_invocation_and_update_monitor(
         self,
-        contents: Union[Sequence[Any], str],
         kwargs: dict,
         response: Any,
     ) -> None:
@@ -224,9 +241,13 @@ class GeminiChatWrapper(GeminiWrapperBase):
             prompt_tokens = response.usage_metadata.prompt_token_count
             completion_tokens = response.usage_metadata.candidates_token_count
         else:
-            prompt_tokens = self.model.count_tokens(contents).total_tokens
-            completion_tokens = self.model.count_tokens(
-                response.text,
+            prompt_tokens = self.client.models.count_tokens(
+                **kwargs,
+            ).total_tokens
+            completion_tokens = self.client.models.count_tokens(
+                model=self.model_name,
+                contents=response.candidates[0].content.parts,
+                config=kwargs.get("config", {}),
             ).total_tokens
 
         formatted_usage = ChatUsage(
@@ -273,7 +294,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
         ):
             # If we cannot get the response text from the model
             finish_reason = response.candidates[0].finish_reason
-            reasons = glm.Candidate.FinishReason
+            reasons = genai.types.Candidate.finish_reason
 
             if finish_reason == reasons.STOP:
                 error_info = (
@@ -387,7 +408,7 @@ class GeminiEmbeddingWrapper(GeminiWrapperBase):
 
     def __call__(
         self,
-        content: Union[Sequence[Msg], str],
+        texts: Union[list[str], str],
         task_type: str = None,
         title: str = None,
         **kwargs: Any,
@@ -397,8 +418,8 @@ class GeminiEmbeddingWrapper(GeminiWrapperBase):
         https://ai.google.dev/tutorials/python_quickstart#use_embeddings
 
         Args:
-            content (`Union[Sequence[Msg], str]`):
-                The content to generate embedding.
+            texts (`list[str]` or `str`):
+                The messages used to embed.
             task_type (`str`, defaults to `None`):
                 The type of the task.
             title (`str`, defaults to `None`):
@@ -413,23 +434,27 @@ class GeminiEmbeddingWrapper(GeminiWrapperBase):
         """
 
         # step1: forward to generate response
-        response = genai.embed_content(
+        response = self.client.models.embed_content(
             model=self.model_name,
-            content=content,
-            task_type=task_type,
-            title=title,
-            **kwargs,
+            contents=texts,
+            config={
+                "task_type": task_type,
+                "title": title,
+                **kwargs,
+            },
         )
 
         # step2: record the api invocation if needed
         self._save_model_invocation(
             arguments={
-                "content": content,
-                "task_type": task_type,
-                "title": title,
-                **kwargs,
+                "contents": texts,
+                "config": {
+                    "task_type": task_type,
+                    "title": title,
+                    **kwargs,
+                },
             },
-            response=response,
+            response=response.model_dump(),
         )
 
         # TODO: Up to 2024/07/26, the embedding model doesn't support to
@@ -441,5 +466,5 @@ class GeminiEmbeddingWrapper(GeminiWrapperBase):
 
         return ModelResponse(
             raw=response,
-            embedding=response["embedding"],
+            embedding=[_.values for _ in response.embeddings],
         )
