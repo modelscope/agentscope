@@ -1,0 +1,20 @@
+agentscope.rag package
+======================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.rag.knowledge
+   agentscope.rag.knowledge_bank
+   agentscope.rag.llama_index_knowledge
+
+Module contents
+---------------
+
+.. automodule:: agentscope.rag
+   :members:
+   :undoc-members:
+   :show-inheritance:
