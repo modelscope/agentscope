@@ -183,7 +183,7 @@ Taking “qwen-vl-max” as an example, its model configuration is the same as t
 <span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>2025-08-13 14:16:16 | INFO     | agentscope.manager._model:load_model_configs:138 - Load configs for model wrapper: my-qwen-vl
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>2025-08-13 14:24:27 | INFO     | agentscope.manager._model:load_model_configs:138 - Load configs for model wrapper: my-qwen-vl
 </pre></div>
 </div>
 <p>To communicate with the vision agent with pictures, <cite>Msg</cite> class provides an <cite>url</cite> field.
@@ -212,7 +212,7 @@ You can put both local or online image URL(s) in the <cite>url</cite> field.</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>2025-08-13 14:16:17 | ERROR    | agentscope.message.msg:__init__:112 - The url argument will be deprecated in the future. Consider using the ContentBlock instead to attach files to the message
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>2025-08-13 14:24:27 | ERROR    | agentscope.message.msg:__init__:112 - The url argument will be deprecated in the future. Consider using the ContentBlock instead to attach files to the message
 </pre></div>
 </div>
 <p>After that, we can send the message to the vision agent and get the response.</p>
@@ -221,17 +221,23 @@ You can put both local or online image URL(s) in the <cite>url</cite> field.</p>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Monday: The image is a bar chart titled **&quot;The Apples Each Person Has in 2023&quot;**. It displays the number of apples that three individuals—Alice, Bob, and Charlie—possess. Here are the details:
 
-- **X-axis**: Labeled &quot;Number of Apples,&quot; it represents the names of the individuals (Alice, Bob, and Charlie).
+- **X-axis**: Labeled as &quot;Number of Apples,&quot; it represents the names of the individuals: Alice, Bob, and Charlie.
 - **Y-axis**: Represents the quantity of apples, ranging from 0 to 4.
-- **Bars**:
-  - **Alice** has **2 apples**.
-  - **Bob** has **1 apple**.
-  - **Charlie** has **4 apples**, which is the highest among the three.
 
-The bars are colored in blue, and the chart provides a clear visual comparison of the number of apples each person has.
+### Data Representation:
+- **Alice** has **2 apples**.
+- **Bob** has **1 apple**.
+- **Charlie** has **4 apples**.
+
+### Visual Characteristics:
+- The bars are colored in blue.
+- Charlie&#39;s bar is the tallest, indicating he has the most apples.
+- Bob&#39;s bar is the shortest, indicating he has the fewest apples.
+
+This chart effectively compares the number of apples each person has in a clear and straightforward manner.
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 9.332 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 39.826 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-multimodality-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/169c560b862dc25b25a32ca7165ed413/multimodality.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">multimodality.ipynb</span></code></a></p>
