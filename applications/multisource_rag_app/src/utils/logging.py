@@ -128,4 +128,4 @@ class logger:
     @staticmethod
     def warning(*arg: Any, **kwargs: Any) -> Any:
         """logging warning"""
-        return logger.warning(*arg, **kwargs)
+        return logger.error(*arg, **kwargs)
