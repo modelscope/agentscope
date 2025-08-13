@@ -109,12 +109,12 @@ Now, we can start the conversation by exchanging messages between these two agen
 
  .. code-block:: none
 
-    Angel: It seems like the conversation history is missing. Could you please provide more details or context so I can assist you better?
-    Monster: Of course! I'm here to help, but I need a bit more information. Could you tell me what you're looking for or what kind of assistance you need? If there was a previous conversation or a specific topic you were discussing, feel free to share that as well.
-    Angel: I see there might be a bit of confusion, as I'm Angel, not Monster. Let's start fresh! How can I assist you today? If you have a specific topic or question in mind, feel free to share it with me.
-    Monster: Ah, I see the mix-up! My apologies for that. I'm Monster, and I'm here to help you. Let's get started fresh. What can I assist you with today, Angel? If you have any specific questions or topics in mind, feel free to share them!
-    Angel: It looks like there's a bit of a mix-up with the names. I'm Angel, and I'm here to help you. Let's start fresh! How can I assist you today? If you have any specific questions or topics in mind, feel free to share them!
-    Monster: I apologize for the confusion earlier. I'm here to help, and my name is Monster. Let's start fresh! How can I assist you today, Angel? If you have any specific questions or topics in mind, feel free to share them.
+    Angel: It looks like the conversation history is empty. How can I assist you today?
+    Monster: Hello! I'm Monster, here to help you with any questions or tasks you have. How can I assist you today?
+    Angel: Hello Monster! It seems there might be a bit of a mix-up. I'm Angel, and I'm here to help. How can I assist you or the person you're supporting today?
+    Monster: Hello Angel! It's nice to meet you. I'm Monster, and I'm here to assist with any questions or tasks as well. If you're here to help, let's team up! Is there anything specific you need assistance with, or is there someone else we can assist together?
+    Angel: Hello Monster! It's great to meet you, and I appreciate the offer to team up. If there's someone who needs our help, we can certainly work together to assist them. Is there a specific person or task in mind, or should we wait for someone to reach out with a question or request?
+    Monster: Hello Angel! It's great to have you here. Since we're both ready to assist, let's keep an eye out for anyone who might need our help. If someone reaches out with a question or request, we can collaborate to provide the best possible support. In the meantime, if you have any specific areas of expertise or topics you're particularly interested in, feel free to share!
 
 
 
@@ -292,7 +292,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 36.729 seconds)
+   **Total running time of the script:** (0 minutes 25.573 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:
