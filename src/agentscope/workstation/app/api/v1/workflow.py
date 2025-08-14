@@ -275,6 +275,7 @@ def part_graph_run_task(
     current_account: CurrentAccount,  # pylint: disable=unused-argument
     session: SessionDep,
     request: TaskPartGraphRequest,
+    redis_client: redis.Redis = Depends(get_redis_client),
 ) -> dict:
     """Run part graph workflow"""
     workflow_service = WorkflowService(session)
@@ -319,6 +320,22 @@ def part_graph_run_task(
     #     workflow_config=workflow_config,
     #     task_id=str(uuid.uuid4()),
     # )
+
+    start_time = time.time()
+    while time.time() - start_time < MAX_WAIT:
+        result_key = f"workflow:task:{task_id}"
+        if redis_client.exists(result_key):
+            return create_response(
+                code="200",
+                message="Run task successfully.",
+                data={
+                    "task_id": task_id,
+                    "session_id": workflow_session_id,
+                    "request_id": request_context_var.get().request_id,
+                },
+            )
+        else:
+            time.sleep(0.01)
 
     # Create and return the response
     return create_response(
