@@ -7,7 +7,7 @@
 }
 
 .bordered-image {
-    border: 1px solid gray;
+    border: 1px solid #e5e5e5;
 }
 
 :root {
@@ -22,6 +22,33 @@
     --item-card-height: calc(var(--item-card-margin) * 3 + var(--item-card-img-length) + var(--item-card-title-height));
 }
 
+td .highlight-python.notranslate {
+    margin-bottom: 0 !important;
+}
+
+/*cite {*/
+/*    background: rgba(229, 229, 229, 0.69) !important;*/
+/*    padding-left: 0.25rem !important;*/
+/*    padding-right: 0.25rem !important;*/
+/*    border-radius: 4px !important;*/
+/*    font-style: normal !important;*/
+/*    font-weight: 600 !important;*/
+/*}*/
+
+.sidebar-brand-text {
+    display: flex;
+    justify-content: center;
+}
+
+.sidebar-logo-container {
+    height: 100px;
+    width: 100%;
+    .sidebar-logo {
+        width: 100px;
+        height: 100%;
+    }
+}
+
 .gallery-item {
     position: relative;
     display: inline-block;
@@ -29,6 +56,23 @@
     height: var(--item-card-height);
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
     margin: 7px;
+}
+
+.docutils.align-default {
+    white-space: normal !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    td {
+        white-space: normal !important;
+    }
+}
+
+.sphx-glr-script-out.highlight-none.notranslate .highlight pre{
+    /*正常打印回车*/
+    white-space: pre-wrap !important;
+    /*white-space: normal !important;*/
+    max-width: 100% !important;
+    width: 100% !important;
 }
 
 .gallery-item-card {
@@ -84,16 +128,20 @@
 
 .language-switch-button {
     background: transparent;
+    display: flex;
+    align-content: center;
+    justify-content: center;
     font-size: 15px;
     margin-top: 0;
     margin-bottom: 4px;
     border: none;
-    color: white;
-    height: 40px;
-    width: 60px;
+    color: rgb(4, 4, 4);
+    height: 20px;
+    width: 20px;
     border-radius: 6px;
+    font-weight: 325;
 }
 
 .language-switch-button:hover {
-    background: rgba(255, 255, 255, 0.1)
+    color: #2758DA;
 }

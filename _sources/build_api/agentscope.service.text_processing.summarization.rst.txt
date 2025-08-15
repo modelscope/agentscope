@@ -1,6 +1,0 @@
-agentscope.service.text_processing.summarization
-================================================
-.. automodule:: agentscope.service.text_processing.summarization
-   :members:
-   :undoc-members:
-   :show-inheritance:

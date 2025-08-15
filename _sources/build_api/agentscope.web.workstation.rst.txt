@@ -1,7 +1,0 @@
-agentscope.web.workstation
-==========================
-
-.. automodule:: agentscope.web.workstation
-   :members:
-   :undoc-members:
-   :show-inheritance:

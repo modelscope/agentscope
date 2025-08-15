@@ -1,9 +1,7 @@
-// _static/language_switch.js
-
-function toChinese() {
-    window.location.href = "https://doc.agentscope.io/zh_CN";
-}
-
-function toEnglish() {
-    window.location.href = "https://doc.agentscope.io";
+function switchLanguage() {
+    if (window.location.href.includes("zh_CN")) {
+        window.location.href = "https://doc.agentscope.io";
+    } else {
+        window.location.href = "https://doc.agentscope.io/zh_CN";
+    }
 }

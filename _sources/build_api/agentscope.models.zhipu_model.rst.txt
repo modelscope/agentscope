@@ -1,6 +1,0 @@
-agentscope.models.zhipu_model
-=============================
-.. automodule:: agentscope.models.zhipu_model
-   :members:
-   :undoc-members:
-   :show-inheritance:

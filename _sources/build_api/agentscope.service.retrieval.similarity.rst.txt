@@ -1,6 +1,0 @@
-agentscope.service.retrieval.similarity
-=======================================
-.. automodule:: agentscope.service.retrieval.similarity
-   :members:
-   :undoc-members:
-   :show-inheritance:

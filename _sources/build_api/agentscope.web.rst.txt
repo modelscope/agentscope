@@ -1,7 +1,0 @@
-agentscope.web
-==============
-
-.. automodule:: agentscope.web
-   :members:
-   :undoc-members:
-   :show-inheritance:
