@@ -38,14 +38,14 @@ class StreamableHttpMCPClientTest(IsolatedAsyncioTestCase):
         """Tear down the test environment."""
         while self.process.is_alive():
             self.process.terminate()
-            await asyncio.sleep(1)
+            await asyncio.sleep(5)
 
     async def asyncSetUp(self) -> None:
         """Set up the test environment."""
         self.port = 8002
         self.process = Process(target=setup_server)
         self.process.start()
-        await asyncio.sleep(2)
+        await asyncio.sleep(10)
 
     async def test_streamable_http_stateless_client(self) -> None:
         """Test the MCP server connection functionality."""

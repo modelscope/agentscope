@@ -47,7 +47,7 @@ class SseMCPClientTest(IsolatedAsyncioTestCase):
         self.port = 8003
         self.process = Process(target=setup_server)
         self.process.start()
-        await asyncio.sleep(5)
+        await asyncio.sleep(10)
 
         self.toolkit = Toolkit()
         self.schemas_wo_arg1 = [
