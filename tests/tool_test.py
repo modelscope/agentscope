@@ -116,9 +116,12 @@ print("456")"""
 
         # with timeout
         timeout_cmd = (
-            f"{sys.executable} -c \"import time; print('123'); "
-            f"time.sleep(5); print('456')\""
+            f'{sys.executable} -c "'
+            f"import time; print('123'); "
+            f"import sys; sys.stdout.flush(); "
+            f"time.sleep(10); print('456')\""
         )
+
         res = await execute_shell_command(
             command=timeout_cmd,
         )
