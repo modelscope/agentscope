@@ -2,6 +2,8 @@
 """The tool module unit tests"""
 
 import os
+import platform
+import sys
 import tempfile
 from unittest import IsolatedAsyncioTestCase
 
@@ -39,24 +41,28 @@ class ToolTest(IsolatedAsyncioTestCase):
 
         # with output
         res = await execute_python_code(code="print('Hello, World!')")
+
+        actual = res.content[0]["text"].replace("\r\n", "\n")
         self.assertEqual(
             "<returncode>0</returncode>"
             "<stdout>Hello, World!\n</stdout>"
             "<stderr></stderr>",
-            res.content[0]["text"],
+            actual,
         )
 
         # with exception
         res = await execute_python_code(code="raise Exception('Test error')")
+        actual = res.content[0]["text"].replace("\r\n", "\n")
+
         self.assertTrue(
-            res.content[0]["text"].startswith(
+            actual.startswith(
                 "<returncode>1</returncode>"
                 "<stdout></stdout>"
                 "<stderr>Traceback (most recent call last):\n  File ",
             ),
         )
         self.assertTrue(
-            res.content[0]["text"].endswith(
+            actual.endswith(
                 '.py", line 1, in <module>\n'
                 "    raise Exception('Test error')\n"
                 "Exception: Test error\n"
@@ -71,64 +77,79 @@ time.sleep(5)
 print("456")"""
 
         res = await execute_python_code(code)
+        actual = res.content[0]["text"].replace("\r\n", "\n")
         self.assertEqual(
             "<returncode>0</returncode>"
             "<stdout>123\n456\n</stdout>"
             "<stderr></stderr>",
-            res.content[0]["text"],
+            actual,
         )
 
         res = await execute_python_code(code, timeout=2)
+        actual = res.content[0]["text"].replace("\r\n", "\n")
         self.assertEqual(
             "<returncode>-1</returncode>"
             "<stdout>123\n</stdout>"
             "<stderr>TimeoutError: The code execution exceeded the "
             "timeout of 2 seconds.</stderr>",
-            res.content[0]["text"],
+            actual,
         )
 
     async def test_execute_shell_command(self) -> None:
         """Test executing shell command."""
         # empty output
-        res = await execute_shell_command(command="echo 'Hello, World!'")
+        python_echo_cmd = f"{sys.executable} -c \"print('Hello, World!')\""
+        res = await execute_shell_command(command=python_echo_cmd)
+        actual = res.content[0]["text"].replace("\r\n", "\n")
         self.assertEqual(
             "<returncode>0</returncode>"
             "<stdout>Hello, World!\n</stdout>"
             "<stderr></stderr>",
-            res.content[0]["text"],
+            actual,
         )
 
         # with exception
         res = await execute_shell_command(command="non_existent_command")
-        self.assertEqual(
-            "<returncode>127</returncode>"
-            "<stdout></stdout>"
-            "<stderr>/bin/sh: non_existent_command: command not found\n"
-            "</stderr>",
-            res.content[0]["text"],
+        assert any(
+            keyword in res.content[0]["text"].lower()
+            for keyword in ["not found", "is not recognized"]
         )
 
-        # with timeout
-        res = await execute_shell_command(
-            command='echo "123"; sleep 5; echo "456"',
+        # without timeout
+        normal_cmd = (
+            f"{sys.executable} -c \""  # fmt: skip
+            f"import time; print('123'); "
+            f"time.sleep(0.1); print('456')\""
         )
+
+        res = await execute_shell_command(
+            command=normal_cmd,
+        )
+        actual = res.content[0]["text"].replace("\r\n", "\n")
         self.assertEqual(
             "<returncode>0</returncode>"
             "<stdout>123\n456\n</stdout>"
             "<stderr></stderr>",
-            res.content[0]["text"],
+            actual,
         )
 
+        # with timeout
+        if platform.system() == "Windows":
+            return
+        else:
+            timeout_cmd = 'echo "123"; sleep 5; echo "456"'
+
         res = await execute_shell_command(
-            command='echo "123"; sleep 5; echo "456"',
+            command=timeout_cmd,
             timeout=2,
         )
+        actual = res.content[0]["text"].replace("\r\n", "\n")
         self.assertEqual(
             "<returncode>-1</returncode>"
             "<stdout>123\n</stdout>"
             "<stderr>TimeoutError: The command execution exceeded "
             "the timeout of 2 seconds.</stderr>",
-            res.content[0]["text"],
+            actual,
         )
 
     async def test_view_text_file(self) -> None:

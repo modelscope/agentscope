@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-13]
+        os: [ubuntu-latest, windows-latest, macos-13]
         python-version: ['3.10', '3.11', '3.12']
     env:
       OS: ${{ matrix.os }}
@@ -21,12 +21,6 @@ jobs:
     - name: Update setuptools
       run: |
         pip install setuptools==78.1.1 wheel==0.45.1
-#    - name: Install Minimal Dependencies
-#      run: |
-#        pip install -q -e .
-#    - name: Run minimal import tests
-#      run: |
-#        python tests/minimal.py
     - name: Install Full Dependencies
       run: |
         pip install -q -e .[full]
