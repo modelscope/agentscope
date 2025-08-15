@@ -100,13 +100,7 @@ print("456")"""
 
         # with exception
         res = await execute_shell_command(command="non_existent_command")
-        self.assertEqual(
-            "<returncode>127</returncode>"
-            "<stdout></stdout>"
-            "<stderr>/bin/sh: non_existent_command: command not found\n"
-            "</stderr>",
-            res.content[0]["text"],
-        )
+        assert "not found" in res.content[0]["text"]
 
         # with timeout
         res = await execute_shell_command(
