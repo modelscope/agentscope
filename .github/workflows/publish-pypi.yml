@@ -36,7 +36,7 @@ jobs:
     - name: Test installation
       run: |
         pip install dist/*.whl
-        python -c "import your_package; print(your_package.__version__)"
+        python -c "import agentscope; print(agentscope.__version__)"
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
