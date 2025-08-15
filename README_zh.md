@@ -1,4 +1,4 @@
-[**English Homepage**](https://github.com/agentscope-ai/agentscope/blob/main/README.md) | [**Tutorial**](https://doc.agentscope.io/zh_CN/) | [**Roadmap**](https://github.com/agentscope-ai/agentscope/blob/main/docs/ROADMAP.md) | [**FAQ**](https://doc.agentscope.io/zh_CN/tutorial/faq.html)
+[**English Homepage**](https://github.com/agentscope-ai/agentscope/blob/main/README.md) | [**Tutorial**](https://doc.agentscope.io/zh_CN/) | [**Roadmap**](https://github.com/agentscope-ai/agentscope/blob/main/docs/roadmap.md) | [**FAQ**](https://doc.agentscope.io/zh_CN/tutorial/faq.html)
 
 <p align="center">
   <img
@@ -96,7 +96,7 @@ AgentScope v1.0 新功能概览:
 | ...        |                                     |                                                                               |
 
 ## 📢 新闻
-- **[2025-08]** v1 版本 Tutorial 已上线！查看[tutorial](https://doc.agentscope.io)了解更多详情。
+- **[2025-08]** v1 版本 Tutorial 已上线！查看[tutorial](https://doc.agentscope.io/zh_CN/)了解更多详情。
 - **[2025-08]** 🎉🎉 AgentScope v1现已发布！在完全拥抱异步执行的基础上提供许多新功能和改进。查看[changelog](https://github.com/agentscope-ai/agentscope/blob/main/docs/changelog.md)了解详细变更。
 
 ## 💬 联系我们
