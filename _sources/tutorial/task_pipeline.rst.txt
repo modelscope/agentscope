@@ -137,8 +137,8 @@ Then we start a meeting and let them introduce themselves without manual message
  .. code-block:: none
 
     Alice: Hello, I'm Alice, a 50-year-old teacher with a passion for helping students learn and grow.
-    Bob: Hello, I'm Bob, a 35-year-old engineer with a focus on creating innovative solutions.
-    Charlie: Hello, I'm Charlie, a 28-year-old designer with a knack for blending aesthetics and functionality in my work.
+    Bob: Hello, I'm Bob, a 35-year-old engineer with a focus on innovative solutions and problem-solving.
+    Charlie: Hello, I'm Charlie, a 28-year-old designer with a flair for creating visually appealing and functional designs.
 
 
 
@@ -179,7 +179,7 @@ Now let's check if Bob, Charlie and David received Alice's message.
 
     Bob: Alice is a 50-year-old teacher who is passionate about helping students learn and grow.
     Charlie: Alice is a 50-year-old teacher who is passionate about helping students learn and grow.
-    David: I don't have specific information about who Alice is or what she does without more context. Could you provide more details, such as her profession or the field she's associated with?
+    David: I don't have specific information about an Alice you're referring to, as there could be many people with that name. Could you provide more details, such as a last name or the context in which you encountered Alice?
 
 
 
@@ -269,7 +269,7 @@ Additionally, for reusability, we also provide a class-based implementation:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 16.611 seconds)
+   **Total running time of the script:** (0 minutes 20.552 seconds)
 
 
 .. _sphx_glr_download_tutorial_task_pipeline.py:

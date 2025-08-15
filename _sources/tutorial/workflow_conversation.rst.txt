@@ -280,10 +280,10 @@ Specifically, the agents within the same ``MsgHub`` will receive messages from o
 
  .. code-block:: none
 
-    Alice: Hello! I'm Alice, a student who's always eager to learn new things and engage in interesting discussions. Nice to meet you! Could you tell me a bit about yourself?
-    Bob: Hello Alice, I'm Bob. It's great to meet you as well! I'm also a student and like diving into all sorts of topics. What kind of discussions do you enjoy the most?
-    Charlie: Alice: I really enjoy discussions that challenge my way of thinking, especially those about philosophy and ethics. It's fascinating to explore different viewpoints and the reasons behind them. What about you, Bob? What topics do you find most engaging?
-    Charlie: I'm quite the same, Alice. I also find philosophical debates intriguing, but I have a soft spot for science and technology topics as well. It's amazing how much they can change our lives and the world around us. Do you follow any scientific or tech news?
+    Alice: Hello! I'm Alice, a student with a passion for learning and exploring new things. It's great to meet you! Could you tell me a little about yourself?
+    Bob: Hello Alice! I'm Bob, and just like you, I'm a student. I have a keen interest in technology and love to engage with all sorts of tech-related topics. It's a pleasure to meet someone who is as enthusiastic about learning as I am. What kind of things do you like to explore?
+    Charlie: Alice: That's really cool, Bob! I'm actually quite interested in a wide range of topics, from literature and art to science. Recently, I've been diving into the world of psychology; it's fascinating to learn about human behavior and the mind. How about you? What aspect of technology are you most excited about?
+    Charlie: I'm really into artificial intelligence and machine learning, Alice. It's amazing how these technologies can solve complex problems and even mimic human-like thinking. I also enjoy tinkering with robotics on the side. Have you ever thought about how psychology could intersect with AI?
 
 
 
@@ -320,9 +320,9 @@ Now we print the memory of Alice to check if her memory is updated correctly.
     system: Now you meet each other with a brief self-introduction.
     Alice: None
     system: None
-    Alice: Hello! I'm Alice, a student who's always eager to learn new things and engage in interesting discussions. Nice to meet you! Could you tell me a bit about yourself?
-    Bob: Hello Alice, I'm Bob. It's great to meet you as well! I'm also a student and like diving into all sorts of topics. What kind of discussions do you enjoy the most?
-    Charlie: I'm quite the same, Alice. I also find philosophical debates intriguing, but I have a soft spot for science and technology topics as well. It's amazing how much they can change our lives and the world around us. Do you follow any scientific or tech news?
+    Alice: Hello! I'm Alice, a student with a passion for learning and exploring new things. It's great to meet you! Could you tell me a little about yourself?
+    Bob: Hello Alice! I'm Bob, and just like you, I'm a student. I have a keen interest in technology and love to engage with all sorts of tech-related topics. It's a pleasure to meet someone who is as enthusiastic about learning as I am. What kind of things do you like to explore?
+    Charlie: I'm really into artificial intelligence and machine learning, Alice. It's amazing how these technologies can solve complex problems and even mimic human-like thinking. I also enjoy tinkering with robotics on the side. Have you ever thought about how psychology could intersect with AI?
 
 
 
@@ -339,7 +339,7 @@ Further Reading
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 11.872 seconds)
+   **Total running time of the script:** (0 minutes 14.875 seconds)
 
 
 .. _sphx_glr_download_tutorial_workflow_conversation.py:

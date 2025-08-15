@@ -110,11 +110,11 @@ Initialize a routing agent
 
  .. code-block:: none
 
-    Router: Sure, I can help with that. Could you give me a theme or some elements you'd like to include in the poem?
+    Router: Sure, I can help you with that. Could you please tell me more about the theme or the style of the poem you have in mind?
     The structured output:
     {
         "your_choice": "Content Generation",
-        "task_description": "Write a poem based on the user's provided theme or elements."
+        "task_description": null
     }
 
 
@@ -247,9 +247,9 @@ After that, we define a routing agent and equip it with the above tool functions
         "input": {
             "demand": "a quick sort function"
         },
-        "id": "call_3279b3eab88e4609b82e47"
+        "id": "call_59138fd84ced411a90d469"
     }
-    PythonAgent: Here is a Python implementation of the quick sort algorithm:
+    PythonAgent: Here is a Python implementation of the quick sort algorithm. This function sorts an array or list in place.
 
     ```python
     def quick_sort(arr):
@@ -263,19 +263,26 @@ After that, we define a routing agent and equip it with the above tool functions
             return quick_sort(left) + middle + quick_sort(right)
     ```
 
-    You can use this function to sort a list of numbers. For example, `quick_sort([3, 6, 8, 10, 1, 2, 1])` will return a sorted list `[1, 1, 2, 3, 6, 8, 10]`.
+    You can use this `quick_sort` function to sort a list by calling it and passing the list as an argument, like so:
+
+    ```python
+    sorted_list = quick_sort([3, 6, 8, 10, 1, 2, 1])
+    print(sorted_list)
+    ```
+
+    Would you like to see an in-place version of quicksort that doesn't create new lists?
     system: {
         "type": "tool_result",
-        "id": "call_3279b3eab88e4609b82e47",
+        "id": "call_59138fd84ced411a90d469",
         "name": "generate_python",
         "output": [
             {
                 "type": "text",
-                "text": "Here is a Python implementation of the quick sort algorithm:\n\n```python\ndef quick_sort(arr):\n    if len(arr) <= 1:\n        return arr\n    else:\n        pivot = arr[len(arr) // 2]\n        left = [x for x in arr if x < pivot]\n        middle = [x for x in arr if x == pivot]\n        right = [x for x in arr if x > pivot]\n        return quick_sort(left) + middle + quick_sort(right)\n```\n\nYou can use this function to sort a list of numbers. For example, `quick_sort([3, 6, 8, 10, 1, 2, 1])` will return a sorted list `[1, 1, 2, 3, 6, 8, 10]`."
+                "text": "Here is a Python implementation of the quick sort algorithm. This function sorts an array or list in place.\n\n```python\ndef quick_sort(arr):\n    if len(arr) <= 1:\n        return arr\n    else:\n        pivot = arr[len(arr) // 2]\n        left = [x for x in arr if x < pivot]\n        middle = [x for x in arr if x == pivot]\n        right = [x for x in arr if x > pivot]\n        return quick_sort(left) + middle + quick_sort(right)\n```\n\nYou can use this `quick_sort` function to sort a list by calling it and passing the list as an argument, like so:\n\n```python\nsorted_list = quick_sort([3, 6, 8, 10, 1, 2, 1])\nprint(sorted_list)\n```\n\nWould you like to see an in-place version of quicksort that doesn't create new lists?"
             }
         ]
     }
-    Router: Here is a Python implementation of the quick sort algorithm:
+    Router: The Python function for quick sort has been generated as you requested. Here it is:
 
     ```python
     def quick_sort(arr):
@@ -289,7 +296,15 @@ After that, we define a routing agent and equip it with the above tool functions
             return quick_sort(left) + middle + quick_sort(right)
     ```
 
-    You can use this function to sort a list of numbers. For example, `quick_sort([3, 6, 8, 10, 1, 2, 1])` will return a sorted list `[1, 1, 2, 3, 6, 8, 10]`.
+    You can use this `quick_sort` function to sort a list, like so:
+
+    ```python
+    sorted_list = quick_sort([3, 6, 8, 10, 1, 2, 1])
+    print(sorted_list)
+    ```
+
+    Would you like an in-place version of the quicksort that doesn't create new lists, or do you need help with anything else?
+    Router: The quick sort function has been generated for you. You can use the provided code to sort a list in Python. If you need an in-place version of the quicksort or any other assistance, feel free to ask.
 
 
 
@@ -297,7 +312,7 @@ After that, we define a routing agent and equip it with the above tool functions
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 24.859 seconds)
+   **Total running time of the script:** (0 minutes 32.134 seconds)
 
 
 .. _sphx_glr_download_tutorial_workflow_routing.py:

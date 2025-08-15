@@ -218,7 +218,7 @@ they will be executed in parallel by the ``asyncio.gather`` function.
 
     Jarvis: {
         "type": "tool_use",
-        "id": "call_62c5acb20db34d1686ee7f",
+        "id": "call_e4c6f59aee5343c88a7595",
         "name": "example_tool_function",
         "input": {
             "tag": "tag1"
@@ -226,18 +226,18 @@ they will be executed in parallel by the ``asyncio.gather`` function.
     }
     system: {
         "type": "tool_result",
-        "id": "call_62c5acb20db34d1686ee7f",
+        "id": "call_e4c6f59aee5343c88a7595",
         "name": "example_tool_function",
         "output": [
             {
                 "type": "text",
-                "text": "Tag tag1 started at 09:50:27.181639 and ended at 09:50:30.184701. "
+                "text": "Tag tag1 started at 10:13:01.819129 and ended at 10:13:04.822206. "
             }
         ]
     }
     Jarvis: {
         "type": "tool_use",
-        "id": "call_cbe813bd39044af4aeb0b2",
+        "id": "call_280915d1f0714467894aed",
         "name": "example_tool_function",
         "input": {
             "tag": "tag2"
@@ -245,21 +245,19 @@ they will be executed in parallel by the ``asyncio.gather`` function.
     }
     system: {
         "type": "tool_result",
-        "id": "call_cbe813bd39044af4aeb0b2",
+        "id": "call_280915d1f0714467894aed",
         "name": "example_tool_function",
         "output": [
             {
                 "type": "text",
-                "text": "Tag tag2 started at 09:50:33.106928 and ended at 09:50:36.109987. "
+                "text": "Tag tag2 started at 10:13:06.988437 and ended at 10:13:09.991500. "
             }
         ]
     }
-    Jarvis: The 'example_tool_function' has been called with two different tags, 'tag1' and 'tag2', in a way that they can execute in parallel. Here are the results:
+    Jarvis: The two function calls for 'example_tool_function' have been made in parallel. Here are the results:
 
-    - For 'tag1': It started at 09:50:27.181639 and ended at 09:50:30.184701.
-    - For 'tag2': It started at 09:50:33.106928 and ended at 09:50:36.109987.
-
-    Please note that the actual execution in parallel may depend on the environment and system capabilities where these functions are being run. If you need further assistance or have any other requests, feel free to let me know.
+    - For the tag 'tag1', the function started at 10:13:01.819129 and ended at 10:13:04.822206.
+    - For the tag 'tag2', the function started at 10:13:06.988437 and ended at 10:13:09.991500.
 
 
 
@@ -339,7 +337,7 @@ Taking introducing Einstein as an example:
     The structured output:
     {
         "name": "Albert Einstein",
-        "description": "Theoretical physicist who developed the theory of relativity",
+        "description": "A theoretical physicist who developed the theory of relativity",
         "age": 76,
         "honor": [
             "Nobel Prize in Physics (1921)",
@@ -416,7 +414,7 @@ Further Reading
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 26.046 seconds)
+   **Total running time of the script:** (0 minutes 21.796 seconds)
 
 
 .. _sphx_glr_download_tutorial_task_agent.py:
