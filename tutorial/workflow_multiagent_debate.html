@@ -228,6 +228,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="task_model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="task_prompt.html">Prompt Formatter</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_tool.html">Tool</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_memory.html">Memory</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_long_term_memory.html">Long-Term Memory</a></li>
@@ -431,37 +432,41 @@ At each round a moderator agent will decide whether the correct answer can be ob
 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">run_multiagent_debate</span><span class="p">())</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Alice: As the affirmative side, I will present the argument that when a smaller circle A, whose radius is 1/3 of the larger circle B, rolls around circle B without sliding, it will revolve 4 times in total by the time it returns to its starting point.
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Alice: As the affirmative side, I will argue that when circle A, which has a radius one-third of that of circle B, rolls around the outside of circle B without sliding, it will revolve 4 times in total by the time it returns to its starting point.
 
-To understand this, let&#39;s consider the following:
+To understand this, let&#39;s break down the problem. The circumference of a circle is given by the formula \( C = 2\pi r \), where \( r \) is the radius of the circle. If we denote the radius of circle B as \( R \), then the radius of circle A would be \( \frac{R}{3} \).
 
-- The circumference of a circle is given by \( C = 2\pi r \), where \( r \) is the radius of the circle.
-- If the radius of circle A is 1/3 of the radius of circle B, then the ratio of their circumferences is also 1:3. This means if the radius of circle B is \( R \), the radius of circle A is \( \frac{R}{3} \).
-- When circle A rolls around the outside of circle B, it travels a distance equal to the circumference of the path it follows, which is the circumference of a circle with a radius equal to the sum of the radii of circles A and B, i.e., \( R + \frac{R}{3} = \frac{4R}{3} \).
-- The total distance that circle A travels is the circumference of this combined circle, which is \( 2\pi \times \frac{4R}{3} = \frac{8\pi R}{3} \).
-- Since the circumference of circle A is \( 2\pi \times \frac{R}{3} = \frac{2\pi R}{3} \), the number of times circle A revolves is the total distance traveled divided by the circumference of circle A, which is \( \frac{\frac{8\pi R}{3}}{\frac{2\pi R}{3}} = 4 \).
+The distance that circle A travels as it goes around circle B once is the circumference of the path that circle A follows, which is the circumference of a circle with radius \( R + \frac{R}{3} = \frac{4R}{3} \). Thus, the distance traveled by circle A is:
 
-Therefore, circle A will revolve 4 times as it rolls around circle B once.
-Bob: I will take the negative side of this argument. While Alice&#39;s explanation is mathematically sound, there is a subtle point that needs to be considered: the relative rotation between the two circles.
+\[ C_{path} = 2\pi \left(\frac{4R}{3}\right) = \frac{8\pi R}{3} \]
 
-When circle A rolls around circle B, it does not only revolve around circle B but also rotates about its own center. To find out how many times circle A revolves in total, we need to consider both the number of rotations due to its path around circle B and the number of rotations due to its own spinning.
+Now, the number of revolutions that circle A makes is the distance traveled divided by the circumference of circle A itself, which is:
 
-Let&#39;s break it down:
+\[ C_A = 2\pi \left(\frac{R}{3}\right) = \frac{2\pi R}{3} \]
 
-- As Alice correctly pointed out, the circumference of the path that circle A follows is \( \frac{8\pi R}{3} \).
-- The distance that circle A travels along this path is equal to 4 circumferences of circle A, which suggests that if circle A were sliding without rotating, it would have to rotate 4 times to cover the distance.
-- However, since there is no sliding, circle A must also rotate once for each full circuit around circle B due to the contact point always being at rest relative to circle B (this is the additional rotation due to the rolling without slipping condition).
+So, the number of revolutions is:
 
-So, for every complete revolution around circle B, circle A makes an extra rotation. This means that on top of the 4 revolutions due to the distance traveled, there is 1 additional revolution due to the rolling motion.
+\[ \text{Revolutions} = \frac{C_{path}}{C_A} = \frac{\frac{8\pi R}{3}}{\frac{2\pi R}{3}} = \frac{8\pi R}{3} \times \frac{3}{2\pi R} = \frac{8}{2} = 4 \]
 
-Therefore, the total number of revolutions is 4 (from the distance) + 1 (from the rolling) = 5. Hence, I argue that circle A will revolve 5 times as it rolls around circle B once.
-Aggregator: The debate is indeed finished, and we can now determine the correct answer.
+Therefore, circle A will make 4 complete revolutions as it rolls around the outside of circle B.
+Bob: I appreciate the detailed explanation by the affirmative side, but I must disagree with the conclusion. The key point that has been overlooked is the effect of the rotation around the larger circle B on the smaller circle A.
 
-Alice&#39;s argument correctly calculates the number of times circle A would revolve based on the distance it travels around circle B. However, Bob pointed out a crucial point about the relative rotation between the two circles. When circle A rolls without slipping around circle B, it will have an additional revolution due to its own spinning as it maintains contact with circle B.
+When a smaller circle rolls around a larger one, it does not only rotate due to its own circumference; it also rotates as part of the larger circle&#39;s circumference. This additional rotation is often referred to as the &#39;sliding&#39; or &#39;geometric phase&#39; and it contributes an extra revolution.
 
-Therefore, the total number of revolutions is the 4 revolutions from the path distance plus 1 additional revolution from the rolling motion, which gives us 5 total revolutions.
+Let&#39;s revisit the problem:
 
-Hence, the correct answer is that circle A will revolve 5 times in total as it rolls around circle B once.
+The circumference of circle B (the larger circle) is \( C_B = 2\pi R \), where \( R \) is the radius of circle B. The circumference of circle A (the smaller circle) is \( C_A = 2\pi \frac{R}{3} \).
+
+When circle A rolls around circle B, it travels a distance equal to the circumference of the path which is the sum of the radii, or \( 2\pi (R + \frac{R}{3}) = \frac{8\pi R}{3} \). To find out how many times circle A revolves, we divide this distance by the circumference of circle A:
+
+\[      ext{Revolutions due to rolling} = \frac{\frac{8\pi R}{3}}{2\pi \frac{R}{3}} = 4 \]
+
+However, as circle A completes a full trip around circle B, it also undergoes a complete rotation about the center of circle B. This adds one more revolution to the count. Therefore, the total number of revolutions is:
+
+\[      ext{Total Revolutions} = 4 + 1 = 5 \]
+
+Hence, I argue that circle A will actually make 5 complete revolutions as it rolls around the outside of circle B without sliding.
+Aggregator: The debate is finished, and the correct answer is that circle A will make 5 complete revolutions as it rolls around the outside of circle B. Bob&#39;s argument correctly accounts for the additional revolution due to the geometric phase, which is an extra rotation that occurs as a result of the smaller circle A moving around the larger circle B. Alice&#39;s calculation was close, but she did not include this additional revolution in her final count.
 
 The debate is finished, and the correct answer is:  5
 </pre></div>
@@ -472,7 +477,7 @@ The debate is finished, and the correct answer is:  5
 <li><p><a class="reference internal" href="task_pipeline.html#pipeline"><span class="std std-ref">Pipeline</span></a></p></li>
 </ul>
 <p id="emnlp-2024">Encouraging Divergent Thinking in Large Language Models through Multi-Agent Debate. EMNLP 2024.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (1 minutes 2.736 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 54.979 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorial-workflow-multiagent-debate-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/4ddcd353f1389c1b465adca14e7ea420/workflow_multiagent_debate.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">workflow_multiagent_debate.ipynb</span></code></a></p>

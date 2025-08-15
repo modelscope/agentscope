@@ -355,10 +355,10 @@
 
 .. only:: html
 
-  .. image:: /tutorial/images/thumb/sphx_glr_prompt_thumb.png
+  .. image:: /tutorial/images/thumb/sphx_glr_task_prompt_thumb.png
     :alt:
 
-  :ref:`sphx_glr_tutorial_prompt.py`
+  :ref:`sphx_glr_tutorial_task_prompt.py`
 
 .. raw:: html
 
@@ -464,7 +464,7 @@
    /tutorial/task_agent
    /tutorial/quickstart_agent
    /tutorial/task_state
-   /tutorial/prompt
+   /tutorial/task_prompt
    /tutorial/workflow_routing
    /tutorial/workflow_multiagent_debate
    /tutorial/task_eval

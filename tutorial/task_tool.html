@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Memory" href="task_memory.html" /><link rel="prev" title="Model" href="task_model.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Memory" href="task_memory.html" /><link rel="prev" title="Prompt Formatter" href="task_prompt.html" />
         <link rel="prefetch" href="../_static/logo.svg" as="image" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
@@ -228,6 +228,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="task_model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="task_prompt.html">Prompt Formatter</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Tool</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_memory.html">Memory</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_long_term_memory.html">Long-Term Memory</a></li>
@@ -506,7 +507,7 @@ openai_audio_to_text
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Tool Response:
-ToolResponse(content=[{&#39;type&#39;: &#39;text&#39;, &#39;text&#39;: &quot;Searching for &#39;AgentScope&#39; with API key &#39;xxx&#39;&quot;}], metadata=None, stream=False, is_last=True, is_interrupted=False, id=&#39;2025-08-15 10:15:20.903_285869&#39;)
+ToolResponse(content=[{&#39;type&#39;: &#39;text&#39;, &#39;text&#39;: &quot;Searching for &#39;AgentScope&#39; with API key &#39;xxx&#39;&quot;}], metadata=None, stream=False, is_last=True, is_interrupted=False, id=&#39;2025-08-15 12:29:18.017_085e70&#39;)
 </pre></div>
 </div>
 </section>
@@ -637,7 +638,7 @@ Besides, a flag <code class="docutils literal notranslate"><span class="pre">is_
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Tool Response:
-ToolResponse(content=[{&#39;type&#39;: &#39;text&#39;, &#39;text&#39;: &#39;&lt;system-info&gt;The tool call has been interrupted by the user.&lt;/system-info&gt;&#39;}], metadata=None, stream=True, is_last=True, is_interrupted=True, id=&#39;2025-08-15 10:15:21.907_8b8289&#39;)
+ToolResponse(content=[{&#39;type&#39;: &#39;text&#39;, &#39;text&#39;: &#39;&lt;system-info&gt;The tool call has been interrupted by the user.&lt;/system-info&gt;&#39;}], metadata=None, stream=True, is_last=True, is_interrupted=True, id=&#39;2025-08-15 12:29:19.021_b6b3ff&#39;)
 The interrupted flag:
 True
 </pre></div>
@@ -697,11 +698,11 @@ By this way, the agent can observe what the tool has returned before the interru
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Chunk 0:
-ToolResponse(content=[{&#39;type&#39;: &#39;text&#39;, &#39;text&#39;: &#39;1234&#39;}], metadata=None, stream=False, is_last=True, is_interrupted=False, id=&#39;2025-08-15 10:15:21.910_4312aa&#39;)
+ToolResponse(content=[{&#39;type&#39;: &#39;text&#39;, &#39;text&#39;: &#39;1234&#39;}], metadata=None, stream=False, is_last=True, is_interrupted=False, id=&#39;2025-08-15 12:29:19.024_7cce81&#39;)
 The interrupted flag:  False
 
 Chunk 1:
-ToolResponse(content=[{&#39;type&#39;: &#39;text&#39;, &#39;text&#39;: &#39;1234&#39;}, {&#39;type&#39;: &#39;text&#39;, &#39;text&#39;: &#39;&lt;system-info&gt;The tool call has been interrupted by the user.&lt;/system-info&gt;&#39;}], metadata=None, stream=False, is_last=True, is_interrupted=True, id=&#39;2025-08-15 10:15:21.910_4312aa&#39;)
+ToolResponse(content=[{&#39;type&#39;: &#39;text&#39;, &#39;text&#39;: &#39;1234&#39;}, {&#39;type&#39;: &#39;text&#39;, &#39;text&#39;: &#39;&lt;system-info&gt;The tool call has been interrupted by the user.&lt;/system-info&gt;&#39;}], metadata=None, stream=False, is_last=True, is_interrupted=True, id=&#39;2025-08-15 12:29:19.024_7cce81&#39;)
 The interrupted flag:  True
 </pre></div>
 </div>
@@ -935,7 +936,7 @@ contain the notes of the activated tool groups.</p>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Text content in tool Response:
-ToolResponse(content=[{&#39;type&#39;: &#39;text&#39;, &#39;text&#39;: &quot;Active tool groups successfully: [&#39;browser_user&#39;]. You MUST follow these notes to use the tools:\n&lt;notes&gt;## About browser_use Tools\n1. Use ``navigate`` to open a web page.\n2. When requiring user authentication, ask the user for the credentials\n3. ...&lt;/notes&gt;&quot;}], metadata=None, stream=False, is_last=True, is_interrupted=False, id=&#39;2025-08-15 10:15:21.918_9a65a9&#39;)
+ToolResponse(content=[{&#39;type&#39;: &#39;text&#39;, &#39;text&#39;: &quot;Active tool groups successfully: [&#39;browser_user&#39;]. You MUST follow these notes to use the tools:\n&lt;notes&gt;## About browser_use Tools\n1. Use ``navigate`` to open a web page.\n2. When requiring user authentication, ask the user for the credentials\n3. ...&lt;/notes&gt;&quot;}], metadata=None, stream=False, is_last=True, is_interrupted=False, id=&#39;2025-08-15 12:29:19.032_26a670&#39;)
 </pre></div>
 </div>
 <p>The toolkit also provides a method to gather the notes of the activated tool groups, and you can assemble it into your agent’s system prompt.</p>
@@ -1005,14 +1006,14 @@ ToolResponse(content=[{&#39;type&#39;: &#39;text&#39;, &#39;text&#39;: &quot;Act
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="task_model.html">
+          <a class="prev-page" href="task_prompt.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Model</div>
+                <div class="title">Prompt Formatter</div>
                 
               </div>
             </a>

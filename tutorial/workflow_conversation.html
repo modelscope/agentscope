@@ -228,6 +228,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="task_model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="task_prompt.html">Prompt Formatter</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_tool.html">Tool</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_memory.html">Memory</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_long_term_memory.html">Long-Term Memory</a></li>
@@ -395,7 +396,7 @@ agent, and format the messages accordingly.</p>
 Taking <code class="docutils literal notranslate"><span class="pre">DashScopeMultiAgentFormatter</span></code> as an example:</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>More details about the formatter can be found in <a class="reference internal" href="prompt.html#prompt"><span class="std std-ref">Prompt Formatter</span></a>.</p>
+<p>More details about the formatter can be found in <a class="reference internal" href="task_prompt.html#prompt"><span class="std std-ref">Prompt Formatter</span></a>.</p>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">example_multi_agent_prompt</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">msgs</span> <span class="o">=</span> <span class="p">[</span>
@@ -501,10 +502,10 @@ Specifically, the agents within the same <code class="docutils literal notransla
 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">example_msghub</span><span class="p">())</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Alice: Hello! I&#39;m Alice, a student with a passion for learning and exploring new things. It&#39;s great to meet you! Could you tell me a little about yourself?
-Bob: Hello Alice! I&#39;m Bob, and just like you, I&#39;m a student. I have a keen interest in technology and love to engage with all sorts of tech-related topics. It&#39;s a pleasure to meet someone who is as enthusiastic about learning as I am. What kind of things do you like to explore?
-Charlie: Alice: That&#39;s really cool, Bob! I&#39;m actually quite interested in a wide range of topics, from literature and art to science. Recently, I&#39;ve been diving into the world of psychology; it&#39;s fascinating to learn about human behavior and the mind. How about you? What aspect of technology are you most excited about?
-Charlie: I&#39;m really into artificial intelligence and machine learning, Alice. It&#39;s amazing how these technologies can solve complex problems and even mimic human-like thinking. I also enjoy tinkering with robotics on the side. Have you ever thought about how psychology could intersect with AI?
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Alice: Hi there, I&#39;m Alice. Nice to meet you! Could you tell me a bit about yourself?
+Bob: Hi Alice, I&#39;m Bob. It&#39;s great to meet you too! I&#39;m a student currently studying computer science and I enjoy playing video games in my free time. What about you?
+Charlie: Alice: That&#39;s cool, Bob! I&#39;m a graphic designer and I love to create digital art. When I&#39;m not working, you can find me hiking or reading a good book. So, what kind of video games do you like?
+Charlie: I&#39;m into all sorts of games, but my favorites are probably strategy and role-playing games. There&#39;s something about building up your characters and planning out every move that really draws me in. Do you play any video games, Alice?
 </pre></div>
 </div>
 <p>Now we print the memory of Alice to check if her memory is updated correctly.</p>
@@ -522,9 +523,9 @@ Charlie: I&#39;m really into artificial intelligence and machine learning, Alice
 system: Now you meet each other with a brief self-introduction.
 Alice: None
 system: None
-Alice: Hello! I&#39;m Alice, a student with a passion for learning and exploring new things. It&#39;s great to meet you! Could you tell me a little about yourself?
-Bob: Hello Alice! I&#39;m Bob, and just like you, I&#39;m a student. I have a keen interest in technology and love to engage with all sorts of tech-related topics. It&#39;s a pleasure to meet someone who is as enthusiastic about learning as I am. What kind of things do you like to explore?
-Charlie: I&#39;m really into artificial intelligence and machine learning, Alice. It&#39;s amazing how these technologies can solve complex problems and even mimic human-like thinking. I also enjoy tinkering with robotics on the side. Have you ever thought about how psychology could intersect with AI?
+Alice: Hi there, I&#39;m Alice. Nice to meet you! Could you tell me a bit about yourself?
+Bob: Hi Alice, I&#39;m Bob. It&#39;s great to meet you too! I&#39;m a student currently studying computer science and I enjoy playing video games in my free time. What about you?
+Charlie: I&#39;m into all sorts of games, but my favorites are probably strategy and role-playing games. There&#39;s something about building up your characters and planning out every move that really draws me in. Do you play any video games, Alice?
 </pre></div>
 </div>
 </section>
@@ -532,10 +533,10 @@ Charlie: I&#39;m really into artificial intelligence and machine learning, Alice
 <section id="further-reading">
 <h2>Further Reading<a class="headerlink" href="#further-reading" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="prompt.html#prompt"><span class="std std-ref">Prompt Formatter</span></a></p></li>
+<li><p><a class="reference internal" href="task_prompt.html#prompt"><span class="std std-ref">Prompt Formatter</span></a></p></li>
 <li><p><a class="reference internal" href="task_pipeline.html#pipeline"><span class="std std-ref">Pipeline</span></a></p></li>
 </ul>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 14.875 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 14.676 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorial-workflow-conversation-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/6fc2f5ac2a455c83476d717ce963aa17/workflow_conversation.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">workflow_conversation.ipynb</span></code></a></p>

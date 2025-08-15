@@ -280,10 +280,10 @@ Specifically, the agents within the same ``MsgHub`` will receive messages from o
 
  .. code-block:: none
 
-    Alice: Hello! I'm Alice, a student with a passion for learning and exploring new things. It's great to meet you! Could you tell me a little about yourself?
-    Bob: Hello Alice! I'm Bob, and just like you, I'm a student. I have a keen interest in technology and love to engage with all sorts of tech-related topics. It's a pleasure to meet someone who is as enthusiastic about learning as I am. What kind of things do you like to explore?
-    Charlie: Alice: That's really cool, Bob! I'm actually quite interested in a wide range of topics, from literature and art to science. Recently, I've been diving into the world of psychology; it's fascinating to learn about human behavior and the mind. How about you? What aspect of technology are you most excited about?
-    Charlie: I'm really into artificial intelligence and machine learning, Alice. It's amazing how these technologies can solve complex problems and even mimic human-like thinking. I also enjoy tinkering with robotics on the side. Have you ever thought about how psychology could intersect with AI?
+    Alice: Hi there, I'm Alice. Nice to meet you! Could you tell me a bit about yourself?
+    Bob: Hi Alice, I'm Bob. It's great to meet you too! I'm a student currently studying computer science and I enjoy playing video games in my free time. What about you?
+    Charlie: Alice: That's cool, Bob! I'm a graphic designer and I love to create digital art. When I'm not working, you can find me hiking or reading a good book. So, what kind of video games do you like?
+    Charlie: I'm into all sorts of games, but my favorites are probably strategy and role-playing games. There's something about building up your characters and planning out every move that really draws me in. Do you play any video games, Alice?
 
 
 
@@ -320,9 +320,9 @@ Now we print the memory of Alice to check if her memory is updated correctly.
     system: Now you meet each other with a brief self-introduction.
     Alice: None
     system: None
-    Alice: Hello! I'm Alice, a student with a passion for learning and exploring new things. It's great to meet you! Could you tell me a little about yourself?
-    Bob: Hello Alice! I'm Bob, and just like you, I'm a student. I have a keen interest in technology and love to engage with all sorts of tech-related topics. It's a pleasure to meet someone who is as enthusiastic about learning as I am. What kind of things do you like to explore?
-    Charlie: I'm really into artificial intelligence and machine learning, Alice. It's amazing how these technologies can solve complex problems and even mimic human-like thinking. I also enjoy tinkering with robotics on the side. Have you ever thought about how psychology could intersect with AI?
+    Alice: Hi there, I'm Alice. Nice to meet you! Could you tell me a bit about yourself?
+    Bob: Hi Alice, I'm Bob. It's great to meet you too! I'm a student currently studying computer science and I enjoy playing video games in my free time. What about you?
+    Charlie: I'm into all sorts of games, but my favorites are probably strategy and role-playing games. There's something about building up your characters and planning out every move that really draws me in. Do you play any video games, Alice?
 
 
 
@@ -339,7 +339,7 @@ Further Reading
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 14.875 seconds)
+   **Total running time of the script:** (0 minutes 14.676 seconds)
 
 
 .. _sphx_glr_download_tutorial_workflow_conversation.py:

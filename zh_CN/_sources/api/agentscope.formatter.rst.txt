@@ -1,7 +1,0 @@
-agentscope.formatter
-====================
-
-.. automodule:: agentscope.formatter
-   :members:
-   :undoc-members:
-   :show-inheritance:
