@@ -27,7 +27,7 @@ jobs:
           pip install setuptools==78.1.1 wheel==0.45.1
       - name: Install Dependencies
         run: |
-          pip install -q -e .[full]
+          pip install -q -e .[dev]
       - name: Add execute permission to build.sh
         run: |
           chmod +x docs/tutorial/en/build.sh
@@ -72,7 +72,7 @@ jobs:
           pip install setuptools==78.1.1 wheel==0.45.1
       - name: Install Dependencies
         run: |
-          pip install -q -e .[full]
+          pip install -q -e .[dev]
       - name: Add execute permission to build.sh
         run: |
           chmod +x docs/tutorial/zh_CN/build.sh
