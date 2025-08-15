@@ -109,7 +109,10 @@ print("456")"""
 
         # with exception
         res = await execute_shell_command(command="non_existent_command")
-        assert "not found" in res.content[0]["text"]
+        assert any(
+            keyword in res.content[0]["text"].lower()
+            for keyword in ["not found", "is not recognized"]
+        )
 
         # with timeout
         timeout_cmd = (
