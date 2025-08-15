@@ -134,7 +134,7 @@ print("456")"""
         )
 
         # with timeout
-        if platform.system() == "windows":
+        if platform.system() == "Windows":
             timeout_cmd = (
                 f"{sys.executable} -c \""  # fmt: skip
                 f"import time; print('123'); "
