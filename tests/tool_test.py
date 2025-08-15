@@ -2,6 +2,7 @@
 """The tool module unit tests"""
 
 import os
+import platform
 import sys
 import tempfile
 from unittest import IsolatedAsyncioTestCase
@@ -133,12 +134,15 @@ print("456")"""
         )
 
         # with timeout
-        timeout_cmd = (
-            f"{sys.executable} -c \""  # fmt: skip
-            f"import time; print('123'); "
-            f"import sys; sys.stdout.flush(); "
-            f"time.sleep(30); print('456')\""
-        )
+        if platform.system() == "windows":
+            timeout_cmd = (
+                f"{sys.executable} -c \""  # fmt: skip
+                f"import time; print('123'); "
+                f"import sys; sys.stdout.flush(); "
+                f"time.sleep(10); print('456')\""
+            )
+        else:
+            timeout_cmd = 'echo "123"; sleep 5; echo "456"'
 
         res = await execute_shell_command(
             command=timeout_cmd,
