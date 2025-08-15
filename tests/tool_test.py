@@ -114,16 +114,15 @@ print("456")"""
             for keyword in ["not found", "is not recognized"]
         )
 
-        # with timeout
-        timeout_cmd = (
+        # without timeout
+        normal_cmd = (
             f"{sys.executable} -c \""  # fmt: skip
             f"import time; print('123'); "
-            f"import sys; sys.stdout.flush(); "
-            f"time.sleep(5); print('456')\""
+            f"time.sleep(0.1); print('456')\""
         )
 
         res = await execute_shell_command(
-            command=timeout_cmd,
+            command=normal_cmd,
         )
         actual = res.content[0]["text"].replace("\r\n", "\n")
         self.assertEqual(
@@ -131,6 +130,14 @@ print("456")"""
             "<stdout>123\n456\n</stdout>"
             "<stderr></stderr>",
             actual,
+        )
+
+        # with timeout
+        timeout_cmd = (
+            f"{sys.executable} -c \""  # fmt: skip
+            f"import time; print('123'); "
+            f"import sys; sys.stdout.flush(); "
+            f"time.sleep(30); print('456')\""
         )
 
         res = await execute_shell_command(
