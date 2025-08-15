@@ -43,6 +43,7 @@ extra_requires = [
     "transformers",
     "jinja2",
     "ray",
+    "mem0ai",
 ]
 
 dev_requires = [
