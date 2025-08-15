@@ -26,7 +26,7 @@ async def tool_1(arg1: str, arg2: list[int]) -> str:
 
 def setup_server() -> None:
     """Set up the streamable HTTP MCP server."""
-    sse_server = FastMCP("SSE", port=8001)
+    sse_server = FastMCP("SSE", port=8003)
     sse_server.tool(description="A test tool function.")(tool_1)
     sse_server.run(transport="sse")
 
@@ -40,14 +40,14 @@ class SseMCPClientTest(IsolatedAsyncioTestCase):
 
         while self.process.is_alive():
             self.process.terminate()
-            await asyncio.sleep(1)
+            await asyncio.sleep(5)
 
     async def asyncSetUp(self) -> None:
         """Set up the test environment."""
-        self.port = 8001
+        self.port = 8003
         self.process = Process(target=setup_server)
         self.process.start()
-        await asyncio.sleep(2)
+        await asyncio.sleep(5)
 
         self.toolkit = Toolkit()
         self.schemas_wo_arg1 = [
