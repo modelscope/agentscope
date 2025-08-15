@@ -131,6 +131,7 @@ dmypy.json
 .idea/
 
 # macOS
+.DS_Store
 
 # docs
 docs/tutorial/en/build/
