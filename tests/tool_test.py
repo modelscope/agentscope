@@ -131,7 +131,7 @@ print("456")"""
         )
 
         res = await execute_shell_command(
-            command='echo "123"; sleep 5; echo "456"',
+            command=timeout_cmd,
             timeout=2,
         )
         actual = res.content[0]["text"].replace("\r\n", "\n")
