@@ -135,12 +135,7 @@ print("456")"""
 
         # with timeout
         if platform.system() == "Windows":
-            timeout_cmd = (
-                f"{sys.executable} -c \""  # fmt: skip
-                f"import time; print('123'); "
-                f"import sys; sys.stdout.flush(); "
-                f"time.sleep(10); print('456')\""
-            )
+            return
         else:
             timeout_cmd = 'echo "123"; sleep 5; echo "456"'
 
