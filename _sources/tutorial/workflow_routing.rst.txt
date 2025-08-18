@@ -110,11 +110,11 @@ Initialize a routing agent
 
  .. code-block:: none
 
-    Router: Sure, I can help you with that. Could you please provide me with more details? Like the theme of the poem, the style, and any specific words or phrases you would like to include?
+    Router: Sure, I can help with that. Could you please provide me with a theme or some keywords that you would like the poem to revolve around?
     The structured output:
     {
         "your_choice": "Content Generation",
-        "task_description": "To write a poem based on user's requirements."
+        "task_description": "Generate a poem based on user's provided theme or keywords."
     }
 
 
@@ -247,7 +247,7 @@ After that, we define a routing agent and equip it with the above tool functions
         "input": {
             "demand": "a quick sort function"
         },
-        "id": "call_10dbb49f04b14ab0a0b5de"
+        "id": "call_01375195b63b4d73b0f86c"
     }
     PythonAgent: Here is a simple implementation of the quick sort algorithm in Python:
     ```python
@@ -262,20 +262,19 @@ After that, we define a routing agent and equip it with the above tool functions
             return quick_sort(left) + middle + quick_sort(right)
     ```
 
-    You can use this function to sort a list. For example, `quick_sort([3, 6, 8, 10, 1, 2, 1])` will return a sorted list `[1, 1, 2, 3, 6, 8, 10]`. Do you want to see an example of how to use it or do you have any other specific requirements?
+    You can use this function to sort a list of numbers. For example, `quick_sort([3, 6, 8, 10, 1, 2, 1])` will return a sorted list `[1, 1, 2, 3, 6, 8, 10]`.
     system: {
         "type": "tool_result",
-        "id": "call_10dbb49f04b14ab0a0b5de",
+        "id": "call_01375195b63b4d73b0f86c",
         "name": "generate_python",
         "output": [
             {
                 "type": "text",
-                "text": "Here is a simple implementation of the quick sort algorithm in Python:\n```python\ndef quick_sort(arr):\n    if len(arr) <= 1:\n        return arr\n    else:\n        pivot = arr[len(arr) // 2]\n        left = [x for x in arr if x < pivot]\n        middle = [x for x in arr if x == pivot]\n        right = [x for x in arr if x > pivot]\n        return quick_sort(left) + middle + quick_sort(right)\n```\n\nYou can use this function to sort a list. For example, `quick_sort([3, 6, 8, 10, 1, 2, 1])` will return a sorted list `[1, 1, 2, 3, 6, 8, 10]`. Do you want to see an example of how to use it or do you have any other specific requirements?"
+                "text": "Here is a simple implementation of the quick sort algorithm in Python:\n```python\ndef quick_sort(arr):\n    if len(arr) <= 1:\n        return arr\n    else:\n        pivot = arr[len(arr) // 2]\n        left = [x for x in arr if x < pivot]\n        middle = [x for x in arr if x == pivot]\n        right = [x for x in arr if x > pivot]\n        return quick_sort(left) + middle + quick_sort(right)\n```\n\nYou can use this function to sort a list of numbers. For example, `quick_sort([3, 6, 8, 10, 1, 2, 1])` will return a sorted list `[1, 1, 2, 3, 6, 8, 10]`."
             }
         ]
     }
     Router: Here is a simple implementation of the quick sort algorithm in Python:
-
     ```python
     def quick_sort(arr):
         if len(arr) <= 1:
@@ -288,7 +287,7 @@ After that, we define a routing agent and equip it with the above tool functions
             return quick_sort(left) + middle + quick_sort(right)
     ```
 
-    You can use this function to sort a list. For example, `quick_sort([3, 6, 8, 10, 1, 2, 1])` will return a sorted list `[1, 1, 2, 3, 6, 8, 10]`. Do you want to see an example of how to use it or do you have any other specific requirements?
+    You can use this function to sort a list of numbers. For example, `quick_sort([3, 6, 8, 10, 1, 2, 1])` will return a sorted list `[1, 1, 2, 3, 6, 8, 10]`.
 
 
 
@@ -296,7 +295,7 @@ After that, we define a routing agent and equip it with the above tool functions
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 33.707 seconds)
+   **Total running time of the script:** (0 minutes 32.477 seconds)
 
 
 .. _sphx_glr_download_tutorial_workflow_routing.py:

@@ -280,9 +280,9 @@ Specifically, the agents within the same ``MsgHub`` will receive messages from o
 
  .. code-block:: none
 
-    Alice: Hi there! I'm Alice, a student. Nice to meet you! Could you tell me a bit about yourself?
-    Bob: Hello Alice! I'm Bob, also a student. It's great to meet you. What kind of things are you into?
-    Charlie: Hi Alice and Bob, I'm Charlie, a fellow student. Nice to meet you both! It's always exciting to learn about new people. Alice, would you like to share more about your interests? And Bob, what subjects or activities do you enjoy?
+    Alice: Hello! I'm Alice, a student who's always eager to learn and explore new things. Nice to meet you! Could you tell me a bit about yourself?
+    Bob: Hello Alice, I'm Bob. I'm also a student and I enjoy diving into all sorts of topics, from science to art. It's great to meet someone who's as curious as I am. What kind of things are you interested in?
+    Charlie: Hey there, I'm Charlie. Just like both of you, I'm a student and I have a passion for learning, especially when it comes to technology and how it can be used to solve real-world problems. It's awesome to meet fellow learners! Alice, Bob, what are some of the topics you've been exploring recently?
 
 
 
@@ -319,9 +319,9 @@ Now we print the memory of Alice to check if her memory is updated correctly.
     system: Now you meet each other with a brief self-introduction.
     Alice: None
     system: None
-    Alice: Hi there! I'm Alice, a student. Nice to meet you! Could you tell me a bit about yourself?
-    Bob: Hello Alice! I'm Bob, also a student. It's great to meet you. What kind of things are you into?
-    Charlie: Hi Alice and Bob, I'm Charlie, a fellow student. Nice to meet you both! It's always exciting to learn about new people. Alice, would you like to share more about your interests? And Bob, what subjects or activities do you enjoy?
+    Alice: Hello! I'm Alice, a student who's always eager to learn and explore new things. Nice to meet you! Could you tell me a bit about yourself?
+    Bob: Hello Alice, I'm Bob. I'm also a student and I enjoy diving into all sorts of topics, from science to art. It's great to meet someone who's as curious as I am. What kind of things are you interested in?
+    Charlie: Hey there, I'm Charlie. Just like both of you, I'm a student and I have a passion for learning, especially when it comes to technology and how it can be used to solve real-world problems. It's awesome to meet fellow learners! Alice, Bob, what are some of the topics you've been exploring recently?
 
 
 
@@ -338,7 +338,7 @@ Further Reading
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 8.862 seconds)
+   **Total running time of the script:** (0 minutes 12.656 seconds)
 
 
 .. _sphx_glr_download_tutorial_workflow_conversation.py:
