@@ -139,7 +139,7 @@ class DashScopeChatModel(ChatModelBase):
             **kwargs,
             "result_format": "message",
             # In agentscope, the `incremental_output` must be `True`
-            "incremental_output": self.incremental_output,
+            "incremental_output": self.stream,
         }
 
         if tools:
