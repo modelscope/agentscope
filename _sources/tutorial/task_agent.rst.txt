@@ -218,7 +218,7 @@ they will be executed in parallel by the ``asyncio.gather`` function.
 
     Jarvis: {
         "type": "tool_use",
-        "id": "call_74ae1d2e29f14d8786177c",
+        "id": "call_abcbc458561445d299cb96",
         "name": "example_tool_function",
         "input": {
             "tag": "tag1"
@@ -226,18 +226,18 @@ they will be executed in parallel by the ``asyncio.gather`` function.
     }
     system: {
         "type": "tool_result",
-        "id": "call_74ae1d2e29f14d8786177c",
+        "id": "call_abcbc458561445d299cb96",
         "name": "example_tool_function",
         "output": [
             {
                 "type": "text",
-                "text": "Tag tag1 started at 05:40:09.947269 and ended at 05:40:12.948876. "
+                "text": "Tag tag1 started at 07:12:33.825667 and ended at 07:12:36.828780. "
             }
         ]
     }
     Jarvis: {
         "type": "tool_use",
-        "id": "call_5cb985f69d08494f91379c",
+        "id": "call_d4161e0123594adc95277e",
         "name": "example_tool_function",
         "input": {
             "tag": "tag2"
@@ -245,16 +245,16 @@ they will be executed in parallel by the ``asyncio.gather`` function.
     }
     system: {
         "type": "tool_result",
-        "id": "call_5cb985f69d08494f91379c",
+        "id": "call_d4161e0123594adc95277e",
         "name": "example_tool_function",
         "output": [
             {
                 "type": "text",
-                "text": "Tag tag2 started at 05:40:16.152167 and ended at 05:40:19.155227. "
+                "text": "Tag tag2 started at 07:12:39.199474 and ended at 07:12:42.202571. "
             }
         ]
     }
-    Jarvis: Both of the function calls have been executed in parallel. The first one with tag 'tag1' started at 05:40:09.947269 and ended at 05:40:12.948876, while the second one with tag 'tag2' started at 05:40:16.152167 and ended at 05:40:19.155227.
+    Jarvis: Both of the function calls have been executed in parallel. The first one with tag 'tag1' started at 07:12:33.825667 and ended at 07:12:36.828780, while the second one with tag 'tag2' started at 07:12:39.199474 and ended at 07:12:42.202571.
 
 
 
@@ -411,7 +411,7 @@ Further Reading
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 25.890 seconds)
+   **Total running time of the script:** (0 minutes 28.340 seconds)
 
 
 .. _sphx_glr_download_tutorial_task_agent.py:
