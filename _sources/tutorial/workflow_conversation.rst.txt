@@ -280,10 +280,9 @@ Specifically, the agents within the same ``MsgHub`` will receive messages from o
 
  .. code-block:: none
 
-    Alice: Hi there, I'm Alice. Nice to meet you! Could you tell me a bit about yourself?
-    Bob: Hi Alice, I'm Bob. It's great to meet you too! I'm a student currently studying computer science and I enjoy playing video games in my free time. What about you?
-    Charlie: Alice: That's cool, Bob! I'm a graphic designer and I love to create digital art. When I'm not working, you can find me hiking or reading a good book. So, what kind of video games do you like?
-    Charlie: I'm into all sorts of games, but my favorites are probably strategy and role-playing games. There's something about building up your characters and planning out every move that really draws me in. Do you play any video games, Alice?
+    Alice: Hi there! I'm Alice, a student currently pursuing my studies in computer science. It's nice to meet you! Could you tell me a bit about yourself?
+    Bob: Hi Alice, I'm Bob. Nice to meet you too! I'm also a student and I have a keen interest in technology and its applications. It's great to find someone with a similar interest in computer science. How do you like your studies so far?
+    Charlie: Alice: Oh, I'm really enjoying my studies, Bob! It's fascinating to learn about the different aspects of computer science and how it impacts our daily lives. What about you? Have you decided on a specific area in technology that interests you the most?
 
 
 
@@ -320,9 +319,9 @@ Now we print the memory of Alice to check if her memory is updated correctly.
     system: Now you meet each other with a brief self-introduction.
     Alice: None
     system: None
-    Alice: Hi there, I'm Alice. Nice to meet you! Could you tell me a bit about yourself?
-    Bob: Hi Alice, I'm Bob. It's great to meet you too! I'm a student currently studying computer science and I enjoy playing video games in my free time. What about you?
-    Charlie: I'm into all sorts of games, but my favorites are probably strategy and role-playing games. There's something about building up your characters and planning out every move that really draws me in. Do you play any video games, Alice?
+    Alice: Hi there! I'm Alice, a student currently pursuing my studies in computer science. It's nice to meet you! Could you tell me a bit about yourself?
+    Bob: Hi Alice, I'm Bob. Nice to meet you too! I'm also a student and I have a keen interest in technology and its applications. It's great to find someone with a similar interest in computer science. How do you like your studies so far?
+    Charlie: Alice: Oh, I'm really enjoying my studies, Bob! It's fascinating to learn about the different aspects of computer science and how it impacts our daily lives. What about you? Have you decided on a specific area in technology that interests you the most?
 
 
 
@@ -339,7 +338,7 @@ Further Reading
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 14.676 seconds)
+   **Total running time of the script:** (0 minutes 16.449 seconds)
 
 
 .. _sphx_glr_download_tutorial_workflow_conversation.py:
