@@ -197,7 +197,7 @@ class OllamaChatModel(ChatModelBase):
         accumulated_text = ""
         acc_thinking_content = ""
         tool_calls = OrderedDict()  # Store tool calls
-        metadata = None, None
+        metadata = None
 
         async for chunk in response:
             has_new_content = False
