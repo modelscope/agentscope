@@ -596,17 +596,8 @@ class TestAnthropicChatModel:
             )
 
             with patch(
-                "agentscope._utils._common._create_tool_from_model",
-            ) as mock_create_tool, patch(
                 "agentscope.model._anthropic_model.logger",
             ) as mock_logger:
-                mock_create_tool.return_value = {
-                    "type": "function",
-                    "function": {
-                        "name": "SampleModel",
-                        "description": "Sample model",
-                    },
-                }
                 mock_client.messages.create = AsyncMock(
                     return_value=mock_response,
                 )
@@ -682,43 +673,33 @@ class TestAnthropicChatModel:
                 for event in events:
                     yield event
 
-            with patch(
-                "agentscope._utils._common._create_tool_from_model",
-            ) as mock_create_tool:
-                mock_create_tool.return_value = {
-                    "type": "function",
-                    "function": {
-                        "name": "SampleModel",
-                        "description": "Sample model",
-                    },
-                }
-                mock_client.messages.create = AsyncMock(
-                    return_value=mock_stream(),
-                )
-                result = await model(
-                    messages,
-                    structured_model=SampleModel,
-                )
+            mock_client.messages.create = AsyncMock(
+                return_value=mock_stream(),
+            )
+            result = await model(
+                messages,
+                structured_model=SampleModel,
+            )
 
-                responses = []
-                async for response in result:
-                    responses.append(response)
+            responses = []
+            async for response in result:
+                responses.append(response)
 
-                final_response = responses[-1]
-                assert final_response.content == [
-                    TextBlock(type="text", text="Here's a person: "),
-                    ToolUseBlock(
-                        type="tool_use",
-                        id="struct_123",
-                        name="SampleModel",
-                        input={"name": "Alice", "age": 25},
-                    ),
-                ]
-                # Verify structured output is in metadata
-                assert final_response.metadata == {
-                    "name": "Alice",
-                    "age": 25,
-                }
+            final_response = responses[-1]
+            assert final_response.content == [
+                TextBlock(type="text", text="Here's a person: "),
+                ToolUseBlock(
+                    type="tool_use",
+                    id="struct_123",
+                    name="SampleModel",
+                    input={"name": "Alice", "age": 25},
+                ),
+            ]
+            # Verify structured output is in metadata
+            assert final_response.metadata == {
+                "name": "Alice",
+                "age": 25,
+            }
 
     @pytest.mark.asyncio
     async def test_structured_model_without_tools_in_response(self) -> None:
@@ -745,29 +726,19 @@ class TestAnthropicChatModel:
                 usage={"input_tokens": 10, "output_tokens": 5},
             )
 
-            with patch(
-                "agentscope._utils._common._create_tool_from_model",
-            ) as mock_create_tool:
-                mock_create_tool.return_value = {
-                    "type": "function",
-                    "function": {
-                        "name": "SampleModel",
-                        "description": "Sample model",
-                    },
-                }
-                mock_client.messages.create = AsyncMock(
-                    return_value=mock_response,
-                )
-                result = await model(
-                    messages,
-                    structured_model=SampleModel,
-                )
+            mock_client.messages.create = AsyncMock(
+                return_value=mock_response,
+            )
+            result = await model(
+                messages,
+                structured_model=SampleModel,
+            )
 
-                # Verify result has no metadata when no tool calls
-                assert result.content == [
-                    TextBlock(type="text", text="I can't generate that."),
-                ]
-                assert result.metadata is None
+            # Verify result has no metadata when no tool calls
+            assert result.content == [
+                TextBlock(type="text", text="I can't generate that."),
+            ]
+            assert result.metadata is None
 
     @pytest.mark.asyncio
     async def test_structured_model_with_invalid_json_input(self) -> None:

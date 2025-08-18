@@ -245,7 +245,7 @@ def _create_tool_from_base_model(
             age: int
             email: str
 
-        tool = _create_tool_from_model(PersonInfo, "extract_person")
+        tool = _create_tool_from_base_model(PersonInfo, "extract_person")
         print(tool["function"]["name"])  # extract_person
         print(tool["type"])              # function
 
