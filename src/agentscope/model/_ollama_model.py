@@ -9,8 +9,11 @@ from typing import (
     AsyncGenerator,
     AsyncIterator,
     Literal,
+    Type,
 )
 from collections import OrderedDict
+
+from pydantic import BaseModel
 
 from . import ChatResponse
 from ._model_base import ChatModelBase
@@ -92,6 +95,7 @@ class OllamaChatModel(ChatModelBase):
         tool_choice: Literal["auto", "none", "any", "required"]
         | str
         | None = None,
+        structured_model: Type[BaseModel] | None = None,
         **kwargs: Any,
     ) -> ChatResponse | AsyncGenerator[ChatResponse, None]:
         """Get the response from Ollama chat completions API by the given
@@ -108,6 +112,9 @@ class OllamaChatModel(ChatModelBase):
                 Controls which (if any) tool is called by the model.
                  Can be "auto", "none", "any", "required", or specific tool
                  name.
+            structured_model (`Type[BaseModel] | None`, default `None`):
+                A Pydantic BaseModel class that defines the expected structure
+                for the model's output.
             **kwargs (`Any`):
                 The keyword arguments for Ollama chat completions API,
                 e.g. `think`etc. Please refer to the Ollama API
@@ -136,6 +143,9 @@ class OllamaChatModel(ChatModelBase):
         if tool_choice:
             logger.warning("Ollama does not support tool_choice yet, ignored.")
 
+        if structured_model:
+            kwargs["format"] = structured_model.model_json_schema()
+
         start_datetime = datetime.now()
         response = await self.client.chat(**kwargs)
 
@@ -143,11 +153,13 @@ class OllamaChatModel(ChatModelBase):
             return self._parse_ollama_stream_completion_response(
                 start_datetime,
                 response,
+                structured_model,
             )
 
         parsed_response = await self._parse_ollama_completion_response(
             start_datetime,
             response,
+            structured_model,
         )
 
         return parsed_response
@@ -156,12 +168,36 @@ class OllamaChatModel(ChatModelBase):
         self,
         start_datetime: datetime,
         response: AsyncIterator[Any],
+        structured_model: Type[BaseModel] | None = None,
     ) -> AsyncGenerator[ChatResponse, None]:
-        """Parse the Ollama chat completion response stream into an async
-        generator of `ChatResponse` objects."""
+        """Given an Ollama streaming completion response, extract the
+        content blocks and usages from it and yield ChatResponse objects.
+
+        Args:
+            start_datetime (`datetime`):
+                The start datetime of the response generation.
+            response (`AsyncIterator[Any]`):
+                Ollama streaming response async iterator to parse.
+            structured_model (`Type[BaseModel] | None`, default `None`):
+                A Pydantic BaseModel class that defines the expected structure
+                for the model's output.
+
+        Returns:
+            AsyncGenerator[ChatResponse, None] (`AsyncGenerator[ \
+            ChatResponse, None]`):
+                An async generator that yields ChatResponse objects containing
+                the content blocks and usage information for each chunk in the
+                streaming response.
+
+        .. note::
+            If `structured_model` is not `None`, the expected structured output
+            will be stored in the metadata of the `ChatResponse`.
+
+        """
         accumulated_text = ""
         acc_thinking_content = ""
         tool_calls = OrderedDict()  # Store tool calls
+        metadata = None, None
 
         async for chunk in response:
             has_new_content = False
@@ -225,6 +261,8 @@ class OllamaChatModel(ChatModelBase):
 
             if accumulated_text:
                 contents.append(TextBlock(type="text", text=accumulated_text))
+                if structured_model:
+                    metadata = _json_loads_with_repair(accumulated_text)
 
             # Add tool call blocks
             if tool_calls:
@@ -247,29 +285,41 @@ class OllamaChatModel(ChatModelBase):
             # Generate response when there's new content or at final chunk
             is_final = getattr(chunk, "done", False)
             if (has_new_thinking or has_new_content or is_final) and contents:
-                res = ChatResponse(content=contents, usage=usage)
+                res = ChatResponse(
+                    content=contents,
+                    usage=usage,
+                    metadata=metadata,
+                )
                 yield res
 
     async def _parse_ollama_completion_response(
         self,
         start_datetime: datetime,
         response: OllamaChatResponse,
+        structured_model: Type[BaseModel] | None = None,
     ) -> ChatResponse:
-        """Parse the Ollama chat completion response into a `ChatResponse`
-        object.
+        """Given an Ollama chat completion response object, extract the content
+        blocks and usages from it.
 
         Args:
             start_datetime (`datetime`):
                 The start datetime of the response generation.
             response (`OllamaChatResponse`):
-                The Ollama chat response object to parse.
+                Ollama OllamaChatResponse object to parse.
+            structured_model (`Type[BaseModel] | None`, default `None`):
+                A Pydantic BaseModel class that defines the expected structure
+                for the model's output.
 
         Returns:
-            `ChatResponse`:
-                The content blocks and usage information extracted from the
-                response.
+            ChatResponse (`ChatResponse`):
+                A ChatResponse object containing the content blocks and usage.
+
+        .. note::
+            If `structured_model` is not `None`, the expected structured output
+            will be stored in the metadata of the `ChatResponse`.
         """
         content_blocks: List[TextBlock | ToolUseBlock | ThinkingBlock] = []
+        metadata = None
 
         if response.message.thinking:
             content_blocks.append(
@@ -286,6 +336,8 @@ class OllamaChatModel(ChatModelBase):
                     text=response.message.content,
                 ),
             )
+            if structured_model:
+                metadata = _json_loads_with_repair(response.message.content)
 
         if response.message.tool_calls:
             for tool_call in response.message.tool_calls:
@@ -309,6 +361,7 @@ class OllamaChatModel(ChatModelBase):
         parsed_response = ChatResponse(
             content=content_blocks,
             usage=usage,
+            metadata=metadata,
         )
 
         return parsed_response

@@ -12,13 +12,18 @@ from typing import (
     TYPE_CHECKING,
     List,
     Literal,
+    Type,
 )
+from pydantic import BaseModel
 from aioitertools import iter as giter
 
 from ._model_base import ChatModelBase
 from ._model_response import ChatResponse
 from ._model_usage import ChatUsage
-from .._utils._common import _json_loads_with_repair
+from .._utils._common import (
+    _json_loads_with_repair,
+    _create_tool_from_base_model,
+)
 from ..message import TextBlock, ToolUseBlock, ThinkingBlock
 from ..tracing import trace_llm
 from ..types import JSONSerializableObject
@@ -92,6 +97,7 @@ class DashScopeChatModel(ChatModelBase):
         tool_choice: Literal["auto", "none", "any", "required"]
         | str
         | None = None,
+        structured_model: Type[BaseModel] | None = None,
         **kwargs: Any,
     ) -> ChatResponse | AsyncGenerator[ChatResponse, None]:
         """Get the response from the dashscope
@@ -113,6 +119,19 @@ class DashScopeChatModel(ChatModelBase):
                  Can be "auto", "none", or specific tool name.
                  For more details, please refer to
                  https://help.aliyun.com/zh/model-studio/qwen-function-calling
+            structured_model (`Type[BaseModel] | None`, default `None`):
+                A Pydantic BaseModel class that defines the expected structure
+                for the model's output. When provided, the model will be forced
+                to return data that conforms to this schema by automatically
+                converting the BaseModel to a function tool and setting
+                `tool_choice` to enforce its usage. This enables structured
+                output generation with automatic validation.
+
+                .. note:: When `structured_model` is specified,
+                    both `tools` and `tool_choice` parameters are ignored,
+                    and the model will only perform structured output
+                    generation without calling any other tools.
+
             **kwargs (`Any`):
                 The keyword arguments for DashScope chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please
@@ -138,8 +157,9 @@ class DashScopeChatModel(ChatModelBase):
             **self.generate_kwargs,
             **kwargs,
             "result_format": "message",
-            # In agentscope, the `incremental_output` must be `True`
-            "incremental_output": self.incremental_output,
+            # In agentscope, the `incremental_output` must be `True` when
+            # self.stream is `True`
+            "incremental_output": self.stream,
         }
 
         if tools:
@@ -151,6 +171,22 @@ class DashScopeChatModel(ChatModelBase):
 
         if self.enable_thinking and "enable_thinking" not in kwargs:
             kwargs["enable_thinking"] = self.enable_thinking
+
+        if structured_model:
+            if tools:
+                logger.warning(
+                    "structured_model is provided. Both 'tools' and "
+                    "'tool_choice' parameters will be overridden and "
+                    "ignored. The model will only perform structured output "
+                    "generation without calling any other tools.",
+                )
+            format_tool = _create_tool_from_base_model(structured_model)
+            kwargs["tools"] = self._format_tools_json_schemas(
+                [format_tool],
+            )
+            kwargs["tool_choice"] = self._format_tool_choice(
+                format_tool["function"]["name"],
+            )
 
         start_datetime = datetime.now()
         if self.model_name.startswith("qvq") or "-vl" in self.model_name:
@@ -169,11 +205,13 @@ class DashScopeChatModel(ChatModelBase):
             return self._parse_dashscope_stream_response(
                 start_datetime,
                 response,
+                structured_model,
             )
 
         parsed_response = await self._parse_dashscope_generation_response(
-            used_time=(datetime.now() - start_datetime).total_seconds(),
-            response=response,
+            start_datetime,
+            response,
+            structured_model,
         )
 
         return parsed_response
@@ -185,12 +223,38 @@ class DashScopeChatModel(ChatModelBase):
             AsyncGenerator[GenerationResponse, None],
             Generator[MultiModalConversationResponse, None, None],
         ],
+        structured_model: Type[BaseModel] | None = None,
     ) -> AsyncGenerator[ChatResponse, Any]:
-        """Parse the DashScope GenerationResponse object and return a
-        ChatResponse object."""
+        """Given a DashScope streaming response generator, extract the content
+            blocks and usages from it and yield ChatResponse objects.
+
+        Args:
+            start_datetime (`datetime`):
+                The start datetime of the response generation.
+            response (
+                `Union[AsyncGenerator[GenerationResponse, None], Generator[ \
+                MultiModalConversationResponse, None, None]]`
+            ):
+                DashScope streaming response generator (GenerationResponse or
+                MultiModalConversationResponse) to parse.
+            structured_model (`Type[BaseModel] | None`, default `None`):
+                A Pydantic BaseModel class that defines the expected structure
+                for the model's output.
+
+        Returns:
+            AsyncGenerator[ChatResponse, Any] (`AsyncGenerator[ChatResponse, \
+            Any]`):
+                An async generator that yields ChatResponse objects containing
+                the content blocks and usage information for each chunk in the
+                streaming response.
+
+        .. note::
+            If `structured_model` is not `None`, the expected structured output
+            will be stored in the metadata of the `ChatResponse`.
+        """
         acc_content, acc_thinking_content = "", ""
         acc_tool_calls = collections.defaultdict(dict)
-        parsed_chunk = None
+        metadata = None
 
         async for chunk in giter(response):
             if chunk.status_code != HTTPStatus.OK:
@@ -272,6 +336,9 @@ class DashScopeChatModel(ChatModelBase):
                     ),
                 )
 
+                if structured_model:
+                    metadata = repaired_input
+
             usage = None
             if chunk.usage:
                 usage = ChatUsage(
@@ -283,38 +350,48 @@ class DashScopeChatModel(ChatModelBase):
             parsed_chunk = ChatResponse(
                 content=content_blocks,
                 usage=usage,
+                metadata=metadata,
             )
             yield parsed_chunk
 
     async def _parse_dashscope_generation_response(
         self,
-        used_time: float,
+        start_datetime: datetime,
         response: Union[
             GenerationResponse,
             MultiModalConversationResponse,
         ],
+        structured_model: Type[BaseModel] | None = None,
     ) -> ChatResponse:
         """Given a DashScope GenerationResponse object, extract the content
         blocks and usages from it.
 
         Args:
-            used_time (`float`):
-                The time used for the response in seconds.
+            start_datetime (`datetime`):
+                The start datetime of the response generation.
             response (
                 `Union[GenerationResponse, MultiModalConversationResponse]`
             ):
                 Dashscope GenerationResponse | MultiModalConversationResponse
                 object to parse.
+            structured_model (`Type[BaseModel] | None`, default `None`):
+                A Pydantic BaseModel class that defines the expected structure
+                for the model's output.
 
         Returns:
-            `ChatResponse`:
+            ChatResponse (`ChatResponse`):
                 A ChatResponse object containing the content blocks and usage.
+
+        .. note::
+            If `structured_model` is not `None`, the expected structured output
+            will be stored in the metadata of the `ChatResponse`.
         """
         # Collect the content blocks from the response.
         if response.status_code != 200:
             raise RuntimeError(response)
 
         content_blocks: List[TextBlock | ToolUseBlock] = []
+        metadata = None
 
         message = response.output.choices[0].message
         content = message.get("content")
@@ -343,20 +420,24 @@ class DashScopeChatModel(ChatModelBase):
 
         if message.get("tool_calls"):
             for tool_call in message["tool_calls"]:
+                input_ = _json_loads_with_repair(
+                    tool_call["function"].get(
+                        "arguments",
+                        "{}",
+                    )
+                    or "{}",
+                )
                 content_blocks.append(
                     ToolUseBlock(
                         type="tool_use",
                         name=tool_call["function"]["name"],
-                        input=_json_loads_with_repair(
-                            tool_call["function"].get(
-                                "arguments",
-                                "{}",
-                            )
-                            or "{}",
-                        ),
+                        input=input_,
                         id=tool_call["id"],
                     ),
                 )
+
+                if structured_model:
+                    metadata = input_
 
         # Usage information
         usage = None
@@ -364,13 +445,16 @@ class DashScopeChatModel(ChatModelBase):
             usage = ChatUsage(
                 input_tokens=response.usage.input_tokens,
                 output_tokens=response.usage.output_tokens,
-                time=used_time,
+                time=(datetime.now() - start_datetime).total_seconds(),
             )
 
-        return ChatResponse(
+        parsed_response = ChatResponse(
             content=content_blocks,
             usage=usage,
+            metadata=metadata,
         )
+
+        return parsed_response
 
     def _format_tools_json_schemas(
         self,
