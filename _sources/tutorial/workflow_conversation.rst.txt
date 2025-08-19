@@ -280,9 +280,9 @@ Specifically, the agents within the same ``MsgHub`` will receive messages from o
 
  .. code-block:: none
 
-    Alice: Hello! I'm Alice, a student with a passion for learning and exploring new things. Nice to meet you! Could you tell me a bit about yourself?
-    Bob: Hello Alice! I'm Bob, also a student. I enjoy diving into the world of technology and science. It's great to meet someone who is also enthusiastic about learning. What kind of things do you like to explore?
-    Charlie: Alice: That's really cool, Bob! I'm particularly interested in history and art. There's just something about understanding the past and how it has shaped our world that fascinates me. And you? What areas of technology or science do you find most intriguing?
+    Alice: Hi there! I'm Alice, a student who's really into technology and learning new things. Nice to meet you! Could you tell me a bit about yourself?
+    Bob: Hi Alice! I'm Bob, and I'm also a student. I have a keen interest in science and enjoy exploring the mysteries of the universe. It's great to meet another curious mind! What kind of technology stuff are you into?
+    Charlie: Alice: That's awesome, Bob! I'm mostly into programming and robotics. I love building little projects and seeing what I can create with code. How about you? What part of science do you find the most intriguing?
 
 
 
@@ -319,9 +319,9 @@ Now we print the memory of Alice to check if her memory is updated correctly.
     system: Now you meet each other with a brief self-introduction.
     Alice: None
     system: None
-    Alice: Hello! I'm Alice, a student with a passion for learning and exploring new things. Nice to meet you! Could you tell me a bit about yourself?
-    Bob: Hello Alice! I'm Bob, also a student. I enjoy diving into the world of technology and science. It's great to meet someone who is also enthusiastic about learning. What kind of things do you like to explore?
-    Charlie: Alice: That's really cool, Bob! I'm particularly interested in history and art. There's just something about understanding the past and how it has shaped our world that fascinates me. And you? What areas of technology or science do you find most intriguing?
+    Alice: Hi there! I'm Alice, a student who's really into technology and learning new things. Nice to meet you! Could you tell me a bit about yourself?
+    Bob: Hi Alice! I'm Bob, and I'm also a student. I have a keen interest in science and enjoy exploring the mysteries of the universe. It's great to meet another curious mind! What kind of technology stuff are you into?
+    Charlie: Alice: That's awesome, Bob! I'm mostly into programming and robotics. I love building little projects and seeing what I can create with code. How about you? What part of science do you find the most intriguing?
 
 
 
@@ -338,7 +338,7 @@ Further Reading
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 13.015 seconds)
+   **Total running time of the script:** (0 minutes 9.241 seconds)
 
 
 .. _sphx_glr_download_tutorial_workflow_conversation.py:

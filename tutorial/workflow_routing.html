@@ -401,11 +401,11 @@ to download the full example code.</p>
 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">example_router_explicit</span><span class="p">())</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Router: Of course, I can help with that. Could you please tell me a bit more about what you&#39;d like the poem to be about? Any particular theme, mood, or style in mind?
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Router: Sure, I can help you with that. Could you please tell me more about the theme or any specific ideas you would like to include in your poem?
 The structured output:
 {
     &quot;your_choice&quot;: &quot;Content Generation&quot;,
-    &quot;task_description&quot;: null
+    &quot;task_description&quot;: &quot;To write a poem based on the user&#39;s provided theme or ideas.&quot;
 }
 </pre></div>
 </div>
@@ -504,9 +504,9 @@ The structured output:
     &quot;input&quot;: {
         &quot;demand&quot;: &quot;a quick sort function&quot;
     },
-    &quot;id&quot;: &quot;call_2e13f52b092749aa90c4c5&quot;
+    &quot;id&quot;: &quot;call_26b480c9815940b8b4c011&quot;
 }
-PythonAgent: Here is a Python implementation of the quick sort algorithm. This function takes a list as input and sorts it in-place.
+PythonAgent: Here is a simple implementation of the quick sort algorithm in Python:
 ```python
 def quick_sort(arr):
     if len(arr) &lt;= 1:
@@ -518,19 +518,25 @@ def quick_sort(arr):
         right = [x for x in arr if x &gt; pivot]
         return quick_sort(left) + middle + quick_sort(right)
 ```
-You can use this function to sort a list by calling `sorted_list = quick_sort(your_list)`. If you want an in-place version, let me know and I will provide that as well.
+You can use this function to sort a list. For example:
+```python
+unsorted_list = [3, 6, 8, 10, 1, 2, 1]
+sorted_list = quick_sort(unsorted_list)
+print(sorted_list)
+```
+This will output the sorted list.
 system: {
     &quot;type&quot;: &quot;tool_result&quot;,
-    &quot;id&quot;: &quot;call_2e13f52b092749aa90c4c5&quot;,
+    &quot;id&quot;: &quot;call_26b480c9815940b8b4c011&quot;,
     &quot;name&quot;: &quot;generate_python&quot;,
     &quot;output&quot;: [
         {
             &quot;type&quot;: &quot;text&quot;,
-            &quot;text&quot;: &quot;Here is a Python implementation of the quick sort algorithm. This function takes a list as input and sorts it in-place.\n```python\ndef quick_sort(arr):\n    if len(arr) &lt;= 1:\n        return arr\n    else:\n        pivot = arr[len(arr) // 2]\n        left = [x for x in arr if x &lt; pivot]\n        middle = [x for x in arr if x == pivot]\n        right = [x for x in arr if x &gt; pivot]\n        return quick_sort(left) + middle + quick_sort(right)\n```\nYou can use this function to sort a list by calling `sorted_list = quick_sort(your_list)`. If you want an in-place version, let me know and I will provide that as well.&quot;
+            &quot;text&quot;: &quot;Here is a simple implementation of the quick sort algorithm in Python:\n```python\ndef quick_sort(arr):\n    if len(arr) &lt;= 1:\n        return arr\n    else:\n        pivot = arr[len(arr) // 2]\n        left = [x for x in arr if x &lt; pivot]\n        middle = [x for x in arr if x == pivot]\n        right = [x for x in arr if x &gt; pivot]\n        return quick_sort(left) + middle + quick_sort(right)\n```\nYou can use this function to sort a list. For example:\n```python\nunsorted_list = [3, 6, 8, 10, 1, 2, 1]\nsorted_list = quick_sort(unsorted_list)\nprint(sorted_list)\n```\nThis will output the sorted list.&quot;
         }
     ]
 }
-Router: The generated Python code for a quick sort function is as follows:
+Router: Here is a simple implementation of the quick sort algorithm in Python:
 
 ```python
 def quick_sort(arr):
@@ -544,11 +550,18 @@ def quick_sort(arr):
         return quick_sort(left) + middle + quick_sort(right)
 ```
 
-You can use this function to sort a list by calling `sorted_list = quick_sort(your_list)`. This version does not sort the list in-place but returns a new sorted list. If you need an in-place sorting, please let me know and I will provide that version for you.
-Router: The quick sort function has been provided to you. You can now use it to sort lists in your Python program. If you need further assistance, feel free to ask.
+You can use this function to sort a list. For example:
+
+```python
+unsorted_list = [3, 6, 8, 10, 1, 2, 1]
+sorted_list = quick_sort(unsorted_list)
+print(sorted_list)
+```
+
+This will output the sorted list.
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 23.123 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 24.364 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorial-workflow-routing-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/3266c75280f96697c4cc46d7d55a3ac8/workflow_routing.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">workflow_routing.ipynb</span></code></a></p>
