@@ -47,7 +47,9 @@ language = "en"
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "sphinx_rtd_theme"
+html_theme = "furo"
+html_title = "AgentScope"
+html_logo = "../../_static/images/logo.svg"
 html_static_path = ["../../_static"]
 
 html_css_files = [
@@ -60,6 +62,7 @@ html_js_files = [
 
 source_suffix = [".md", ".rst"]
 
+html_baseurl = "/v0"
 
 # -- Options for API documentation -------------------------------------------
 
