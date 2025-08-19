@@ -136,7 +136,7 @@ python werewolf.py
 
 ``````
 werewolf-game/
-├── werewolf_game.py			# Main game loop and agent coordination
+├── werewolf.py			# Main game loop and agent coordination
 ├── werewolf_utils.py     # Game logic utilities and models
 ├── prompt.py  						# Role prompts and game text
 └── README.md
