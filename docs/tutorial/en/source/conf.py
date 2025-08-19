@@ -60,6 +60,7 @@ html_js_files = [
 
 source_suffix = [".md", ".rst"]
 
+html_baseurl = '/v0'
 
 # -- Options for API documentation -------------------------------------------
 
