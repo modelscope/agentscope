@@ -280,9 +280,9 @@ Specifically, the agents within the same ``MsgHub`` will receive messages from o
 
  .. code-block:: none
 
-    Alice: Hello! I'm Alice, a student eager to learn and share knowledge. How about you? Could you tell me a bit about yourself?
-    Bob: Hello Alice, I'm Bob. Nice to meet you! I'm also a student and I enjoy exploring new ideas and collaborating with others on projects. It's great to meet someone who is as enthusiastic about learning as I am. What kind of knowledge are you interested in, or do you have any projects you're working on right now?
-    Charlie: Hi Bob, it's great to meet you too! I'm really into science and technology, especially how they can be used to solve real-world problems. Currently, I'm working on a small project that involves creating an app to help people manage their time more efficiently. What about you, what fields or projects are you passionate about?
+    Alice: Hello! I'm Alice, a student with a passion for learning and exploring new things. Nice to meet you! Could you tell me a bit about yourself?
+    Bob: Hello Alice! I'm Bob, also a student. I enjoy diving into the world of technology and science. It's great to meet someone who is also enthusiastic about learning. What kind of things do you like to explore?
+    Charlie: Alice: That's really cool, Bob! I'm particularly interested in history and art. There's just something about understanding the past and how it has shaped our world that fascinates me. And you? What areas of technology or science do you find most intriguing?
 
 
 
@@ -319,9 +319,9 @@ Now we print the memory of Alice to check if her memory is updated correctly.
     system: Now you meet each other with a brief self-introduction.
     Alice: None
     system: None
-    Alice: Hello! I'm Alice, a student eager to learn and share knowledge. How about you? Could you tell me a bit about yourself?
-    Bob: Hello Alice, I'm Bob. Nice to meet you! I'm also a student and I enjoy exploring new ideas and collaborating with others on projects. It's great to meet someone who is as enthusiastic about learning as I am. What kind of knowledge are you interested in, or do you have any projects you're working on right now?
-    Charlie: Hi Bob, it's great to meet you too! I'm really into science and technology, especially how they can be used to solve real-world problems. Currently, I'm working on a small project that involves creating an app to help people manage their time more efficiently. What about you, what fields or projects are you passionate about?
+    Alice: Hello! I'm Alice, a student with a passion for learning and exploring new things. Nice to meet you! Could you tell me a bit about yourself?
+    Bob: Hello Alice! I'm Bob, also a student. I enjoy diving into the world of technology and science. It's great to meet someone who is also enthusiastic about learning. What kind of things do you like to explore?
+    Charlie: Alice: That's really cool, Bob! I'm particularly interested in history and art. There's just something about understanding the past and how it has shaped our world that fascinates me. And you? What areas of technology or science do you find most intriguing?
 
 
 
@@ -338,7 +338,7 @@ Further Reading
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 16.439 seconds)
+   **Total running time of the script:** (0 minutes 13.015 seconds)
 
 
 .. _sphx_glr_download_tutorial_workflow_conversation.py:
