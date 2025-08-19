@@ -7,7 +7,7 @@
 <img src="https://github.com/user-attachments/assets/dfffbd1e-1fe7-49ee-ac11-902415b2b0d6" width="45%" alt="agentscope-logo">
 </h5>
 
-- **[2024-07-15]** AgentScope 中添加了 Mixture of Agents 算法。使用样例请参考 [MoA 示例](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents)。
+- **[2024-07-15]** AgentScope 中添加了 Mixture of Agents 算法。使用样例请参考 [MoA 示例](https://github.com/modelscope/agentscope/blob/v0/examples/conversation_mixture_of_agents)。
 
 - **[2024-06-14]** 新的提示调优（Prompt tuning）模块已经上线 AgentScope，用以帮助开发者生成和优化智能体的 system prompt。更多的细节和使用样例请参考 AgentScope [教程](https://doc.agentscope.io/v0/zh_CN/build_tutorial/prompt_optimization.html)！
 
@@ -20,7 +20,7 @@
 
 - **[2024-05-24]** 我们很高兴地宣布 **AgentScope Workstation** 相关功能即将开源。我们的网站服务暂时下线。在线服务会很快升级重新上线，敬请期待...
 
-- **[2024-05-15]** 用于解析模型格式化输出的**解析器**模块已经上线 AgentScope！更轻松的构建多智能体应用，使用方法请参考[教程](https://doc.agentscope.io/v0/zh_CN/build_tutorial/structured_output.html)。与此同时，[`DictDialogAgent`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/dict_dialog_agent.py) 类和 [狼人杀游戏](https://github.com/modelscope/agentscope/tree/v0/examples/game_werewolf) 样例也已经同步更新！
+- **[2024-05-15]** 用于解析模型格式化输出的**解析器**模块已经上线 AgentScope！更轻松的构建多智能体应用，使用方法请参考[教程](https://doc.agentscope.io/v0/zh_CN/build_tutorial/structured_output.html)。与此同时，[`DictDialogAgent`](https://github.com/modelscope/agentscope/blob/v0/src/agentscope/agents/dict_dialog_agent.py) 类和 [狼人杀游戏](https://github.com/modelscope/agentscope/tree/v0/examples/game_werewolf) 样例也已经同步更新！
 
 - **[2024-05-14]** 目前 AgentScope 正在进行 AgentScope Workstation & Copilot 用户体验反馈活动，需要您宝贵的意见来帮助我们改善 AgentScope 的拖拽式多智能体应用开发与 Copilot 体验。您的每一个反馈都十分宝贵，请点击 [链接](https://survey.aliyun.com/apps/zhiliao/vgpTppn22) 参与问卷，感谢您的支持！
 

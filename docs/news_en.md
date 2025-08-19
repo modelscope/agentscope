@@ -1,7 +1,7 @@
 
 # News
 
-- **[2024-12-12]** We have updated the [roadmap of AgentScope](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md).
+- **[2024-12-12]** We have updated the [roadmap of AgentScope](https://github.com/modelscope/agentscope/blob/v0/docs/ROADMAP.md).
 
 - **[2024-09-06]** AgentScope version 0.1.0 is released now.
 
@@ -18,7 +18,7 @@
 <img src="https://github.com/user-attachments/assets/dfffbd1e-1fe7-49ee-ac11-902415b2b0d6" width="45%" alt="agentscope-logo">
 </h5>
 
-- **[2024-07-15]** AgentScope has implemented the Mixture-of-Agents algorithm. Refer to our [MoA example](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents) for more details.
+- **[2024-07-15]** AgentScope has implemented the Mixture-of-Agents algorithm. Refer to our [MoA example](https://github.com/modelscope/agentscope/blob/v0/examples/conversation_mixture_of_agents) for more details.
 
 - **[2024-06-14]** A new prompt tuning module is available in AgentScope to help developers generate and optimize the agents' system prompts! Refer to our [tutorial](https://doc.agentscope.io/v0/en/build_tutorial/prompt_optimization.html) for more details!
 
@@ -27,7 +27,7 @@
 - **[2024-06-09]** We release **AgentScope** v0.0.5 now! In this new version, [**AgentScope Workstation**](https://doc.agentscope.io/v0/en/build_tutorial/visual.html) (the online version is running on [agentscope.io](https://agentscope.io)) is open-sourced with the refactored [**AgentScope Studio**](https://doc.agentscope.io/v0/en/build_tutorial/visual.html)!
 - **[2024-05-24]** We are pleased to announce that features related to the **AgentScope Workstation** will soon be open-sourced! The online website services are temporarily offline. The online website service will be upgraded and back online shortly. Stay tuned...
 
-- **[2024-05-15]** A new **Parser Module** for **formatted response** is added in AgentScope! Refer to our [tutorial](https://doc.agentscope.io/v0/en/build_tutorial/structured_output.html) for more details. The [`DictDialogAgent`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/dict_dialog_agent.py) and [werewolf game](https://github.com/modelscope/agentscope/tree/v0/examples/game_werewolf) example are updated simultaneously.
+- **[2024-05-15]** A new **Parser Module** for **formatted response** is added in AgentScope! Refer to our [tutorial](https://doc.agentscope.io/v0/en/build_tutorial/structured_output.html) for more details. The [`DictDialogAgent`](https://github.com/modelscope/agentscope/blob/v0/src/agentscope/agents/dict_dialog_agent.py) and [werewolf game](https://github.com/modelscope/agentscope/tree/v0/examples/game_werewolf) example are updated simultaneously.
 
 <https://github.com/qbc2016/AgentScope/assets/22984042/22d45aee-3470-4923-850f-348a5b0faaa7>
 
@@ -39,16 +39,16 @@
 
 - **[2024-04-27]** [AgentScope Workstation](https://agentscope.io/) is now online! You are welcome to try building your multi-agent application simply with our *drag-and-drop platform* and ask our *copilot* questions about AgentScope!
 
-- **[2024-04-19]** AgentScope supports Llama3 now! We provide [scripts](https://github.com/modelscope/agentscope/blob/main/examples/model_llama3) and example [model configuration](https://github.com/modelscope/agentscope/blob/main/examples/model_llama3) for quick set-up. Feel free to try llama3 in our examples!
+- **[2024-04-19]** AgentScope supports Llama3 now! We provide [scripts](https://github.com/modelscope/agentscope/blob/v0/examples/model_llama3) and example [model configuration](https://github.com/modelscope/agentscope/blob/v0/examples/model_llama3) for quick set-up. Feel free to try llama3 in our examples!
 
 - **[2024-04-06]** We release **AgentScope** v0.0.3 now!
 
-- **[2024-04-06]** New examples [Gomoku](https://github.com/modelscope/agentscope/blob/main/examples/game_gomoku), [Conversation with ReAct Agent](https://github.com/modelscope/agentscope/blob/main/examples/agent_ReAct), [Conversation with RAG Agent](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_RAG_agents) and [Distributed Parallel Optimization](https://github.com/modelscope/agentscope/blob/main/examples/distributed_parallel_optimization) are available now!
+- **[2024-04-06]** New examples [Gomoku](https://github.com/modelscope/agentscope/blob/v0/examples/game_gomoku), [Conversation with ReAct Agent](https://github.com/modelscope/agentscope/blob/v0/examples/agent_ReAct), [Conversation with RAG Agent](https://github.com/modelscope/agentscope/blob/v0/examples/conversation_with_RAG_agents) and [Distributed Parallel Optimization](https://github.com/modelscope/agentscope/blob/v0/examples/distributed_parallel_optimization) are available now!
 
 - **[2024-03-19]** We release **AgentScope** v0.0.2 now! In this new version,
 AgentScope supports ollama(A local CPU inference engine), DashScope and Google Gemini APIs.
 
-- **[2024-03-19]** New examples ["Autonomous Conversation with Mentions"](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_mentions) and ["Basic Conversation with LangChain library"](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_langchain) are available now!
+- **[2024-03-19]** New examples ["Autonomous Conversation with Mentions"](https://github.com/modelscope/agentscope/blob/v0/examples/conversation_with_mentions) and ["Basic Conversation with LangChain library"](https://github.com/modelscope/agentscope/blob/v0/examples/conversation_with_langchain) are available now!
 
 - **[2024-03-19]** The [Chinese tutorial](https://modelscope.github.io/agentscope/zh_CN/index.html) of AgentScope is online now!
 

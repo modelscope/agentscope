@@ -42,7 +42,7 @@
         {
           "name": "",
           "local_pattern": "src/agentscope/",
-          "url_pattern": "https://github.com/modelscope/agentscope/blob/main/src/agentscope/{}"
+          "url_pattern": "https://github.com/modelscope/agentscope/blob/v0/src/agentscope/{}"
         }
       ],
       "default_web_path_key": "agentscope_clean"
@@ -92,7 +92,7 @@
         {
           "name": "",
           "local_pattern": "examples/",
-          "url_pattern": "https://github.com/modelscope/agentscope/blob/main/examples/{}"
+          "url_pattern": "https://github.com/modelscope/agentscope/blob/v0/examples/{}"
         }
       ],
       "default_web_path_key": "agentscope_clean"

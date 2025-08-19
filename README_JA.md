@@ -1,4 +1,4 @@
-[English Homepage](https://github.com/modelscope/agentscope/blob/main/README.md) | [中文主页](https://github.com/modelscope/agentscope/blob/main/README_ZH.md) | [**Tutorial**](https://doc.agentscope.io/v0/en/) | [**Roadmap**](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md) | [**FAQ**](https://doc.agentscope.io/v0/en/tutorial/faq.html)
+[English Homepage](https://github.com/modelscope/agentscope/blob/v0/README.md) | [中文主页](https://github.com/modelscope/agentscope/blob/v0/README_ZH.md) | [**Tutorial**](https://doc.agentscope.io/v0/en/) | [**Roadmap**](https://github.com/modelscope/agentscope/blob/v0/docs/ROADMAP.md) | [**FAQ**](https://doc.agentscope.io/v0/en/tutorial/faq.html)
 
 <p align="center">
   <img
@@ -72,7 +72,7 @@
 - **開発者フレンドリー**：ローコード開発、視覚的なトレース＆モニタリング。開発からデプロイまで、すべてが一箇所で完結。
 
 ## 📢 ニュース
-- **[2025-07-01]** 新しいバージョンのAgentScopeが開発中です。この新しいバージョンでは、AgentScopeはより強力で柔軟になり、新しいアーキテクチャとより多くの機能を備えています。詳細については、[ロードマップ](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md)を参照してください！
+- **[2025-07-01]** 新しいバージョンのAgentScopeが開発中です。この新しいバージョンでは、AgentScopeはより強力で柔軟になり、新しいアーキテクチャとより多くの機能を備えています。詳細については、[ロードマップ](https://github.com/modelscope/agentscope/blob/v0/docs/ROADMAP.md)を参照してください！
 - **[2025-04-27]** 新しい 💻 AgentScope Studioが公開されました。詳細は[こちら](https://doc.agentscope.io/v0/en/build_tutorial/visual.html)をご覧ください。
 - **[2025-03-21]** AgentScopeはフック関数をサポートしました。詳細は[チュートリアル](https://doc.agentscope.io/v0/en/build_tutorial/hook.html)をご覧ください。
 - **[2025-03-19]** AgentScopeは 🔧 ツールAPIをサポートしました。詳細は[チュートリアル](https://doc.agentscope.io/v0/en/build_tutorial/tool.html)をご覧ください。
@@ -83,7 +83,7 @@
 - **[2025-02-07]** 🎉🎉 AgentScopeは[SWE-Bench(Verified)](https://www.swebench.com/)で**63.4%の解決率**を達成しました！
 - **[2025-01-04]** AgentScopeはAnthropic APIをサポートしました。
 
-👉👉 [**過去のニュース**](https://github.com/modelscope/agentscope/blob/main/docs/news_ja.md)
+👉👉 [**過去のニュース**](https://github.com/modelscope/agentscope/blob/v0/docs/news_ja.md)
 
 ## 💬 お問い合わせ
 

@@ -11,14 +11,14 @@ You can refer to the [paper of MoA](https://arxiv.org/abs/2406.04692) or their [
 ## Implementation
 
 Here, we implement the MoA algorithm in AgentScope, and provide an example of using MoA.
-For implementation, please refer to [mixture_of_agent.py](https://github.com/modelscope/agentscope/blob/main/src/agentscope/strategy/mixture_of_agent.py).
+For implementation, please refer to [mixture_of_agent.py](https://github.com/modelscope/agentscope/blob/v0/src/agentscope/strategy/mixture_of_agent.py).
 
 
 ## Usage
-MoA modules can be used anywhere. Here we provide an example of using MoA in the [conversation_moa.py](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents/conversation_moa.py) file.
+MoA modules can be used anywhere. Here we provide an example of using MoA in the [conversation_moa.py](https://github.com/modelscope/agentscope/blob/v0/examples/conversation_mixture_of_agents/conversation_moa.py) file.
 
 To use run it, you first have to fill in the api_keys for different models, or host local models using vllm or ollama.
-If you are not familiar with setting up model serving, you can refer to [scripts/README.md](https://github.com/modelscope/agentscope/blob/main/scripts/README.md).
+If you are not familiar with setting up model serving, you can refer to [scripts/README.md](https://github.com/modelscope/agentscope/blob/v0/scripts/README.md).
 
 Then you can have a conversation with the MoA module by running the following code:
 
@@ -26,7 +26,7 @@ Then you can have a conversation with the MoA module by running the following co
 python conversation_moa.py
 ```
 
-If you are interested in using the MoA module elsewhere, you can learn how to use it following the code in [conversation_moa.py](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents/conversation_moa.py).
+If you are interested in using the MoA module elsewhere, you can learn how to use it following the code in [conversation_moa.py](https://github.com/modelscope/agentscope/blob/v0/examples/conversation_mixture_of_agents/conversation_moa.py).
 
 
 You can init the module as follows:
@@ -71,7 +71,7 @@ With MoA module, you can use it as follows:
 
 ## Prerequisites
 To set up model serving with open-source LLMs, follow the guidance in
-[scripts/README.md](https://github.com/modelscope/agentscope/blob/main/scripts/README.md).
+[scripts/README.md](https://github.com/modelscope/agentscope/blob/v0/scripts/README.md).
 
 ## Notice
 With the MoA module, inference time will increase and more tokens are used. So use it with caution.
