@@ -81,7 +81,6 @@ class DashScopeChatModel(ChatModelBase):
 
         self.api_key = api_key
         self.enable_thinking = enable_thinking
-        self.incremental_output = self.stream
         self.generate_kwargs = generate_kwargs or {}
 
     @trace_llm
@@ -138,7 +137,8 @@ class DashScopeChatModel(ChatModelBase):
             **self.generate_kwargs,
             **kwargs,
             "result_format": "message",
-            # In agentscope, the `incremental_output` must be `True`
+            # In agentscope, the `incremental_output` must be `True` when
+            # `self.stream` is True
             "incremental_output": self.stream,
         }
 

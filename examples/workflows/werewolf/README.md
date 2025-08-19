@@ -48,9 +48,6 @@ This enables each agent to:
 `sequential_pipeline` orchestrates turn-based agent interactions:
 
 ```python
-# Structured discussion with completion tracking
-result = await sequential_pipeline(wolves, structured_model=WolfDiscussionModel)
-
 # Free-form discussion among all players
 await sequential_pipeline(survivors)
 ```
@@ -58,7 +55,6 @@ await sequential_pipeline(survivors)
 **Pipeline Features:**
 
 - **Turn-Based Coordination**: Ensures agents speak in sequence, preventing message overlap
-- **Structured Output Integration**: Works seamlessly with Pydantic models for reliable decision-making
 - **Flexible Participation**: Supports both structured discussions with specific goals and open conversations
 - **Automatic Flow Control**: Manages conversation flow without manual turn management
 
@@ -66,7 +62,6 @@ await sequential_pipeline(survivors)
 
 - **Werewolf Strategy Discussions**: Coordinated planning between werewolf teammates
 - **Village Debates**: Organized discussions among all surviving players
-- **Role-Specific Interactions**: Sequential questioning, voting, or decision-making processes
 
 ### **Multi-Agent Coordination**
 
@@ -75,9 +70,11 @@ AgentScope's `MsgHub` enables seamless group interactions:
 ```python
 async with MsgHub(wolves, announcement=hint) as hub:
     for _ in range(MAX_WEREWOLF_DISCUSSION_ROUND):
-        x = await sequential_pipeline(wolves, structured_model=WolfDiscussionModel)
+        x = None
+        for wolf in wolves:
+            x = await wolf(x, structured_model=WolfDiscussionModel)
         if x.metadata.get("finish_discussion", False):
-          break
+            break
 ```
 
 **Coordination Capabilities:**
@@ -91,7 +88,7 @@ Pydantic models ensure reliable AI outputs:
 
 ```python
 class VoteModel(BaseModel):
-		name: str = Field(description="The name you vote for")
+    name: str = Field(description="The name you vote for")
 
 # Automatic validation and parsing
 votes = await collect_votes(survivors, hint, VoteModel)

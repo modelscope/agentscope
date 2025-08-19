@@ -96,10 +96,9 @@ async def main() -> None:
         await moderator(hint)
         async with MsgHub(wolves, announcement=hint) as hub:
             for _ in range(MAX_WEREWOLF_DISCUSSION_ROUND):
-                x = await sequential_pipeline(
-                    wolves,
-                    structured_model=WolfDiscussionModel,
-                )
+                x = None
+                for wolf in wolves:
+                    x = await wolf(x, structured_model=WolfDiscussionModel)
                 if x.metadata.get("finish_discussion", False):
                     break
 
