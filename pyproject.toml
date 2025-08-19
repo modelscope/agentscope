@@ -1,0 +1,77 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentscope"
+version = "1.0.0"
+description = "AgentScope: A Flexible yet Robust Multi-Agent Platform."
+readme = "README.md"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "SysML team of Alibaba Tongyi Lab", email = "gaodawei.gdw@alibaba-inc.com" },
+]
+keywords = ["deep-learning", "multi agents", "agents"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "aioitertools",
+    "anthropic",
+    "dashscope",
+    "docstring_parser",
+    "json5",
+    "json_repair",
+    "mcp",
+    "numpy",
+    "openai",
+    "python-datauri",
+    "opentelemetry-api",
+    "opentelemetry-sdk",
+    "opentelemetry-exporter-otlp",
+    "python-socketio",
+    "shortuuid",
+    "tiktoken",
+    "furo",
+]
+
+[project.optional-dependencies]
+full = [
+    "ollama",
+    "google-genai",
+    "Pillow",
+    "transformers",
+    "jinja2",
+    "ray",
+    "mem0ai",
+]
+dev = [
+    "ollama",
+    "google-genai",
+    "Pillow",
+    "transformers",
+    "jinja2",
+    "ray",
+    "mem0ai",
+    "pre-commit",
+    "pytest",
+    "sphinx-gallery",
+    "myst_parser",
+    "sphinx_rtd_theme",
+    "matplotlib",
+]
+
+[project.urls]
+Homepage = "https://github.com/agentscope-ai/agentscope"
+Repository = "https://github.com/agentscope-ai/agentscope"
+Documentation = "https://doc.agentscope.io/"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"

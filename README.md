@@ -222,6 +222,25 @@ npm install -g @agentscope/studio
 as_studio
 ```
 
+## 👨‍💻 Development
+
+To set up the development environment:
+
+```bash
+# Clone the repository
+git clone https://github.com/agentscope-ai/agentscope.git
+cd agentscope
+
+# Install dependencies using uv
+uv sync
+
+# For full dependencies (optional)
+uv sync --extra full
+
+# For development dependencies (optional)
+uv sync --extra dev
+```
+
 ## ⚖️ License
 
 AgentScope is released under Apache License 2.0.

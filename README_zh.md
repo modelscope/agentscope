@@ -146,7 +146,6 @@ from agentscope.memory import InMemoryMemory
 from agentscope.tool import Toolkit, execute_python_code, execute_shell_command
 import os, asyncio
 
-
 async def main():
     toolkit = Toolkit()
     toolkit.register_tool_function(execute_python_code)
@@ -219,6 +218,25 @@ asyncio.run(main())
 npm install -g @agentscope/studio
 
 as_studio
+```
+
+## 👨‍💻 开发
+
+设置开发环境：
+
+```bash
+# 克隆代码仓库
+git clone https://github.com/agentscope-ai/agentscope.git
+cd agentscope
+
+# 使用 uv 安装依赖
+uv sync
+
+# 安装完整依赖（可选）
+uv sync --extra full
+
+# 安装开发依赖（可选）
+uv sync --extra dev
 ```
 
 ## ⚖️ 许可
