@@ -1,6 +1,6 @@
 # News
 
-- **[2024-07-18]** AgentScopeはストリーミングモードをサポートしています。詳細については、[チュートリアル](https://doc.agentscope.io/v0/en/build_tutorial/streaming.html)および[ストリーミングモードでの会話の例](https://github.com/modelscope/agentscope/tree/main/examples/conversation_in_stream_mode)を参照してください。
+- **[2024-07-18]** AgentScopeはストリーミングモードをサポートしています。詳細については、[チュートリアル](https://doc.agentscope.io/v0/en/build_tutorial/streaming.html)および[ストリーミングモードでの会話の例](https://github.com/modelscope/agentscope/tree/v0/examples/conversation_in_stream_mode)を参照してください。
 
 <h5 align="left">
 <img src="https://github.com/user-attachments/assets/b14d9b2f-ce02-4f40-8c1a-950f4022c0cc" width="45%" alt="agentscope-logo">
@@ -20,7 +20,7 @@
 
 - **[2024-05-24]** **AgentScope Workstation**に関連する機能がまもなくオープンソース化されることをお知らせします。オンラインウェブサイトサービスは一時的にオフラインになっています。オンラインウェブサイトサービスはアップグレードされ、まもなく再開されます。お楽しみに...
 
-- **[2024-05-15]** **フォーマットされた応答**のための新しい**パーサーモジュール**がAgentScopeに追加されました。詳細については、[チュートリアル](https://doc.agentscope.io/v0/en/build_tutorial/structured_output.html)を参照してください。[`DictDialogAgent`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/dict_dialog_agent.py)および[人狼ゲーム](https://github.com/modelscope/agentscope/tree/main/examples/game_werewolf)の例も同時に更新されました。
+- **[2024-05-15]** **フォーマットされた応答**のための新しい**パーサーモジュール**がAgentScopeに追加されました。詳細については、[チュートリアル](https://doc.agentscope.io/v0/en/build_tutorial/structured_output.html)を参照してください。[`DictDialogAgent`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/dict_dialog_agent.py)および[人狼ゲーム](https://github.com/modelscope/agentscope/tree/v0/examples/game_werewolf)の例も同時に更新されました。
 
 - **[2024-05-14]** 親愛なるAgentScopeユーザーの皆様、**AgentScope Workstation & Copilot**のユーザーエクスペリエンスに関するアンケートを実施しています。現在、AgentScopeのドラッグアンドドロップマルチエージェントアプリケーション開発とCopilotのエクスペリエンスを改善するために、貴重なフィードバックが必要です。フィードバックは貴重であり、アンケートには約3〜5分かかります。アンケート調査に参加するには、[URL](https://survey.aliyun.com/apps/zhiliao/vgpTppn22)をクリックしてください。ご支援とご協力に感謝します。
 
