@@ -50,6 +50,7 @@ class DashScopeChatModel(ChatModelBase):
         stream: bool = True,
         enable_thinking: bool | None = None,
         generate_kwargs: dict[str, JSONSerializableObject] | None = None,
+        base_http_api_url: str | None = None,
     ) -> None:
         """Initialize the DashScope chat model.
 
@@ -69,6 +70,9 @@ class DashScopeChatModel(ChatModelBase):
             optional):
                The extra keyword arguments used in DashScope API generation,
                e.g. `temperature`, `seed`.
+            base_http_api_url (`str | None`, optional):
+                The base URL for DashScope API requests. If not provided,
+                the default base URL from the DashScope SDK will be used.
         """
         if enable_thinking and not stream:
             logger.info(
@@ -83,6 +87,11 @@ class DashScopeChatModel(ChatModelBase):
         self.enable_thinking = enable_thinking
         self.incremental_output = self.stream
         self.generate_kwargs = generate_kwargs or {}
+
+        if base_http_api_url is not None:
+            import dashscope
+
+            dashscope.base_http_api_url = base_http_api_url
 
     @trace_llm
     async def __call__(
