@@ -15,7 +15,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=a1b5f972" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=c456fbe9" />
     
     
 
@@ -206,7 +206,20 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+    <p class="caption" role="heading">
+        <span class="caption-text">
+            Version
+        </span>
+        <ul>
+            <li>
+                <select class="version-select" onchange="navigateToV0(this.value)">
+                    <option value="v1" selected>Stable(v1.0)</option>
+                    <option value="v0">v0.1.x</option>
+                </select>
+            </li>
+        </ul>
+    </p>
+    <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="quickstart_installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart_key_concept.html">Key Concepts</a></li>
@@ -279,7 +292,7 @@
         </a>
         <div class="content-icon-container">
           
-<button onclick="switchLanguage()" class="language-switch-button" title="Switch to Chinese">
+<button onclick="switchV1Language()" class="language-switch-button" title="Switch to Chinese">
   <script>
     document.write(window.location.href.includes("zh_CN") ? "En": "中");
   </script>
@@ -380,9 +393,9 @@ Note David is not included in this meeting.</p>
 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">example_broadcast_message</span><span class="p">())</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Alice: Hello, I&#39;m Alice, a 50-year-old teacher with a passion for education and a wealth of experience in the classroom.
-Bob: Hello, I&#39;m Bob, a 35-year-old engineer with a focus on innovative solutions and technical problem-solving.
-Charlie: Hello, I&#39;m Charlie, a 28-year-old designer with a knack for creating visually appealing and user-friendly designs.
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Alice: Hello, I&#39;m Alice, a 50-year-old teacher with a passion for helping students learn and grow.
+Bob: Hello, I&#39;m Bob, a 35-year-old engineer who enjoys solving complex problems and designing innovative solutions.
+Charlie: Hello, I&#39;m Charlie, a 28-year-old designer who loves to create visually appealing and user-friendly designs.
 </pre></div>
 </div>
 <p>Now let’s check if Bob, Charlie and David received Alice’s message.</p>
@@ -402,9 +415,9 @@ Charlie: Hello, I&#39;m Charlie, a 28-year-old designer with a knack for creatin
 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">check_broadcast_message</span><span class="p">())</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Bob: Alice is a 50-year-old teacher who is passionate about education and has extensive experience in the classroom.
-Charlie: Alice is a 50-year-old teacher who is passionate about education and has extensive experience in the classroom.
-David: I don&#39;t have specific information about an Alice without more context. Could you provide more details, such as her last name or the field she works in?
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Bob: Alice is a 50-year-old teacher who is passionate about helping students learn and grow.
+Charlie: Alice is a 50-year-old teacher who is passionate about helping students learn and grow.
+David: I don&#39;t have specific information about who Alice is or what she does, as it could refer to many different people. Could you provide more context or details about which Alice you&#39;re asking about?
 </pre></div>
 </div>
 <p>Now we observe that Bob and Charlie know Alice and her profession, while David has no idea
@@ -484,7 +497,7 @@ For example, the two following code snippets are equivalent:</p>
 </pre></div>
 </div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 21.888 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 20.296 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorial-task-pipeline-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/a841049f564cf5f9c0fea523e59490f5/task_pipeline.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">task_pipeline.ipynb</span></code></a></p>
@@ -576,6 +589,6 @@ For example, the two following code snippets are equivalent:</p>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
-    <script src="../_static/language_switch.js?v=6601bc2f"></script>
+    <script src="../_static/language_switch.js?v=92e4c85c"></script>
     </body>
 </html>

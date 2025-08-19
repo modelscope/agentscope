@@ -1,6 +1,0 @@
-agentscope.service.web.download
-===============================
-.. automodule:: agentscope.service.web.download
-   :members:
-   :undoc-members:
-   :show-inheritance:

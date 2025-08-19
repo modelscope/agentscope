@@ -15,7 +15,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=a1b5f972" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=c456fbe9" />
     
     
 
@@ -206,7 +206,20 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+    <p class="caption" role="heading">
+        <span class="caption-text">
+            Version
+        </span>
+        <ul>
+            <li>
+                <select class="version-select" onchange="navigateToV0(this.value)">
+                    <option value="v1" selected>Stable(v1.0)</option>
+                    <option value="v0">v0.1.x</option>
+                </select>
+            </li>
+        </ul>
+    </p>
+    <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="quickstart_installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart_key_concept.html">Key Concepts</a></li>
@@ -279,7 +292,7 @@
         </a>
         <div class="content-icon-container">
           
-<button onclick="switchLanguage()" class="language-switch-button" title="Switch to Chinese">
+<button onclick="switchV1Language()" class="language-switch-button" title="Switch to Chinese">
   <script>
     document.write(window.location.href.includes("zh_CN") ? "En": "中");
   </script>
@@ -600,7 +613,7 @@ Repeat ID: 0
                 }
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 10.356 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 8.069 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorial-task-eval-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/c97c5fec6c05569e62f14d7f1ea7d164/task_eval.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">task_eval.ipynb</span></code></a></p>
@@ -694,6 +707,6 @@ Repeat ID: 0
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
-    <script src="../_static/language_switch.js?v=6601bc2f"></script>
+    <script src="../_static/language_switch.js?v=92e4c85c"></script>
     </body>
 </html>

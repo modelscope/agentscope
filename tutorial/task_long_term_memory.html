@@ -15,7 +15,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=a1b5f972" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=c456fbe9" />
     
     
 
@@ -206,7 +206,20 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+    <p class="caption" role="heading">
+        <span class="caption-text">
+            Version
+        </span>
+        <ul>
+            <li>
+                <select class="version-select" onchange="navigateToV0(this.value)">
+                    <option value="v1" selected>Stable(v1.0)</option>
+                    <option value="v0">v0.1.x</option>
+                </select>
+            </li>
+        </ul>
+    </p>
+    <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="quickstart_installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart_key_concept.html">Key Concepts</a></li>
@@ -279,7 +292,7 @@
         </a>
         <div class="content-icon-container">
           
-<button onclick="switchLanguage()" class="language-switch-button" title="Switch to Chinese">
+<button onclick="switchV1Language()" class="language-switch-button" title="Switch to Chinese">
   <script>
     document.write(window.location.href.includes("zh_CN") ? "En": "中");
   </script>
@@ -382,7 +395,7 @@ They take a list of messages as input and record/retrieve information from long-
 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">basic_usage</span><span class="p">())</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Retrieval results: 喜欢住在民宿
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Retrieval results: Likes staying in homestays
 </pre></div>
 </div>
 <section id="integration-with-react-agent">
@@ -429,7 +442,7 @@ additional instructions in the system prompt.</p>
 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">record_preferences</span><span class="p">())</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Friday: That&#39;s great! Staying in homestays can be a wonderful experience as it allows you to immerse yourself in the local culture and lifestyle. Hangzhou, known for its beautiful West Lake and rich history, has a variety of charming homestays that can offer a more personal touch than hotels. You can enjoy interacting with local hosts, tasting homemade cuisine, and getting insider tips on what to see and do in the area. If you need recommendations or help with planning your stay, feel free to ask!
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Friday: If you like staying in homestays, then Hangzhou will not disappoint you. This city has a wide variety of homestays that offer unique experiences. You can find homestays with beautiful views of the West Lake, or those nestled quietly amidst the tea plantations. Each homestay provides a cozy and personalized atmosphere, allowing you to experience the local culture and lifestyle firsthand.
 </pre></div>
 </div>
 <p>Then we clear the short-term memory and ask the agent about the user’s preferences.</p>
@@ -445,7 +458,7 @@ additional instructions in the system prompt.</p>
 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">retrieve_preferences</span><span class="p">())</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Friday: You prefer staying in homestays when traveling, for example, in Hangzhou.
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Friday: You like staying in homestays.
 </pre></div>
 </div>
 </section>
@@ -494,7 +507,7 @@ memory systems according to their needs：</p>
 <li><p><a class="reference internal" href="task_agent.html#agent"><span class="std std-ref">Agent</span></a> - ReAct agent</p></li>
 <li><p><a class="reference internal" href="task_tool.html#tool"><span class="std std-ref">Tool</span></a> - Tool system</p></li>
 </ul>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 40.468 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 28.690 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorial-task-long-term-memory-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/cf2bfcc46b2b3d58d3df8c98a6a13f87/task_long_term_memory.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">task_long_term_memory.ipynb</span></code></a></p>
@@ -587,6 +600,6 @@ memory systems according to their needs：</p>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
-    <script src="../_static/language_switch.js?v=6601bc2f"></script>
+    <script src="../_static/language_switch.js?v=92e4c85c"></script>
     </body>
 </html>

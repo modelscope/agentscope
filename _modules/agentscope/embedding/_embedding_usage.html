@@ -14,7 +14,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/css/gallery.css?v=a1b5f972" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/gallery.css?v=c456fbe9" />
     
     
 
@@ -205,7 +205,20 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+    <p class="caption" role="heading">
+        <span class="caption-text">
+            Version
+        </span>
+        <ul>
+            <li>
+                <select class="version-select" onchange="navigateToV0(this.value)">
+                    <option value="v1" selected>Stable(v1.0)</option>
+                    <option value="v0">v0.1.x</option>
+                </select>
+            </li>
+        </ul>
+    </p>
+    <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/quickstart_installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/quickstart_key_concept.html">Key Concepts</a></li>
@@ -278,7 +291,7 @@
         </a>
         <div class="content-icon-container">
           
-<button onclick="switchLanguage()" class="language-switch-button" title="Switch to Chinese">
+<button onclick="switchV1Language()" class="language-switch-button" title="Switch to Chinese">
   <script>
     document.write(window.location.href.includes("zh_CN") ? "En": "中");
   </script>
@@ -357,6 +370,6 @@
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
-    <script src="../../../_static/language_switch.js?v=6601bc2f"></script>
+    <script src="../../../_static/language_switch.js?v=92e4c85c"></script>
     </body>
 </html>

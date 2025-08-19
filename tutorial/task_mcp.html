@@ -15,7 +15,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=a1b5f972" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=c456fbe9" />
     
     
 
@@ -206,7 +206,20 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+    <p class="caption" role="heading">
+        <span class="caption-text">
+            Version
+        </span>
+        <ul>
+            <li>
+                <select class="version-select" onchange="navigateToV0(this.value)">
+                    <option value="v1" selected>Stable(v1.0)</option>
+                    <option value="v0">v0.1.x</option>
+                </select>
+            </li>
+        </ul>
+    </p>
+    <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="quickstart_installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart_key_concept.html">Key Concepts</a></li>
@@ -279,7 +292,7 @@
         </a>
         <div class="content-icon-container">
           
-<button onclick="switchLanguage()" class="language-switch-button" title="Switch to Chinese">
+<button onclick="switchV1Language()" class="language-switch-button" title="Switch to Chinese">
   <script>
     document.write(window.location.href.includes("zh_CN") ? "En": "中");
   </script>
@@ -569,7 +582,7 @@ Function JSON schema: {
 }
 
 Function call result:
-ToolResponse(content=[{&#39;type&#39;: &#39;text&#39;, &#39;text&#39;: &#39;{&quot;results&quot;:[{&quot;country&quot;:&quot;中国&quot;,&quot;province&quot;:&quot;北京市&quot;,&quot;city&quot;:&quot;北京市&quot;,&quot;citycode&quot;:&quot;010&quot;,&quot;district&quot;:&quot;东城区&quot;,&quot;street&quot;:[],&quot;number&quot;:[],&quot;adcode&quot;:&quot;110101&quot;,&quot;location&quot;:&quot;116.397455,39.909187&quot;,&quot;level&quot;:&quot;兴趣点&quot;}]}&#39;}], metadata=None, stream=False, is_last=True, is_interrupted=False, id=&#39;2025-08-19 03:43:04.461_11f24c&#39;)
+ToolResponse(content=[{&#39;type&#39;: &#39;text&#39;, &#39;text&#39;: &#39;{&quot;results&quot;:[{&quot;country&quot;:&quot;中国&quot;,&quot;province&quot;:&quot;北京市&quot;,&quot;city&quot;:&quot;北京市&quot;,&quot;citycode&quot;:&quot;010&quot;,&quot;district&quot;:&quot;东城区&quot;,&quot;street&quot;:[],&quot;number&quot;:[],&quot;adcode&quot;:&quot;110101&quot;,&quot;location&quot;:&quot;116.397455,39.909187&quot;,&quot;level&quot;:&quot;兴趣点&quot;}]}&#39;}], metadata=None, stream=False, is_last=True, is_interrupted=False, id=&#39;2025-08-19 09:17:59.355_7e73f5&#39;)
 </pre></div>
 </div>
 </section>
@@ -581,7 +594,7 @@ ToolResponse(content=[{&#39;type&#39;: &#39;text&#39;, &#39;text&#39;: &#39;{&qu
 <li><p><a class="reference internal" href="task_tool.html#tool"><span class="std std-ref">Tool</span></a></p></li>
 <li><p><a class="reference internal" href="task_agent.html#agent"><span class="std std-ref">Agent</span></a></p></li>
 </ul>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 8.679 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 7.390 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorial-task-mcp-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/da545788627514321d5d0429de9a0028/task_mcp.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">task_mcp.ipynb</span></code></a></p>
@@ -675,6 +688,6 @@ ToolResponse(content=[{&#39;type&#39;: &#39;text&#39;, &#39;text&#39;: &#39;{&qu
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
-    <script src="../_static/language_switch.js?v=6601bc2f"></script>
+    <script src="../_static/language_switch.js?v=92e4c85c"></script>
     </body>
 </html>

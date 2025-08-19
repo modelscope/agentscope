@@ -1,7 +1,0 @@
-agentscope.manager
-==================
-
-.. automodule:: agentscope.manager
-   :members:
-   :undoc-members:
-   :show-inheritance:

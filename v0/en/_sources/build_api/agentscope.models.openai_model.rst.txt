@@ -1,6 +1,0 @@
-agentscope.models.openai_model
-==============================
-.. automodule:: agentscope.models.openai_model
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -15,7 +15,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=a1b5f972" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=c456fbe9" />
     
     
 
@@ -206,7 +206,20 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+    <p class="caption" role="heading">
+        <span class="caption-text">
+            Version
+        </span>
+        <ul>
+            <li>
+                <select class="version-select" onchange="navigateToV0(this.value)">
+                    <option value="v1" selected>Stable(v1.0)</option>
+                    <option value="v0">v0.1.x</option>
+                </select>
+            </li>
+        </ul>
+    </p>
+    <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="quickstart_installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart_key_concept.html">Key Concepts</a></li>
@@ -279,7 +292,7 @@
         </a>
         <div class="content-icon-container">
           
-<button onclick="switchLanguage()" class="language-switch-button" title="Switch to Chinese">
+<button onclick="switchV1Language()" class="language-switch-button" title="Switch to Chinese">
   <script>
     document.write(window.location.href.includes("zh_CN") ? "En": "中");
   </script>
@@ -313,10 +326,10 @@ to download the full example code.</p>
 <span id="sphx-glr-tutorial-workflow-concurrent-agents-py"></span><h1>Concurrent Agents<a class="headerlink" href="#concurrent-agents" title="Link to this heading">¶</a></h1>
 <p>With the help of asynchronous programming, the concurrent agents can be executed by <code class="docutils literal notranslate"><span class="pre">asyncio.gather</span></code> in Python.</p>
 <p>A simple example is shown below, where two agents are created and executed concurrently.</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Agent 1 started at 03:41:35.983
-Agent 2 started at 03:41:35.983
-Agent 1 finished at 03:41:38.987
-Agent 2 finished at 03:41:38.987
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Agent 1 started at 09:16:48.496
+Agent 2 started at 09:16:48.496
+Agent 1 finished at 09:16:51.500
+Agent 2 finished at 09:16:51.500
 </pre></div>
 </div>
 <div class="line-block">
@@ -425,6 +438,6 @@ Agent 2 finished at 03:41:38.987
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
-    <script src="../_static/language_switch.js?v=6601bc2f"></script>
+    <script src="../_static/language_switch.js?v=92e4c85c"></script>
     </body>
 </html>

@@ -15,7 +15,7 @@
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
-    <link rel="stylesheet" type="text/css" href="_static/css/gallery.css?v=a1b5f972" />
+    <link rel="stylesheet" type="text/css" href="_static/css/gallery.css?v=c456fbe9" />
     
     
 
@@ -206,7 +206,20 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+    <p class="caption" role="heading">
+        <span class="caption-text">
+            Version
+        </span>
+        <ul>
+            <li>
+                <select class="version-select" onchange="navigateToV0(this.value)">
+                    <option value="v1" selected>Stable(v1.0)</option>
+                    <option value="v0">v0.1.x</option>
+                </select>
+            </li>
+        </ul>
+    </p>
+    <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/quickstart_installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/quickstart_key_concept.html">Key Concepts</a></li>
@@ -279,7 +292,7 @@
         </a>
         <div class="content-icon-container">
           
-<button onclick="switchLanguage()" class="language-switch-button" title="Switch to Chinese">
+<button onclick="switchV1Language()" class="language-switch-button" title="Switch to Chinese">
   <script>
     document.write(window.location.href.includes("zh_CN") ? "En": "中");
   </script>
@@ -306,7 +319,7 @@
         <article role="main" id="furo-main-content">
           <section id="computation-times">
 <span id="sphx-glr-sg-execution-times"></span><h1>Computation times<a class="headerlink" href="#computation-times" title="Link to this heading">¶</a></h1>
-<p><strong>04:47.010</strong> total execution time for 25 files <strong>from all galleries</strong>:</p>
+<p><strong>04:35.387</strong> total execution time for 25 files <strong>from all galleries</strong>:</p>
 <div class="docutils container">
 <style scoped>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
@@ -329,55 +342,55 @@ $(document).ready( function () {
 </thead>
 <tbody>
 <tr class="row-even"><td><p><a class="reference internal" href="tutorial/workflow_multiagent_debate.html#sphx-glr-tutorial-workflow-multiagent-debate-py"><span class="std std-ref">Multi-Agent Debate</span></a> (<code class="docutils literal notranslate"><span class="pre">src/workflow_multiagent_debate.py</span></code>)</p></td>
-<td><p>01:27.486</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tutorial/task_long_term_memory.html#sphx-glr-tutorial-task-long-term-memory-py"><span class="std std-ref">Long-Term Memory</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_long_term_memory.py</span></code>)</p></td>
-<td><p>00:40.468</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tutorial/task_agent.html#sphx-glr-tutorial-task-agent-py"><span class="std std-ref">Agent</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_agent.py</span></code>)</p></td>
-<td><p>00:26.768</p></td>
+<td><p>01:01.556</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="tutorial/workflow_routing.html#sphx-glr-tutorial-workflow-routing-py"><span class="std std-ref">Routing</span></a> (<code class="docutils literal notranslate"><span class="pre">src/workflow_routing.py</span></code>)</p></td>
-<td><p>00:24.772</p></td>
+<td><p>00:51.095</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="tutorial/task_long_term_memory.html#sphx-glr-tutorial-task-long-term-memory-py"><span class="std std-ref">Long-Term Memory</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_long_term_memory.py</span></code>)</p></td>
+<td><p>00:28.690</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="tutorial/task_agent.html#sphx-glr-tutorial-task-agent-py"><span class="std std-ref">Agent</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_agent.py</span></code>)</p></td>
+<td><p>00:26.983</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="tutorial/task_pipeline.html#sphx-glr-tutorial-task-pipeline-py"><span class="std std-ref">Pipeline</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_pipeline.py</span></code>)</p></td>
-<td><p>00:21.888</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tutorial/workflow_handoffs.html#sphx-glr-tutorial-workflow-handoffs-py"><span class="std std-ref">Handoffs</span></a> (<code class="docutils literal notranslate"><span class="pre">src/workflow_handoffs.py</span></code>)</p></td>
-<td><p>00:13.918</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tutorial/workflow_conversation.html#sphx-glr-tutorial-workflow-conversation-py"><span class="std std-ref">Conversation</span></a> (<code class="docutils literal notranslate"><span class="pre">src/workflow_conversation.py</span></code>)</p></td>
-<td><p>00:13.346</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tutorial/quickstart_agent.html#sphx-glr-tutorial-quickstart-agent-py"><span class="std std-ref">Create ReAct Agent</span></a> (<code class="docutils literal notranslate"><span class="pre">src/quickstart_agent.py</span></code>)</p></td>
-<td><p>00:10.536</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tutorial/task_eval.html#sphx-glr-tutorial-task-eval-py"><span class="std std-ref">Evaluation</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_eval.py</span></code>)</p></td>
-<td><p>00:10.356</p></td>
+<td><p>00:20.296</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="tutorial/task_model.html#sphx-glr-tutorial-task-model-py"><span class="std std-ref">Model</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_model.py</span></code>)</p></td>
-<td><p>00:09.602</p></td>
+<td><p>00:17.392</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tutorial/task_mcp.html#sphx-glr-tutorial-task-mcp-py"><span class="std std-ref">MCP</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_mcp.py</span></code>)</p></td>
-<td><p>00:08.679</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tutorial/workflow_conversation.html#sphx-glr-tutorial-workflow-conversation-py"><span class="std std-ref">Conversation</span></a> (<code class="docutils literal notranslate"><span class="pre">src/workflow_conversation.py</span></code>)</p></td>
+<td><p>00:16.439</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tutorial/task_prompt.html#sphx-glr-tutorial-task-prompt-py"><span class="std std-ref">Prompt Formatter</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_prompt.py</span></code>)</p></td>
-<td><p>00:07.676</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tutorial/workflow_handoffs.html#sphx-glr-tutorial-workflow-handoffs-py"><span class="std std-ref">Handoffs</span></a> (<code class="docutils literal notranslate"><span class="pre">src/workflow_handoffs.py</span></code>)</p></td>
+<td><p>00:10.886</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="tutorial/task_eval.html#sphx-glr-tutorial-task-eval-py"><span class="std std-ref">Evaluation</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_eval.py</span></code>)</p></td>
+<td><p>00:08.069</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="tutorial/quickstart_agent.html#sphx-glr-tutorial-quickstart-agent-py"><span class="std std-ref">Create ReAct Agent</span></a> (<code class="docutils literal notranslate"><span class="pre">src/quickstart_agent.py</span></code>)</p></td>
+<td><p>00:08.016</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="tutorial/task_prompt.html#sphx-glr-tutorial-task-prompt-py"><span class="std std-ref">Prompt Formatter</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_prompt.py</span></code>)</p></td>
+<td><p>00:07.471</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="tutorial/task_mcp.html#sphx-glr-tutorial-task-mcp-py"><span class="std std-ref">MCP</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_mcp.py</span></code>)</p></td>
+<td><p>00:07.390</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="tutorial/task_state.html#sphx-glr-tutorial-task-state-py"><span class="std std-ref">State/Session Management</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_state.py</span></code>)</p></td>
-<td><p>00:03.260</p></td>
+<td><p>00:03.023</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="tutorial/workflow_concurrent_agents.html#sphx-glr-tutorial-workflow-concurrent-agents-py"><span class="std std-ref">Concurrent Agents</span></a> (<code class="docutils literal notranslate"><span class="pre">src/workflow_concurrent_agents.py</span></code>)</p></td>
@@ -385,19 +398,19 @@ $(document).ready( function () {
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="tutorial/task_embedding.html#sphx-glr-tutorial-task-embedding-py"><span class="std std-ref">Embedding</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_embedding.py</span></code>)</p></td>
-<td><p>00:02.523</p></td>
+<td><p>00:02.061</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tutorial/task_tool.html#sphx-glr-tutorial-task-tool-py"><span class="std std-ref">Tool</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_tool.py</span></code>)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tutorial/quickstart_installation.html#sphx-glr-tutorial-quickstart-installation-py"><span class="std std-ref">Installation</span></a> (<code class="docutils literal notranslate"><span class="pre">src/quickstart_installation.py</span></code>)</p></td>
+<td><p>00:01.141</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="tutorial/task_tool.html#sphx-glr-tutorial-task-tool-py"><span class="std std-ref">Tool</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_tool.py</span></code>)</p></td>
 <td><p>00:01.022</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tutorial/quickstart_installation.html#sphx-glr-tutorial-quickstart-installation-py"><span class="std std-ref">Installation</span></a> (<code class="docutils literal notranslate"><span class="pre">src/quickstart_installation.py</span></code>)</p></td>
-<td><p>00:00.976</p></td>
-<td><p>0.0</p></td>
-</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="tutorial/task_token.html#sphx-glr-tutorial-task-token-py"><span class="std std-ref">Token</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_token.py</span></code>)</p></td>
-<td><p>00:00.723</p></td>
+<td><p>00:00.845</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="tutorial/quickstart_message.html#sphx-glr-tutorial-quickstart-message-py"><span class="std std-ref">Create Message</span></a> (<code class="docutils literal notranslate"><span class="pre">src/quickstart_message.py</span></code>)</p></td>
@@ -412,7 +425,7 @@ $(document).ready( function () {
 <td><p>00:00.000</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tutorial/faq.html#sphx-glr-tutorial-faq-py"><span class="std std-ref">FAQ</span></a> (<code class="docutils literal notranslate"><span class="pre">src/faq.py</span></code>)</p></td>
+<tr class="row-odd"><td><p><span class="xref std std-ref">sphx_glr_tutorial_quickstart_key_concept.py</span> (<code class="docutils literal notranslate"><span class="pre">src/quickstart_key_concept.py</span></code>)</p></td>
 <td><p>00:00.000</p></td>
 <td><p>0.0</p></td>
 </tr>
@@ -420,11 +433,11 @@ $(document).ready( function () {
 <td><p>00:00.000</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-odd"><td><p><span class="xref std std-ref">sphx_glr_tutorial_quickstart_key_concept.py</span> (<code class="docutils literal notranslate"><span class="pre">src/quickstart_key_concept.py</span></code>)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tutorial/task_studio.html#sphx-glr-tutorial-task-studio-py"><span class="std std-ref">AgentScope Studio</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_studio.py</span></code>)</p></td>
 <td><p>00:00.000</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tutorial/task_studio.html#sphx-glr-tutorial-task-studio-py"><span class="std std-ref">AgentScope Studio</span></a> (<code class="docutils literal notranslate"><span class="pre">src/task_studio.py</span></code>)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tutorial/faq.html#sphx-glr-tutorial-faq-py"><span class="std std-ref">FAQ</span></a> (<code class="docutils literal notranslate"><span class="pre">src/faq.py</span></code>)</p></td>
 <td><p>00:00.000</p></td>
 <td><p>0.0</p></td>
 </tr>
@@ -469,6 +482,6 @@ $(document).ready( function () {
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>
-    <script src="_static/language_switch.js?v=6601bc2f"></script>
+    <script src="_static/language_switch.js?v=92e4c85c"></script>
     </body>
 </html>

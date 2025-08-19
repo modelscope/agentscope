@@ -1,6 +1,0 @@
-agentscope.parsers.code_block_parser
-====================================
-.. automodule:: agentscope.parsers.code_block_parser
-   :members:
-   :undoc-members:
-   :show-inheritance:
