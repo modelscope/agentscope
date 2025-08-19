@@ -145,3 +145,21 @@ td .highlight-python.notranslate {
 .language-switch-button:hover {
     color: #2758DA;
 }
+
+.version-select {
+    display: flex;
+    background: transparent;
+    font-size: 14px;
+    padding-inline: 16px;
+    padding-block: 8px;
+    height: 32px;
+    width: 100%;
+    box-sizing: border-box;
+    font-weight: 400;
+    gap: 16px;
+
+    .selected {
+        font-weight: 600;
+        color: #000;
+    }
+}
