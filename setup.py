@@ -33,7 +33,6 @@ minimal_requires = [
     "python-socketio",
     "shortuuid",
     "tiktoken",
-    "furo",
 ]
 
 extra_requires = [
@@ -50,8 +49,8 @@ dev_requires = [
     "pre-commit",
     "pytest",
     "sphinx-gallery",
+    "furo",
     "myst_parser",
-    "sphinx_rtd_theme",
     "matplotlib",
 ]
 
