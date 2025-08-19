@@ -114,7 +114,7 @@ Once tools are added to the global toolkit, they are grouped into meta categorie
     }
 }
 ```
-In the default configuration, `Meta_tool_config.json` defines a basic categorization for the MCP tools used in `example.py`.
+In the default configuration, `Meta_tool_config.json` defines a basic categorization for the MCP tools used in `example.py`. When DIY your meta tool system, remember to update `Meta_tool_config.json` along with your agent file.
 
 ### 4. Execution Situations
 - **Normal Execution**: Complete execution history with results and comprehensive summaries
