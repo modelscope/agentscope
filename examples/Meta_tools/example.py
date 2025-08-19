@@ -15,6 +15,7 @@ from Meta_toolkit import CategoryManager, MetaManager
 gaode_api_key = os.environ["GAODE_API_KEY"]
 bing_api_key = os.environ["BING_API_KEY"]
 train_api_key = os.environ["TRAIN_API_KEY"]
+dashscope_api_key = os.environ["DASHSCOPE_API_KEY"]
 
 def init_meta_tool_from_intact_file(
     model_config_name: str,
@@ -40,7 +41,7 @@ def init_meta_tool_from_intact_file(
 
     model = DashScopeChatModel(
         model_name=model_config_name,
-        api_key=os.environ["DASHSCOPE_API_KEY"],
+        api_key=dashscope_api_key,
         stream=True,
     )
 
@@ -135,7 +136,7 @@ async def main():
             sys_prompt="You're a helpful assistant named Friday.",
             model=DashScopeChatModel(
                 model_name="qwen-max",
-                api_key=os.environ["DASHSCOPE_API_KEY"],
+                api_key=dashscope_api_key,
                 stream=True,
             ),
             memory=InMemoryMemory(),
