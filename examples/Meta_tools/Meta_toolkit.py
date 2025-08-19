@@ -19,7 +19,7 @@ from typing import (
     Literal,
     Type,
 )
-
+from agentscope.model import ChatModelBase
 from agentscope.formatter import FormatterBase
 from agentscope.memory import InMemoryMemory
 from agentscope.message import Msg, TextBlock, ToolUseBlock
@@ -39,10 +39,29 @@ class CategoryManager:
         self, 
         category_name: str, 
         category_description: str, 
-        model, 
+        model: ChatModelBase,
         tool_usage_notes: str = "",
         formatter: FormatterBase = None,
     ):
+        """Initialize the Category Manager
+
+        Args:
+            category_name (`str`):
+                The unique name identifier for this category manager.
+            category_description (`str`):
+                A comprehensive description of what this category manages
+                and its functional scope.
+            model (`ChatModelBase`):
+                The chat model used for internal tool selection, tool result
+                evaluation, and summary generation within this category.
+            tool_usage_notes (`str`, optional):
+                Special usage notes and considerations for tools in this
+                category that will be included in the system prompts.
+            formatter (`FormatterBase`, optional):
+                The formatter used to format the messages into the required
+                format of the model API provider. If not provided, the
+                category will use basic message formatting.
+        """
         self.category_name = category_name
         self.category_description = category_description
         self.model = model
@@ -53,7 +72,14 @@ class CategoryManager:
         self.internal_toolkit = Toolkit()   
 
     def _generate_category_json_schema(self) -> dict:
-        """Generate JSON schema for this category manager as a meta-tool."""
+        """Generate JSON schema for this category manager as a meta-tool.
+
+        Returns:
+            `dict`:
+                A JSON schema in OpenAI function calling format that defines
+                this category manager as a callable tool function with
+                'objective' and 'exact_input' parameters.
+        """
         return {
             "type": "function",
             "function": {
@@ -92,11 +118,23 @@ class CategoryManager:
 
     @property
     def json_schema(self) -> dict:
-        """Return the JSON schema for this category manager."""
+        """Return the JSON schema for this category manager.
+
+        Returns:
+            `dict`:
+                The JSON schema that defines this category manager as a
+                callable tool function for external agents.
+        """
         return self._generate_category_json_schema()
 
     def generate_internal_tool_json_schema(self) -> dict:
-        """Generate JSON schema for the internal tools of this category manager."""
+        """Generate JSON schema for the internal tools of this category manager.
+
+        Returns:
+            `dict`:
+                A list of JSON schemas for all tools contained within this
+                category's internal toolkit.
+        """
         return self.internal_toolkit.get_json_schemas()
 
     def _get_prompt(
@@ -107,7 +145,21 @@ class CategoryManager:
             "max_iteration_summary"
         ]
     ) -> str:
-        """Generate system prompt for tool selection by reading from file."""
+        """Generate system prompt for tool selection by reading from file.
+
+        Args:
+            prompt_type (`Literal["tool_selection", "tool_result_evaluation", \
+            "max_iteration_summary"]`):
+                The type of prompt to generate. Each type corresponds to a
+                different phase of the execution workflow:
+                - "tool_selection": For initial tool selection
+                - "tool_result_evaluation": For evaluating tool results
+                - "max_iteration_summary": For generating final summaries
+
+        Returns:
+            `str`:
+                The formatted system prompt.
+        """
         # Get current directory
         current_dir = os.path.dirname(os.path.realpath(__file__))
         
@@ -141,8 +193,21 @@ Please keep these considerations in mind when generating tool calls."""
         func_obj:RegisteredToolFunction = None,
         tool_group: ToolGroup = None,
     ):
-        """
-        Add an internal func_obj to the category manager.
+        """Add an internal tool function object to the category manager.
+
+        Args:
+            func_obj (`RegisteredToolFunction`):
+                The registered tool function object to be added to this
+                category's internal toolkit.
+            tool_group (`ToolGroup`, optional):
+                The tool group information from the global toolkit. If
+                provided and the function's group doesn't exist in the
+                internal toolkit, the group will be created inside the category manager, maintaining consistency with the outside.
+
+        Note:
+            This method directly adds the tool function object to the internal
+            toolkit and preserves the original group structure from the
+            global toolkit.
         """
         self.internal_toolkit.tools[func_obj.name] = func_obj
 
@@ -154,10 +219,23 @@ Please keep these considerations in mind when generating tool calls."""
     async def execute_category_task(
         self, objective: str, exact_input: str
     ) -> ToolResponse:
-        """
-        Core logic of category manager.
-        
-        Intelligent tool selection and execution based on objective and input.
+        """Execute a task within this category using intelligent tool selection.
+
+        This is the core method that implements the multi-round reasoning-acting
+        loop for category-level task execution. It performs tool selection,
+        execution, evaluation, and result synthesis automatically.
+
+        Returns:
+            `ToolResponse`:
+                A response containing the execution results in JSON format
+                with fields:
+                - "all_execution_results": Detailed history of tool executions
+                - "summary": Comprehensive summary of accomplishments
+                - "category": Category name for tracking
+
+        Note:
+            The method implements a maximum of MAX_ITERATIONS iterations for the
+            reasoning-acting loop. 
         """
         try:
             # 1. Check tool availability
@@ -298,8 +376,22 @@ Please keep these considerations in mind when generating tool calls."""
             pass
 
     async def _llm_select_tools(self, objective: str, exact_input: str) -> dict:
-        """
-        First round tool selection 
+        """Perform initial tool selection using LLM reasoning.
+
+        Uses the tool_selection prompt template to guide the LLM in selecting
+        the most appropriate tools from the internal toolkit based on the
+        objective and input parameters.
+
+        Returns:
+            `dict`:
+                A dictionary containing:
+                - "reasoning": The LLM's reasoning for tool selection
+                - "tool_calls": List of selected tool calls in ToolUseBlock format
+
+        Note:
+            If no tools are selected due to constraint analysis or missing
+            requirements, the tool_calls list will be empty and reasoning
+            will contain the explanation.
         """
         try:
             # 1. Build prompt
@@ -366,8 +458,23 @@ Please keep these considerations in mind when generating tool calls."""
             }
 
     async def _evaluate_tool_results(self, objective: str, exact_input: str) -> dict:
-        """
-        Evaluate tool results
+        """Evaluate tool execution results and determine next actions.
+
+        Uses the tool_result_evaluation prompt template and complete memory
+        history to assess whether the current tool execution results have
+        successfully fulfilled the task or if additional tool calls are needed.
+
+        Returns:
+            `dict`:
+                A dictionary containing:
+                - "reasoning": The LLM's evaluation and reasoning
+                - "tool_calls": List of additional tool calls if needed, or
+                  empty list if task is complete
+
+        Note:
+            This method uses the complete memory history (including previous
+            tool results) to make informed decisions about task completion
+            and next steps.
         """
         try:
             # 1. Build evaluation prompt
@@ -432,10 +539,23 @@ Please keep these considerations in mind when generating tool calls."""
             }
 
     async def _generate_max_iteration_summary(self) -> str:
-        """
-        Generate intelligent summary when reaching max iterations.
-        
-        Uses LLM based on memory to generate the summary.
+        """Generate intelligent summary when reaching maximum iterations.
+
+        Uses the max_iteration_summary prompt template and complete memory
+        history to generate a comprehensive summary of what was accomplished
+        and what remains incomplete when the maximum iteration limit is reached.
+
+        Returns:
+            `str`:
+                A comprehensive summary of the execution history, including
+                successful tool executions, their outputs, and any incomplete
+                aspects of the original objective.
+
+        Note:
+            This method is called when the category manager reaches the
+            maximum number of iterations (5) without completing the task.
+            It provides a failsafe to ensure users receive meaningful
+            information even in complex or incomplete scenarios.
         """
         try:
             system_prompt = self._get_prompt("max_iteration_summary")
@@ -487,7 +607,25 @@ Please keep these considerations in mind when generating tool calls."""
             )
 
     async def _execute_tool_calls(self, tool_calls: list) -> list:
-        """Execute tool calls and return results."""
+        """Execute a list of tool calls and return structured results.
+
+        Executes each tool call sequentially, captures results, and records
+        them in memory for subsequent evaluation. 
+
+
+        Returns:
+            `list`:
+                A list of execution result dictionaries, each containing:
+                - 'tool_name': Name of the executed tool
+                - 'tool_args': Arguments passed to the tool
+                - 'result': Execution result or error message
+                - 'status': 'SUCCESS' or 'ERROR'
+
+        Note:
+            All results are automatically added to the category's memory
+            for use in subsequent evaluation steps. Invalid tool call
+            formats are handled gracefully and reported as errors.
+        """
         results = []
         
         for tool_call in tool_calls:
@@ -562,7 +700,13 @@ Please keep these considerations in mind when generating tool calls."""
         return results
 
 class MetaManager(Toolkit):
-    """Level 3 Meta Manager - Manages Level 2 Category Managers."""
+    """Level 3 Meta Manager - Manages Level 2 Category Managers.
+    
+    The MetaManager extends the Toolkit class to provide hierarchical tool
+    management. It manages CategoryManager instances and exposes them as
+    callable tools to external agents, while hiding the internal tool
+    complexity.
+    """
 
     def __init__(self):
         # self.toolkit manages the external interface of category manager.
@@ -571,7 +715,27 @@ class MetaManager(Toolkit):
         self.category_managers: Dict[str, CategoryManager] = {}
     
     def add_category_manager(self, category_manager: CategoryManager):
-        """Add a complete category manager"""
+        """Add a category manager to the meta manager.
+
+        Registers a CategoryManager instance as a callable tool function
+        in the meta manager's toolkit. The category manager becomes accessible
+        to external agents as a standard tool with objective and exact_input
+        parameters.
+
+        Args:
+            category_manager (`CategoryManager`):
+                The category manager instance to be added. Must have a unique
+                category name that doesn't conflict with existing managers.
+
+        Raises:
+            ValueError: If a category manager with the same name already exists.
+
+        Note:
+            The method creates a named wrapper function that forwards calls
+            to the category manager's execute_category_task method. This
+            ensures proper function naming for tool registration while
+            maintaining the execution logic within the category manager.
+        """
         category_name = category_manager.category_name
         if category_name in self.category_managers:
             raise ValueError(f"Category {category_name} already exists")
