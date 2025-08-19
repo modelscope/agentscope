@@ -165,7 +165,7 @@ print(
 #
 # .. tip:: 更多实现细节可以参考 `ReActAgentV2` 的 `源码`_
 #
-# .. _源码: https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/_react_agent_v2.py
+# .. _源码: https://github.com/modelscope/agentscope/blob/v0/src/agentscope/agents/_react_agent_v2.py
 #
 # 文本解析
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

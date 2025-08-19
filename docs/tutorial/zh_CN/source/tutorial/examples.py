@@ -10,7 +10,7 @@
 
     <a
         class="gallery-item"
-        href="https://github.com/modelscope/agentscope/tree/main/examples/model_configs_template"
+        href="https://github.com/modelscope/agentscope/tree/v0/examples/model_configs_template"
     >
         <div class="gallery-item-card">
             <img
@@ -26,7 +26,7 @@
     </a>
     <a
         class="gallery-item"
-        href="https://github.com/modelscope/agentscope/tree/main/examples/model_llama3"
+        href="https://github.com/modelscope/agentscope/tree/v0/examples/model_llama3"
     >
         <div class="gallery-item-card">
             <img
@@ -51,7 +51,7 @@
 .. raw:: html
 
     <a class="gallery-item">
-        <div class="gallery-item-card" href="https://github.com/modelscope/agentscope/tree/main/examples/conversation_with_web_browser_agent">
+        <div class="gallery-item-card" href="https://github.com/modelscope/agentscope/tree/v0/examples/conversation_with_web_browser_agent">
             <img
                 class="gallery-item-card-img"
                 src="https://img.alicdn.com/imgextra/i2/O1CN01M4Xm6S1PypUvcjzq5_!!6000000001910-0-tps-1598-1596.jpg"
@@ -66,7 +66,7 @@
         </div>
     </a>
 
-    <a class="gallery-item" href="https://github.com/modelscope/agentscope/tree/main/examples/conversation_with_RAG_agents">
+    <a class="gallery-item" href="https://github.com/modelscope/agentscope/tree/v0/examples/conversation_with_RAG_agents">
         <div class="gallery-item-card">
             <img
                 class="gallery-item-card-img"
@@ -81,7 +81,7 @@
     </a>
 
     <a class="gallery-item">
-        <div class="gallery-item-card" href="https://github.com/modelscope/agentscope/tree/main/examples/distributed_conversation">
+        <div class="gallery-item-card" href="https://github.com/modelscope/agentscope/tree/v0/examples/distributed_conversation">
             <img
                 class="gallery-item-card-img"
                 src="https://img.alicdn.com/imgextra/i2/O1CN01M4Xm6S1PypUvcjzq5_!!6000000001910-0-tps-1598-1596.jpg"
@@ -105,7 +105,7 @@
 
     <a
         class="gallery-item"
-        href="https://github.com/modelscope/agentscope/tree/main/examples/game_werewolf"
+        href="https://github.com/modelscope/agentscope/tree/v0/examples/game_werewolf"
     >
         <div class="gallery-item-card">
             <img
@@ -121,7 +121,7 @@
             六个由 LLM 智能体进行狼人杀游戏。
         </div>
     </a>
-    <a class="gallery-item" href="https://github.com/modelscope/agentscope/tree/main/examples/game_gomoku">
+    <a class="gallery-item" href="https://github.com/modelscope/agentscope/tree/v0/examples/game_gomoku">
         <div class="gallery-item-card">
             <img
                 class="gallery-item-card-img"
@@ -144,7 +144,7 @@
 .. raw:: html
 
     <a class="gallery-item">
-        <div class="gallery-item-card" href="https://github.com/modelscope/agentscope/tree/main/examples/conversation_basic">
+        <div class="gallery-item-card" href="https://github.com/modelscope/agentscope/tree/v0/examples/conversation_basic">
             <img
                 class="gallery-item-card-img"
                 src="https://img.alicdn.com/imgextra/i2/O1CN01M4Xm6S1PypUvcjzq5_!!6000000001910-0-tps-1598-1596.jpg"
@@ -159,7 +159,7 @@
         </div>
     </a>
 
-    <a class="gallery-item" href="https://github.com/modelscope/agentscope/tree/main/examples/conversation_with_mentions">
+    <a class="gallery-item" href="https://github.com/modelscope/agentscope/tree/v0/examples/conversation_with_mentions">
         <div class="gallery-item-card">
             <img
                 class="gallery-item-card-img"

@@ -2,7 +2,7 @@
 
 This example demonstrates how to utilize AgentScope to build a web browsing agent. Throughout this tutorial, you will gain insights into the following features of AgentScope:
 
-- How to use the [WebBrowser](https://github.com/modelscope/agentscope/blob/main/src/agentscope/service/browser/web_browser.py) module in AgentScope
+- How to use the [WebBrowser](https://github.com/modelscope/agentscope/blob/v0/src/agentscope/service/browser/web_browser.py) module in AgentScope
 - How to build a conversation with an agent that can browse the web
 
 Refer to our tutorial for more details on the `WebBrowser` module.
@@ -27,7 +27,7 @@ To run this example, you need to:
 2. Install the necessary Playwright packages:
     - Run `pip install playwright` to set up the Python environment.
     - Run `playwright install` to install the required browser for Playwright.
-3. [Optional] For a better understanding of how web browsing is implemented, refer to the original code in [web_browser.py](https://github.com/modelscope/agentscope/blob/main/src/agentscope/service/browser/web_browser.py) and [webact_agent.py](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_web_browser_agent/webact_agent.py).
+3. [Optional] For a better understanding of how web browsing is implemented, refer to the original code in [web_browser.py](https://github.com/modelscope/agentscope/blob/v0/src/agentscope/service/browser/web_browser.py) and [webact_agent.py](https://github.com/modelscope/agentscope/blob/v0/examples/conversation_with_web_browser_agent/webact_agent.py).
 
 ## Running the Example
 

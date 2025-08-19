@@ -162,7 +162,7 @@ print(
 # We can see that the schema of the `generate_response` function has been combined with the schema of the `Model1` class.
 # Therefore, when the model calls this function, it will generate the corresponding structured data.
 #
-# .. tip:: More implementation details can be found in the `ReActAgentV2` `source code <https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/_react_agent_v2.py>`_
+# .. tip:: More implementation details can be found in the `ReActAgentV2` `source code <https://github.com/modelscope/agentscope/blob/v0/src/agentscope/agents/_react_agent_v2.py>`_
 #
 # Text Parsing
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

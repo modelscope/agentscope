@@ -1,26 +1,26 @@
 # News
 
-- **[2024-07-18]** AgentScope 已支持模型流式输出。请参考我们的 [**教程**](https://doc.agentscope.io/build_tutorial/streaming.html) 和 [**流式对话样例**](https://github.com/modelscope/agentscope/tree/main/examples/conversation_in_stream_mode)！
+- **[2024-07-18]** AgentScope 已支持模型流式输出。请参考我们的 [**教程**](https://doc.agentscope.io/v0/zh_CN/build_tutorial/streaming.html) 和 [**流式对话样例**](https://github.com/modelscope/agentscope/tree/v0/examples/conversation_in_stream_mode)！
 
 <h5 align="left">
 <img src="https://github.com/user-attachments/assets/b14d9b2f-ce02-4f40-8c1a-950f4022c0cc" width="45%" alt="agentscope-logo">
 <img src="https://github.com/user-attachments/assets/dfffbd1e-1fe7-49ee-ac11-902415b2b0d6" width="45%" alt="agentscope-logo">
 </h5>
 
-- **[2024-07-15]** AgentScope 中添加了 Mixture of Agents 算法。使用样例请参考 [MoA 示例](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents)。
+- **[2024-07-15]** AgentScope 中添加了 Mixture of Agents 算法。使用样例请参考 [MoA 示例](https://github.com/modelscope/agentscope/blob/v0/examples/conversation_mixture_of_agents)。
 
-- **[2024-06-14]** 新的提示调优（Prompt tuning）模块已经上线 AgentScope，用以帮助开发者生成和优化智能体的 system prompt。更多的细节和使用样例请参考 AgentScope [教程](https://doc.agentscope.io/build_tutorial/prompt_optimization.html)！
+- **[2024-06-14]** 新的提示调优（Prompt tuning）模块已经上线 AgentScope，用以帮助开发者生成和优化智能体的 system prompt。更多的细节和使用样例请参考 AgentScope [教程](https://doc.agentscope.io/v0/zh_CN/build_tutorial/prompt_optimization.html)！
 
-- **[2024-06-11]** RAG功能现在已经整合进 **AgentScope** 中! 大家可以根据 [**简要介绍AgentScope中的RAG**](https://doc.agentscope.io/tutorial/rag.html) ，让自己的agent用上外部知识!
+- **[2024-06-11]** RAG功能现在已经整合进 **AgentScope** 中! 大家可以根据 [**简要介绍AgentScope中的RAG**](https://doc.agentscope.io/v0/zh_CN/tutorial/rag.html) ，让自己的agent用上外部知识!
 
-- **[2024-06-09]** AgentScope v0.0.5 已经更新！在这个新版本中，我们开源了 [**AgentScope Workstation**](https://doc.agentscope.io/build_tutorial/visual.html) (在线版本的网址是[agentscope.io](https://agentscope.io))！
+- **[2024-06-09]** AgentScope v0.0.5 已经更新！在这个新版本中，我们开源了 [**AgentScope Workstation**](https://doc.agentscope.io/v0/zh_CN/build_tutorial/visual.html) (在线版本的网址是[agentscope.io](https://agentscope.io))！
 
 <details>
 <summary>完整新闻</summary>
 
 - **[2024-05-24]** 我们很高兴地宣布 **AgentScope Workstation** 相关功能即将开源。我们的网站服务暂时下线。在线服务会很快升级重新上线，敬请期待...
 
-- **[2024-05-15]** 用于解析模型格式化输出的**解析器**模块已经上线 AgentScope！更轻松的构建多智能体应用，使用方法请参考[教程](https://doc.agentscope.io/build_tutorial/structured_output.html)。与此同时，[`DictDialogAgent`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/dict_dialog_agent.py) 类和 [狼人杀游戏](https://github.com/modelscope/agentscope/tree/main/examples/game_werewolf) 样例也已经同步更新！
+- **[2024-05-15]** 用于解析模型格式化输出的**解析器**模块已经上线 AgentScope！更轻松的构建多智能体应用，使用方法请参考[教程](https://doc.agentscope.io/v0/zh_CN/build_tutorial/structured_output.html)。与此同时，[`DictDialogAgent`](https://github.com/modelscope/agentscope/blob/v0/src/agentscope/agents/dict_dialog_agent.py) 类和 [狼人杀游戏](https://github.com/modelscope/agentscope/tree/v0/examples/game_werewolf) 样例也已经同步更新！
 
 - **[2024-05-14]** 目前 AgentScope 正在进行 AgentScope Workstation & Copilot 用户体验反馈活动，需要您宝贵的意见来帮助我们改善 AgentScope 的拖拽式多智能体应用开发与 Copilot 体验。您的每一个反馈都十分宝贵，请点击 [链接](https://survey.aliyun.com/apps/zhiliao/vgpTppn22) 参与问卷，感谢您的支持！
 
@@ -40,7 +40,7 @@
 
 - **[2024-03-19]** 新的样例“[带有@功能的自主对话](./examples/conversation_with_mentions)”和“[兼容LangChain的基础对话](./examples/conversation_with_langchain)”上线了！
 
-- **[2024-03-19]** AgentScope的[中文教程](https://modelscope.github.io/agentscope/zh_CN/index.html)上线了！
+- **[2024-03-19]** AgentScope的[中文教程](https://doc.agentscope.io/v0/zh_CN)上线了！
 
 - **[2024-02-27]** 我们现在发布了**AgentScope** v0.0.1版本！现在，AgentScope也可以在[PyPI](https://pypi.org/project/agentscope/)上下载
 
