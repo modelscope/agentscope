@@ -134,7 +134,7 @@ class SeerModel(BaseModel):
 
 
 class WitchResurrectModel(BaseModel):
-    """witch model"""
+    """witch resurrect model"""
 
     name: str = Field(description="The name you want to resurrect")
     resurrect: bool = Field(
@@ -143,7 +143,7 @@ class WitchResurrectModel(BaseModel):
 
 
 class WitchPoisonModel(BaseModel):
-    """witch model"""
+    """witch poison model"""
 
     name: str = Field(description="The name you want to poison")
     poison: bool = Field(description="Whether you want to poison the player")
