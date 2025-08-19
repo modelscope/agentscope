@@ -17,8 +17,7 @@ from werewolf_utils import (
     WitchResurrectModel,
     WitchPoisonModel,
     SeerModel,
-    turn_off_stream,
-    turn_on_stream,
+    collect_votes,
 )
 from agentscope.tool import Toolkit
 from agentscope.agent import ReActAgent, AgentBase
@@ -63,11 +62,6 @@ async def main() -> None:
     healing, poison = True, True
     MAX_WEREWOLF_DISCUSSION_ROUND = 3
     MAX_GAME_ROUND = 6
-    model = DashScopeChatModel(
-        model_name="qwen-max",
-        api_key=os.getenv("DASHSCOPE_API_KEY"),
-        stream=True,
-    )
     roles = ["werewolf", "werewolf", "villager", "villager", "seer", "witch"]
 
     survivors = []
@@ -81,7 +75,11 @@ async def main() -> None:
                     player_name=name,
                     role=roles[i],
                 ),
-                model=model,
+                model=DashScopeChatModel(
+                    model_name="qwen-max",
+                    api_key=os.getenv("DASHSCOPE_API_KEY"),
+                    stream=True,
+                ),
                 formatter=DashScopeMultiAgentFormatter(),
                 toolkit=Toolkit(),
                 memory=InMemoryMemory(),
@@ -109,26 +107,18 @@ async def main() -> None:
             hint = HostMsg(content=Prompts.to_wolves_vote)
             await moderator(hint)
 
-            turn_off_stream(wolves)
-
-            wolves_vote_tasks = [
-                wolf(hint, structured_model=VoteModel) for wolf in wolves
-            ]
-            wolves_vote_results = await asyncio.gather(*wolves_vote_tasks)
-
-            votes = [
-                extract_name_and_id(result.metadata["name"])[0]
-                for result in wolves_vote_results
-            ]
+            votes = await collect_votes(wolves, hint, VoteModel)
             print("Werewolves vote: ", votes)
 
-            turn_on_stream(wolves)
-
             # broadcast the result to werewolves
-            dead_player = [majority_vote(votes)]
-            await hub.broadcast(
-                HostMsg(content=Prompts.to_wolves_res.format(dead_player[0])),
+            dead_player: list = [majority_vote(votes)]
+            vote_result = HostMsg(
+                content=Prompts.to_wolves_res.format(
+                    dead_player[0],
+                ),
             )
+            await hub.broadcast(vote_result)
+            await moderator(vote_result)
 
         # witch
         healing_used_tonight = False
@@ -220,21 +210,7 @@ async def main() -> None:
             hint = HostMsg(content=Prompts.to_all_vote.format(n2s(survivors)))
             await moderator(hint)
 
-            turn_off_stream(survivors)
-
-            survivors_vote_tasks = [
-                x(hint, structured_model=VoteModel) for x in survivors
-            ]
-            survivors_vote_results = await asyncio.gather(
-                *survivors_vote_tasks,
-            )
-
-            turn_on_stream(survivors)
-
-            votes = [
-                extract_name_and_id(result.metadata["name"])[0]
-                for result in survivors_vote_results
-            ]
+            votes = await collect_votes(survivors, hint, VoteModel)
             print("Survivors votes list: ", votes)
 
             vote_res = majority_vote(votes)

@@ -88,7 +88,6 @@ class StructuredAgent(AgentBase):
         self,
         x: Msg | None,
         structured_model: Type[BaseModel] | None = None,
-        **kwargs: Any,
     ) -> Msg | None:
         """Reply function with structured_model support"""
         if x is None:
@@ -131,7 +130,6 @@ class MixedAgent(AgentBase):
         self,
         x: Msg | None,
         structured_model: Type[BaseModel] | None = None,
-        **kwargs: Any,
     ) -> Msg | None:
         """Reply function with both calculation and structured_model support"""
         if x is None:
@@ -429,8 +427,7 @@ class PipelineTest(IsolatedAsyncioTestCase):
         x = Msg("user", "", "user", metadata={"result": 0})
         pipeline = SequentialPipeline([add1, mult2, structured_agent])
         res = await pipeline(x, structured_model=TaskResult)
-        print("lalala")
-        print(res)
+
         # Verify calculation is (0 + 2) * 2 = 4, StructuredAgent does not
         # affect "result"
         self.assertEqual(res.metadata["result"], 4)

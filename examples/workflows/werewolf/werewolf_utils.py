@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """utils."""
+import asyncio
 import re
-from typing import Union, Any, Sequence
+from typing import Union, Any, Sequence, Type
 
 import numpy as np
 from pydantic import BaseModel, Field
@@ -88,6 +89,26 @@ def turn_on_stream(agents: Sequence[ReActAgent]) -> None:
     """turn on stream for all agents"""
     for agent in agents:
         agent.model.stream = True
+
+
+async def collect_votes(
+    voters: Sequence[ReActAgent],
+    hint: Msg,
+    structured_model: Type[BaseModel],
+) -> list[str]:
+    """collect votes from voters"""
+    turn_off_stream(voters)
+    vote_tasks = [
+        voter(hint, structured_model=structured_model) for voter in voters
+    ]
+    wolves_vote_results = await asyncio.gather(*vote_tasks)
+
+    turn_on_stream(voters)
+    votes = [
+        extract_name_and_id(result.metadata["name"])[0]
+        for result in wolves_vote_results
+    ]
+    return votes
 
 
 class WolfDiscussionModel(BaseModel):
