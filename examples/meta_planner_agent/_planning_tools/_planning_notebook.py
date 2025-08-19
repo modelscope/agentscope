@@ -102,12 +102,12 @@ class WorkerResponse(BaseModel):
         description=WORKER_NEXT_STEP_INSTRUCTION,
     )
     generated_files: dict = Field(
-        default_factory=dict,
+        ...,
         description=WORKER_FILE_COLLECTION_INSTRUCTION,
     )
     task_done: bool = Field(
         ...,
-        description="Whether task_done is True",
+        description="Whether task is done or it require addition effort",
     )
 
 

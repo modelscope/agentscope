@@ -228,7 +228,7 @@ class RoadmapManager(StateModule):
             )
         elif subtask_idx >= num_subtasks:
             return ToolResponse(
-                metadata={"success": True},
+                metadata={"success": False},
                 content=[
                     TextBlock(
                         type="text",

@@ -89,7 +89,7 @@ def rebuild_reactworker(
         formatter=formatter if formatter else DashScopeChatFormatter(),
         toolkit=new_toolkit,
         memory=InMemoryMemory() if memory is None else memory,
-        max_iters=20,  # sli
+        max_iters=20,  # hardcoded the max iteration for now
     )
 
 
@@ -499,14 +499,17 @@ class WorkerManager(StateModule):
             )
             # double-check to ensure the generated files exists
             for filepath, desc in worker_response.generated_files.items():
-                if check_file_existence(filepath, self.worker_full_toolkit):
+                if await check_file_existence(
+                    filepath,
+                    self.worker_full_toolkit,
+                ):
                     self.planner_notebook.files[filepath] = desc
                 else:
                     worker_response.generated_files.pop(filepath)
 
             return ToolResponse(
                 metadata={
-                    "success": False,
+                    "success": True,
                     "worker_response": worker_response.model_dump_json(),
                 },
                 content=[
