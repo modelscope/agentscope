@@ -75,7 +75,7 @@ extra_dev_requires = [
     # doc
     "sphinx",
     "sphinx-autobuild",
-    "sphinx_rtd_theme",
+    "furo",
     "myst-parser",
     "sphinxcontrib-mermaid",
     "sphinx-gallery",
