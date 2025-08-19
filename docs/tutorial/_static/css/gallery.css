@@ -148,18 +148,16 @@ td .highlight-python.notranslate {
 
 .version-select {
     display: flex;
+    align-items: center;
+    justify-content: center;
     background: transparent;
     font-size: 14px;
-    padding-inline: 16px;
-    padding-block: 8px;
-    height: 32px;
-    width: 100%;
+    border: 1px solid rgb(238, 235, 238);
+    margin-inline: 16px;
+    padding: 8px;
+    height: fit-content;
     box-sizing: border-box;
-    font-weight: 400;
-    gap: 16px;
-
-    .selected {
-        font-weight: 600;
-        color: #000;
-    }
+    font-weight: 600;
+    border-radius: 6px;
+    fill: rgb(238, 235, 238);
 }

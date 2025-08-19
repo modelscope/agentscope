@@ -5,10 +5,10 @@
         </span>
         <ul>
             <li>
-                <div class="version-select">
-                    <div class="selected">Stable(v1.0)</div>
-                    <a onclick="switchVersion()">v0.1.x</a>
-                </div>
+                <select class="version-select" onchange="navigateToV0(this.value)">
+                    <option value="v1" selected>Stable(v1.0)</option>
+                    <option value="v0">v0.1.x</option>
+                </select>
             </li>
         </ul>
     </p>
