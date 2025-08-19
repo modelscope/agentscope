@@ -43,6 +43,9 @@ From the main agent’s perspective, only high-level categories are visible — 
 * **LLM API Key**: Configure your environment variable:
 ```bash
 export DASHSCOPE_API_KEY="your_dashscope_api_key"
+export GAODE_API_KEY="your_gaode_api_key"
+export BING_API_KEY="your_bing_api_key_from_modelscope"
+export TRAIN_API_KEY="your_12306_api_key_from_modelscope"
 ```
 **MCP Service Setup**
 
@@ -50,7 +53,7 @@ export DASHSCOPE_API_KEY="your_dashscope_api_key"
 * **Bing Search** (Information Retrieval): [ModelScope MCP Service](https://www.modelscope.cn/mcp/servers/@yan5236/bing-cn-mcp-server)
 * **12306 Train Services** (Information Retrieval): [ModelScope MCP Service](https://www.modelscope.cn/mcp/servers/@Joooook/12306-mcp)
 
-Update your sse API keys in `example.py`.
+Update your sse API keys in your environment variable.
 
 **Run Example**
 

@@ -12,6 +12,9 @@ from agentscope.tool import Toolkit, execute_python_code, execute_shell_command
 
 from Meta_toolkit import CategoryManager, MetaManager
 
+gaode_api_key = os.environ["GAODE_API_KEY"]
+bing_api_key = os.environ["BING_API_KEY"]
+train_api_key = os.environ["TRAIN_API_KEY"]
 
 def init_meta_tool_from_intact_file(
     model_config_name: str,
@@ -89,44 +92,36 @@ async def main():
     gaode_client = HttpStatefulClient(
         name="amap-sse",
         transport="sse",
-        url="https://mcp.amap.com/sse?key={YOUR_AMAP_API_KEY}",
+        url=f"https://mcp.amap.com/sse?key={gaode_api_key}",
         # get your own API keys from Gaode MCP servers
     )
     bing_client = HttpStatefulClient(
         name="bing-cn-mcp-server",
         transport="sse",
-        url="https://mcp.api-inference.modelscope.net/{YOUR_BING_API_KEY}/sse",
+        url=f"https://mcp.api-inference.modelscope.net/{bing_api_key}/sse",
         # get your own API keys from Modelscope's Bing MCP servers
     )
     train_client = HttpStatefulClient(
         name="12306-mcp",
         transport="sse",
-        url="https://mcp.api-inference.modelscope.net/{YOUR_12306_API_KEY}/sse",
+        url=f"https://mcp.api-inference.modelscope.net/{train_api_key}/sse",
         # get your own API keys from Modelscope's train 12306 MCP servers
     )
     try:
-        try:
-            await gaode_client.connect()
-            await toolkit.register_mcp_client(
-                gaode_client, group_name="map_tools"
-            )
-            print("Gaode MCP client connected successfully")
-        except Exception as e:
-            print(f"Failed to connect Gaode MCP client: {e}")
+        await gaode_client.connect()
+        await toolkit.register_mcp_client(
+            gaode_client, group_name="map_tools"
+        )
+        print("Gaode MCP client connected successfully")
 
-        try:
-            await bing_client.connect()
-            await toolkit.register_mcp_client(bing_client)
-            print("Bing MCP client connected successfully")
-        except Exception as e:
-            print(f"Failed to connect Bing MCP client: {e}")
+        await bing_client.connect()
+        await toolkit.register_mcp_client(bing_client)
+        print("Bing MCP client connected successfully")
 
-        try:
-            await train_client.connect()
-            await toolkit.register_mcp_client(train_client)
-            print("12306 MCP client connected successfully")
-        except Exception as e:
-            print(f"Failed to connect 12306 MCP client: {e}")
+        await train_client.connect()
+        await toolkit.register_mcp_client(train_client)
+        print("12306 MCP client connected successfully")
+
 
         # Initialize meta manager from configuration
         meta_manager = init_meta_tool_from_intact_file(
