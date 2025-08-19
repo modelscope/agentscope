@@ -202,7 +202,8 @@ Please keep these considerations in mind when generating tool calls."""
             tool_group (`ToolGroup`, optional):
                 The tool group information from the global toolkit. If
                 provided and the function's group doesn't exist in the
-                internal toolkit, the group will be created inside the category manager, maintaining consistency with the outside.
+                internal toolkit, the group will be created inside the 
+                category manager, maintaining consistency with the outside.
 
         Note:
             This method directly adds the tool function object to the internal
