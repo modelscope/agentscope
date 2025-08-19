@@ -159,7 +159,11 @@ async def main() -> None:
                     structured_model=WitchPoisonModel,
                 )
                 if x.metadata.get("poison", False):
-                    dead_player.append(extract_name_and_id(x.metadata["name"]))
+                    dead_player.append(
+                        extract_name_and_id(
+                            x.metadata["name"],
+                        )[0],
+                    )
                     poison = False
 
         # seer
