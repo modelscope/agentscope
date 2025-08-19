@@ -59,8 +59,7 @@ class CategoryManager:
                 category that will be included in the system prompts.
             formatter (`FormatterBase`, optional):
                 The formatter used to format the messages into the required
-                format of the model API provider. If not provided, the
-                category will use basic message formatting.
+                format of the model API provider. 
         """
         self.category_name = category_name
         self.category_description = category_description
