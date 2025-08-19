@@ -1,4 +1,4 @@
-[**English Homepage**](https://github.com/modelscope/agentscope/blob/main/README.md) | [**日本語のホームページ**](https://github.com/modelscope/agentscope/blob/main/README_JA.md) | [**教程**](https://doc.agentscope.io/) | [**开发路线图**](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md) | [**FAQ**](https://doc.agentscope.io/tutorial/faq.html)
+[**English Homepage**](https://github.com/modelscope/agentscope/blob/main/README.md) | [**日本語のホームページ**](https://github.com/modelscope/agentscope/blob/main/README_JA.md) | [**教程**](https://doc.agentscope.io/v0/zh_CN/) | [**开发路线图**](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md) | [**FAQ**](https://doc.agentscope.io/v0/zh_CN/tutorial/faq.html)
 
 <p align="center">
   <img
@@ -29,7 +29,7 @@
             alt="pypi"
         />
     </a>
-    <a href="https://doc.agentscope.io/">
+    <a href="https://doc.agentscope.io/v0/zh_CN/">
         <img
             src="https://img.shields.io/badge/Docs-English%7C%E4%B8%AD%E6%96%87-blue?logo=markdown"
             alt="docs"
@@ -73,13 +73,13 @@
 
 ## 📢 新闻
 - **[2025-07-01]** 新版本的 AgentScope 正在开发中，在这个新的版本中，AgentScope 将变的更加强大和灵活，具有更多新的功能和架构，目前[开发路线图](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md)已更新。
-- **[2025-04-27]** 新的 💻 AgentScope Studio 现已上线。详情请参考[链接](https://doc.agentscope.io/build_tutorial/visual.html)。
-- **[2025-03-21]** AgentScope 现已支持钩子函数。详情请参考[链接](https://doc.agentscope.io/build_tutorial/hook.html)。
-- **[2025-03-19]** AgentScope 现在支持 🔧 Tools API。详情请参考[链接](https://doc.agentscope.io/build_tutorial/tool.html)。
-- **[2025-03-20]** Agentscope 现在支持 [MCP Server](https://github.com/modelcontextprotocol/servers)！请参考[链接](https://doc.agentscope.io/build_tutorial/MCP.html)。
+- **[2025-04-27]** 新的 💻 AgentScope Studio 现已上线。详情请参考[链接](https://doc.agentscope.io/v0/zh_CN/build_tutorial/visual.html)。
+- **[2025-03-21]** AgentScope 现已支持钩子函数。详情请参考[链接](https://doc.agentscope.io/v0/zh_CN/build_tutorial/hook.html)。
+- **[2025-03-19]** AgentScope 现在支持 🔧 Tools API。详情请参考[链接](https://doc.agentscope.io/v0/zh_CN/build_tutorial/tool.html)。
+- **[2025-03-20]** Agentscope 现在支持 [MCP Server](https://github.com/modelcontextprotocol/servers)！请参考[链接](https://doc.agentscope.io/v0/zh_CN/build_tutorial/MCP.html)。
 - **[2025-03-05]** [🎓 AgentScope Copilot](applications/multisource_rag_app/README.md)——多智能体 RAG 应用现已开源！
-- **[2025-02-24]** [🇨🇳 中文版教程](https://doc.agentscope.io/zh_CN)现已上线！
-- **[2025-02-13]** [SWE-Bench(Verified)](https://www.swebench.com/) 解决方案[ 📁 技术报告](https://doc.agentscope.io/tutorial/swe.html)现已上线！
+- **[2025-02-24]** [🇨🇳 中文版教程](https://doc.agentscope.io/v0/zh_CN)现已上线！
+- **[2025-02-13]** [SWE-Bench(Verified)](https://www.swebench.com/) 解决方案[ 📁 技术报告](https://doc.agentscope.io/v0/zh_CN/tutorial/swe.html)现已上线！
 - **[2025-02-07]** 🎉🎉 AgentScope 在 [SWE-Bench(Verified) ](https://www.swebench.com/) 榜单中取得了 **63.4%** 的成绩。
 - **[2025-01-04]** AgentScope 现在支持 Anthropic API。
 

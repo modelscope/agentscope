@@ -1,4 +1,4 @@
-[English Homepage](https://github.com/modelscope/agentscope/blob/main/README.md) | [中文主页](https://github.com/modelscope/agentscope/blob/main/README_ZH.md) | [**Tutorial**](https://doc.agentscope.io/) | [**Roadmap**](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md) | [**FAQ**](https://doc.agentscope.io/tutorial/faq.html)
+[English Homepage](https://github.com/modelscope/agentscope/blob/main/README.md) | [中文主页](https://github.com/modelscope/agentscope/blob/main/README_ZH.md) | [**Tutorial**](https://doc.agentscope.io/v0/en/) | [**Roadmap**](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md) | [**FAQ**](https://doc.agentscope.io/v0/en/tutorial/faq.html)
 
 <p align="center">
   <img
@@ -29,7 +29,7 @@
             alt="pypi"
         />
     </a>
-    <a href="https://doc.agentscope.io/">
+    <a href="https://doc.agentscope.io/v0/en/">
         <img
             src="https://img.shields.io/badge/Docs-English%7C%E4%B8%AD%E6%96%87-blue?logo=markdown"
             alt="docs"
@@ -73,13 +73,13 @@
 
 ## 📢 ニュース
 - **[2025-07-01]** 新しいバージョンのAgentScopeが開発中です。この新しいバージョンでは、AgentScopeはより強力で柔軟になり、新しいアーキテクチャとより多くの機能を備えています。詳細については、[ロードマップ](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md)を参照してください！
-- **[2025-04-27]** 新しい 💻 AgentScope Studioが公開されました。詳細は[こちら](https://doc.agentscope.io/build_tutorial/visual.html)をご覧ください。
-- **[2025-03-21]** AgentScopeはフック関数をサポートしました。詳細は[チュートリアル](https://doc.agentscope.io/build_tutorial/hook.html)をご覧ください。
-- **[2025-03-19]** AgentScopeは 🔧 ツールAPIをサポートしました。詳細は[チュートリアル](https://doc.agentscope.io/build_tutorial/tool.html)をご覧ください。
-- **[2025-03-20]** Agentscopeは[MCP Server](https://github.com/modelcontextprotocol/servers)をサポートしました！[チュートリアル](https://doc.agentscope.io/build_tutorial/MCP.html)で使い方を学べます。
+- **[2025-04-27]** 新しい 💻 AgentScope Studioが公開されました。詳細は[こちら](https://doc.agentscope.io/v0/en/build_tutorial/visual.html)をご覧ください。
+- **[2025-03-21]** AgentScopeはフック関数をサポートしました。詳細は[チュートリアル](https://doc.agentscope.io/v0/en/build_tutorial/hook.html)をご覧ください。
+- **[2025-03-19]** AgentScopeは 🔧 ツールAPIをサポートしました。詳細は[チュートリアル](https://doc.agentscope.io/v0/en/build_tutorial/tool.html)をご覧ください。
+- **[2025-03-20]** Agentscopeは[MCP Server](https://github.com/modelcontextprotocol/servers)をサポートしました！[チュートリアル](https://doc.agentscope.io/v0/en/build_tutorial/MCP.html)で使い方を学べます。
 - **[2025-03-05]** [🎓 AgentScope Copilot](applications/multisource_rag_app/README.md)、マルチソースRAGアプリケーションがオープンソースになりました！
-- **[2025-02-24]** [🇨🇳 中国語版チュートリアル](https://doc.agentscope.io/zh_CN)が公開されました！
-- **[2025-02-13]** [SWE-Bench(Verified)](https://www.swebench.com/)における私たちのソリューションの[📁 技術報告書](https://doc.agentscope.io/tutorial/swe.html)が公開されました！
+- **[2025-02-24]** [🇨🇳 中国語版チュートリアル](https://doc.agentscope.io/v0/en/zh_CN)が公開されました！
+- **[2025-02-13]** [SWE-Bench(Verified)](https://www.swebench.com/)における私たちのソリューションの[📁 技術報告書](https://doc.agentscope.io/v0/en/tutorial/swe.html)が公開されました！
 - **[2025-02-07]** 🎉🎉 AgentScopeは[SWE-Bench(Verified)](https://www.swebench.com/)で**63.4%の解決率**を達成しました！
 - **[2025-01-04]** AgentScopeはAnthropic APIをサポートしました。
 

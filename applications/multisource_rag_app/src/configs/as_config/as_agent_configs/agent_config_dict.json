@@ -18,7 +18,7 @@
           "name": "",
           "local_pattern": "text/build_tutorial/",
           "replace_suffix": ["txt$", "html"],
-          "url_pattern": "https://doc.agentscope.io/build_tutorial/{}"
+          "url_pattern": "https://doc.agentscope.io/v0/en/build_tutorial/{}"
         }
       ],
       "default_web_path_key": "agentscope_clean"
@@ -67,7 +67,7 @@
           "name": "",
           "local_pattern": "text/build_api/",
           "replace_suffix": ["txt$", "html"],
-          "url_pattern": "https://doc.agentscope.io/build_api/{}"
+          "url_pattern": "https://doc.agentscope.io/v0/en/build_api/{}"
         }
       ],
       "default_web_path_key": "agentscope_clean"
