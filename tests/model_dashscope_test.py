@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 """Unit tests for DashScope API model class."""
 from typing import Any, AsyncGenerator
+from unittest.async_case import IsolatedAsyncioTestCase
 from unittest.mock import Mock, patch
 from http import HTTPStatus
-import asyncio
-import pytest
 from pydantic import BaseModel
-
 
 from agentscope.model import DashScopeChatModel, ChatResponse
 from agentscope.message import TextBlock, ToolUseBlock, ThinkingBlock
@@ -29,7 +27,7 @@ class SampleModel(BaseModel):
     age: int
 
 
-class TestDashScopeChatModel:
+class TestDashScopeChatModel(IsolatedAsyncioTestCase):
     """Test cases for DashScopeChatModel."""
 
     def test_init_default_params(self) -> None:
@@ -38,12 +36,12 @@ class TestDashScopeChatModel:
             model_name="qwen-turbo",
             api_key="test_key",
         )
-        assert model.model_name == "qwen-turbo"
-        assert model.api_key == "test_key"
-        assert model.stream is True
-        assert model.enable_thinking is None
-        assert model.incremental_output is True
-        assert model.generate_kwargs == {}
+        self.assertEqual(model.model_name, "qwen-turbo")
+        self.assertEqual(model.api_key, "test_key")
+        self.assertTrue(model.stream)
+        self.assertIsNone(model.enable_thinking)
+        self.assertTrue(model.incremental_output)
+        self.assertEqual(model.generate_kwargs, {})
 
     def test_init_with_enable_thinking_forces_stream(self) -> None:
         """Test that enable_thinking=True forces stream=True."""
@@ -54,8 +52,8 @@ class TestDashScopeChatModel:
                 stream=False,
                 enable_thinking=True,
             )
-            assert model.stream is True
-            assert model.enable_thinking is True
+            self.assertTrue(model.stream)
+            self.assertTrue(model.enable_thinking)
             mock_logger.info.assert_called_once()
 
     def test_init_with_custom_params(self) -> None:
@@ -68,12 +66,11 @@ class TestDashScopeChatModel:
             enable_thinking=False,
             generate_kwargs=generate_kwargs,
         )
-        assert model.model_name == "qwen-max"
-        assert model.stream is False
-        assert model.enable_thinking is False
-        assert model.generate_kwargs == generate_kwargs
+        self.assertEqual(model.model_name, "qwen-max")
+        self.assertFalse(model.stream)
+        self.assertFalse(model.enable_thinking)
+        self.assertEqual(model.generate_kwargs, generate_kwargs)
 
-    @pytest.mark.asyncio
     async def test_call_with_qvq_model_content_conversion(self) -> None:
         """Test content conversion when calling qvq model."""
         model = DashScopeChatModel(
@@ -89,14 +86,12 @@ class TestDashScopeChatModel:
             result = await model(messages)
             # Verify content=None is converted to an empty list
             call_args = mock_call.call_args[1]
-            assert call_args["messages"][0]["content"] == []
-            assert call_args["model"] == "qvq-preview"
-            assert isinstance(result, ChatResponse)
-            assert result.content == [
-                TextBlock(type="text", text="Test response"),
-            ]
+            self.assertEqual(call_args["messages"][0]["content"], [])
+            self.assertEqual(call_args["model"], "qvq-preview")
+            self.assertIsInstance(result, ChatResponse)
+            expected_content = [TextBlock(type="text", text="Test response")]
+            self.assertEqual(result.content, expected_content)
 
-    @pytest.mark.asyncio
     async def test_call_with_vl_model_content_conversion(self) -> None:
         """Test content conversion when calling visual language model."""
         model = DashScopeChatModel(
@@ -112,14 +107,11 @@ class TestDashScopeChatModel:
             result = await model(messages)
             # Verify content=[{"text": None}] is converted to an empty list
             call_args = mock_call.call_args[1]
-            assert call_args["messages"][0]["content"] == []
+            self.assertEqual(call_args["messages"][0]["content"], [])
+            self.assertIsInstance(result, ChatResponse)
+            expected_content = [TextBlock(type="text", text="Test response")]
+            self.assertEqual(result.content, expected_content)
 
-            assert isinstance(result, ChatResponse)
-            assert result.content == [
-                TextBlock(type="text", text="Test response"),
-            ]
-
-    @pytest.mark.asyncio
     async def test_call_with_regular_model(self) -> None:
         """Test calling a regular model."""
         model = DashScopeChatModel(
@@ -138,15 +130,15 @@ class TestDashScopeChatModel:
             mock_call.return_value = mock_response
             result = await model(messages)
             call_args = mock_call.call_args[1]
-            assert call_args["messages"] == messages
-            assert call_args["model"] == "qwen-turbo"
-            assert call_args["stream"] is False
-            assert isinstance(result, ChatResponse)
-            assert result.content == [
+            self.assertEqual(call_args["messages"], messages)
+            self.assertEqual(call_args["model"], "qwen-turbo")
+            self.assertFalse(call_args["stream"])
+            self.assertIsInstance(result, ChatResponse)
+            expected_content = [
                 TextBlock(type="text", text="Hello! How can I help you?"),
             ]
+            self.assertEqual(result.content, expected_content)
 
-    @pytest.mark.asyncio
     async def test_call_with_tools_integration(self) -> None:
         """Test full integration of tool calls."""
         model = DashScopeChatModel(
@@ -185,15 +177,12 @@ class TestDashScopeChatModel:
             mock_call.return_value = mock_response
             result = await model(messages, tools=tools, tool_choice="auto")
             call_args = mock_call.call_args[1]
-            assert "tools" in call_args
-            assert "tool_choice" in call_args
-            assert call_args["tool_choice"] == "auto"
+            self.assertIn("tools", call_args)
+            self.assertIn("tool_choice", call_args)
+            self.assertEqual(call_args["tool_choice"], "auto")
 
-            assert result.content == [
-                TextBlock(
-                    type="text",
-                    text="I'll check the weather for you.",
-                ),
+            expected_content = [
+                TextBlock(type="text", text="I'll check the weather for you."),
                 ToolUseBlock(
                     type="tool_use",
                     id="call_123",
@@ -201,8 +190,8 @@ class TestDashScopeChatModel:
                     input={"location": "Beijing"},
                 ),
             ]
+            self.assertEqual(result.content, expected_content)
 
-    @pytest.mark.asyncio
     async def test_call_with_enable_thinking_streaming(self) -> None:
         """Test streaming response with thinking mode enabled."""
         model = DashScopeChatModel(
@@ -226,27 +215,20 @@ class TestDashScopeChatModel:
             result = await model(messages)
 
             call_args = mock_call.call_args[1]
-            assert call_args["enable_thinking"] is True
-            assert call_args["stream"] is True
+            self.assertTrue(call_args["enable_thinking"])
+            self.assertTrue(call_args["stream"])
             responses = []
             async for response in result:
                 responses.append(response)
+            self.assertGreater(len(responses), 0)
+            self.assertIsInstance(responses[0], ChatResponse)
 
-            assert len(responses) > 0
-            assert isinstance(responses[0], ChatResponse)
-
-            assert responses[0].content == [
-                ThinkingBlock(
-                    type="thinking",
-                    thinking="Let me think...",
-                ),
-                TextBlock(
-                    type="text",
-                    text="Solution",
-                ),
+            expected_content = [
+                ThinkingBlock(type="thinking", thinking="Let me think..."),
+                TextBlock(type="text", text="Solution"),
             ]
+            self.assertEqual(responses[0].content, expected_content)
 
-    @pytest.mark.asyncio
     async def test_call_with_structured_model_integration(self) -> None:
         """Test full integration of a structured model."""
         model = DashScopeChatModel(
@@ -269,9 +251,9 @@ class TestDashScopeChatModel:
             ],
         )
 
-        with (
-            patch("dashscope.aigc.generation.AioGeneration.call") as mock_call,
-        ):
+        with patch(
+            "dashscope.aigc.generation.AioGeneration.call",
+        ) as mock_call:
             mock_call.return_value = mock_response
 
             result = await model(messages, structured_model=SampleModel)
@@ -304,21 +286,21 @@ class TestDashScopeChatModel:
                     },
                 },
             ]
-            assert call_args["tools"] == expected_tools
-            assert call_args["tool_choice"] == {
-                "type": "function",
-                "function": {
-                    "name": "format_output",
+            self.assertEqual(call_args["tools"], expected_tools)
+            self.assertEqual(
+                call_args["tool_choice"],
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "format_output",
+                    },
                 },
-            }
+            )
 
-            assert isinstance(result, ChatResponse)
-            assert result.metadata == {"name": "John", "age": 30}
-            assert result.content == [
-                TextBlock(
-                    type="text",
-                    text="Here's a person",
-                ),
+            self.assertIsInstance(result, ChatResponse)
+            self.assertEqual(result.metadata, {"name": "John", "age": 30})
+            expected_content = [
+                TextBlock(type="text", text="Here's a person"),
                 ToolUseBlock(
                     type="tool_use",
                     id="call_123",
@@ -326,8 +308,8 @@ class TestDashScopeChatModel:
                     input={"name": "John", "age": 30},
                 ),
             ]
+            self.assertEqual(result.content, expected_content)
 
-    @pytest.mark.asyncio
     async def test_call_with_structured_model_warning(self) -> None:
         """Test warning when a structured model overrides tools."""
         model = DashScopeChatModel(
@@ -348,7 +330,6 @@ class TestDashScopeChatModel:
             await model(messages, tools=tools, structured_model=SampleModel)
             mock_logger.warning.assert_called_once()
 
-    @pytest.mark.asyncio
     async def test_streaming_response_processing(self) -> None:
         """Test processing of streaming response."""
         model = DashScopeChatModel(
@@ -389,19 +370,15 @@ class TestDashScopeChatModel:
             responses = []
             async for response in result:
                 responses.append(response)
-
-            assert len(responses) == 2
+            self.assertEqual(len(responses), 2)
             final_response = responses[-1]
 
-            assert final_response.content == [
+            expected_content = [
                 ThinkingBlock(
                     type="thinking",
                     thinking="I should greet the user",
                 ),
-                TextBlock(
-                    type="text",
-                    text="Hello there!",
-                ),
+                TextBlock(type="text", text="Hello there!"),
                 ToolUseBlock(
                     id="call_123",
                     name="greet",
@@ -409,8 +386,8 @@ class TestDashScopeChatModel:
                     type="tool_use",
                 ),
             ]
+            self.assertEqual(final_response.content, expected_content)
 
-    @pytest.mark.asyncio
     async def test_tool_choice_validation_through_api(self) -> None:
         """Test tool choice validation through API call."""
         model = DashScopeChatModel(
@@ -438,16 +415,16 @@ class TestDashScopeChatModel:
         ]
 
         for tool_choice, expected_format in test_cases:
-            with patch(
-                "dashscope.aigc.generation.AioGeneration.call",
-            ) as mock_call:
-                mock_call.return_value = mock_response
-                await model(messages, tools=tools, tool_choice=tool_choice)
+            with self.subTest(tool_choice=tool_choice):
+                with patch(
+                    "dashscope.aigc.generation.AioGeneration.call",
+                ) as mock_call:
+                    mock_call.return_value = mock_response
+                    await model(messages, tools=tools, tool_choice=tool_choice)
 
-                call_args = mock_call.call_args[1]
-                assert call_args["tool_choice"] == expected_format
+                    call_args = mock_call.call_args[1]
+                    self.assertEqual(call_args["tool_choice"], expected_format)
 
-    @pytest.mark.asyncio
     async def test_tool_choice_unsupported_options(self) -> None:
         """Test unsupported tool choice options."""
         model = DashScopeChatModel(
@@ -469,7 +446,7 @@ class TestDashScopeChatModel:
             await model(messages, tools=tools, tool_choice="any")
 
             call_args = mock_call.call_args[1]
-            assert call_args["tool_choice"] == "auto"
+            self.assertEqual(call_args["tool_choice"], "auto")
             mock_logger.warning.assert_called()
 
     def test_tools_schema_validation_through_api(self) -> None:
@@ -502,12 +479,18 @@ class TestDashScopeChatModel:
 
             # Should not throw an exception
             try:
-                asyncio.run(model(messages, tools=valid_tools))
+                import asyncio
+
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    # If event loop is already running, create a task
+                    loop.create_task(model(messages, tools=valid_tools))
+                else:
+                    loop.run_until_complete(model(messages, tools=valid_tools))
             except Exception as e:
                 if "schema must be a dict" in str(e):
-                    pytest.fail("Valid tools schema was rejected")
+                    self.fail("Valid tools schema was rejected")
 
-    @pytest.mark.asyncio
     async def test_error_handling_scenarios(self) -> None:
         """Test various error handling scenarios."""
         model = DashScopeChatModel(
@@ -524,10 +507,9 @@ class TestDashScopeChatModel:
             "dashscope.aigc.generation.AioGeneration.call",
         ) as mock_call:
             mock_call.return_value = mock_response
-            with pytest.raises(RuntimeError):
+            with self.assertRaises(RuntimeError):
                 await model(messages)
 
-    @pytest.mark.asyncio
     async def test_streaming_error_handling(self) -> None:
         """Test error handling for streaming responses."""
         model = DashScopeChatModel(
@@ -547,11 +529,10 @@ class TestDashScopeChatModel:
             )
 
             result = await model(messages)
-            with pytest.raises(RuntimeError):
+            with self.assertRaises(RuntimeError):
                 async for _ in result:
                     pass
 
-    @pytest.mark.asyncio
     async def test_content_processing_variations(self) -> None:
         """Test various content processing scenarios."""
         model = DashScopeChatModel(
@@ -560,7 +541,6 @@ class TestDashScopeChatModel:
             stream=False,
         )
         messages = [{"role": "user", "content": "Test"}]
-
         # Test content in list format
         mock_response = Mock()
         mock_response.status_code = 200
@@ -582,10 +562,11 @@ class TestDashScopeChatModel:
             mock_call.return_value = mock_response
             result = await model(messages)
 
-            assert result.content == [
+            expected_content = [
                 TextBlock(type="text", text="Hello"),
                 TextBlock(type="text", text=" world"),
             ]
+            self.assertEqual(result.content, expected_content)
 
     # Auxiliary methods
     def _create_mock_response(self, content: str) -> Mock:
@@ -649,13 +630,10 @@ class TestDashScopeChatModel:
             yield item
 
 
-class TestDashScopeIntegrationScenarios:
+class TestDashScopeIntegrationScenarios(IsolatedAsyncioTestCase):
     """Integration test scenarios for Dashscope model."""
 
-    @pytest.mark.asyncio
-    async def test_complete_conversation_flow(
-        self,
-    ) -> None:
+    async def test_complete_conversation_flow(self) -> None:
         """Test the complete conversation flow."""
         model = DashScopeChatModel(
             model_name="qwen-max",
@@ -681,22 +659,19 @@ class TestDashScopeIntegrationScenarios:
         ) as mock_call:
             mock_call.return_value = mock_response
             result = await model(messages)
-            assert isinstance(result, ChatResponse)
-            assert len(result.content) == 1
-            assert result.content == [
+            self.assertIsInstance(result, ChatResponse)
+            self.assertEqual(len(result.content), 1)
+            expected_content = [
                 TextBlock(
                     type="text",
                     text="I'm doing well, thank you for asking!",
                 ),
             ]
+            self.assertEqual(result.content, expected_content)
+            self.assertEqual(result.usage.input_tokens, 15)
+            self.assertEqual(result.usage.output_tokens, 25)
 
-            assert result.usage.input_tokens == 15
-            assert result.usage.output_tokens == 25
-
-    @pytest.mark.asyncio
-    async def test_multi_turn_conversation_with_tools(
-        self,
-    ) -> None:
+    async def test_multi_turn_conversation_with_tools(self) -> None:
         """Test multi-turn conversation with tools."""
         model = DashScopeChatModel(
             model_name="qwen-turbo",
@@ -722,7 +697,6 @@ class TestDashScopeIntegrationScenarios:
                 },
             },
         ]
-
         mock_response = Mock()
         mock_response.status_code = 200
         mock_response.output.choices = [Mock()]
@@ -747,13 +721,9 @@ class TestDashScopeIntegrationScenarios:
             "dashscope.aigc.generation.AioGeneration.call",
         ) as mock_call:
             mock_call.return_value = mock_response
-            result = await model(
-                messages,
-                tools=tools,
-                tool_choice="auto",
-            )
+            result = await model(messages, tools=tools, tool_choice="auto")
 
-            assert result.content == [
+            expected_content = [
                 TextBlock(
                     type="text",
                     text="Let me check the weather for you.",
@@ -765,8 +735,8 @@ class TestDashScopeIntegrationScenarios:
                     input={"location": "Beijing"},
                 ),
             ]
+            self.assertEqual(result.content, expected_content)
 
-    @pytest.mark.asyncio
     async def test_streaming_with_complex_content(self) -> None:
         """Test streaming processing with complex content."""
         model = DashScopeChatModel(
@@ -863,10 +833,10 @@ class TestDashScopeIntegrationScenarios:
             async for response in result:
                 responses.append(response)
 
-            assert len(responses) == 3
+            self.assertEqual(len(responses), 3)
             final_response = responses[-1]
 
-            assert final_response.content == [
+            expected_content = [
                 ThinkingBlock(
                     type="thinking",
                     thinking="Let me analyze this step by step. First, "
@@ -884,3 +854,4 @@ class TestDashScopeIntegrationScenarios:
                     input={"expression": "2+2"},
                 ),
             ]
+            self.assertEqual(final_response.content, expected_content)

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Unit tests for OpenAI API model class."""
 from typing import AsyncGenerator, Any
+from unittest.async_case import IsolatedAsyncioTestCase
 from unittest.mock import Mock, patch, AsyncMock
-import pytest
 from pydantic import BaseModel
 
 from agentscope.model import OpenAIChatModel, ChatResponse
@@ -16,20 +16,17 @@ class SampleModel(BaseModel):
     age: int
 
 
-class TestOpenAIChatModel:
+class TestOpenAIChatModel(IsolatedAsyncioTestCase):
     """Test cases for OpenAIChatModel."""
 
     def test_init_default_params(self) -> None:
         """Test initialization with default parameters."""
         with patch("openai.AsyncClient") as mock_client:
-            model = OpenAIChatModel(
-                model_name="gpt-4",
-                api_key="test_key",
-            )
-            assert model.model_name == "gpt-4"
-            assert model.stream is True
-            assert model.reasoning_effort is None
-            assert model.generate_kwargs == {}
+            model = OpenAIChatModel(model_name="gpt-4", api_key="test_key")
+            self.assertEqual(model.model_name, "gpt-4")
+            self.assertTrue(model.stream)
+            self.assertIsNone(model.reasoning_effort)
+            self.assertEqual(model.generate_kwargs, {})
             mock_client.assert_called_once_with(
                 api_key="test_key",
                 organization=None,
@@ -49,33 +46,29 @@ class TestOpenAIChatModel:
                 client_args=client_args,
                 generate_kwargs=generate_kwargs,
             )
-            assert model.model_name == "gpt-4o"
-            assert model.stream is False
-            assert model.reasoning_effort == "high"
-            assert model.generate_kwargs == generate_kwargs
+            self.assertEqual(model.model_name, "gpt-4o")
+            self.assertFalse(model.stream)
+            self.assertEqual(model.reasoning_effort, "high")
+            self.assertEqual(model.generate_kwargs, generate_kwargs)
             mock_client.assert_called_once_with(
                 api_key="test_key",
                 organization="org-123",
                 timeout=30,
             )
 
-    @pytest.mark.asyncio
     async def test_call_with_invalid_messages_format(self) -> None:
         """Test calling with invalid messages format."""
         with patch("openai.AsyncClient"):
             model = OpenAIChatModel(model_name="gpt-4", api_key="test_key")
-            # Test non-list messages
-            with pytest.raises(ValueError, match="expected type `list`"):
+            with self.assertRaisesRegex(ValueError, "expected type `list`"):
                 await model("invalid messages")
-            # Test messages without required fields
             invalid_messages = [{"role": "user"}]  # missing content
-            with pytest.raises(
+            with self.assertRaisesRegex(
                 ValueError,
-                match="must contain a 'role' and 'content' key",
+                "must contain a 'role' and 'content' key",
             ):
                 await model(invalid_messages)
 
-    @pytest.mark.asyncio
     async def test_call_with_regular_model(self) -> None:
         """Test calling a regular model."""
         with patch("openai.AsyncClient") as mock_client_class:
@@ -99,15 +92,15 @@ class TestOpenAIChatModel:
 
             result = await model(messages)
             call_args = mock_client.chat.completions.create.call_args[1]
-            assert call_args["model"] == "gpt-4"
-            assert call_args["messages"] == messages
-            assert call_args["stream"] is False
-            assert isinstance(result, ChatResponse)
-            assert result.content == [
+            self.assertEqual(call_args["model"], "gpt-4")
+            self.assertEqual(call_args["messages"], messages)
+            self.assertFalse(call_args["stream"])
+            self.assertIsInstance(result, ChatResponse)
+            expected_content = [
                 TextBlock(type="text", text="Hello! How can I help you?"),
             ]
+            self.assertEqual(result.content, expected_content)
 
-    @pytest.mark.asyncio
     async def test_call_with_tools_integration(self) -> None:
         """Test full integration of tool calls."""
         with patch("openai.AsyncClient") as mock_client_class:
@@ -148,10 +141,10 @@ class TestOpenAIChatModel:
             )
             result = await model(messages, tools=tools, tool_choice="auto")
             call_args = mock_client.chat.completions.create.call_args[1]
-            assert "tools" in call_args
-            assert call_args["tools"] == tools
-            assert call_args["tool_choice"] == "auto"
-            assert result.content == [
+            self.assertIn("tools", call_args)
+            self.assertEqual(call_args["tools"], tools)
+            self.assertEqual(call_args["tool_choice"], "auto")
+            expected_content = [
                 TextBlock(type="text", text="I'll check the weather for you."),
                 ToolUseBlock(
                     type="tool_use",
@@ -160,8 +153,8 @@ class TestOpenAIChatModel:
                     input={"location": "Beijing"},
                 ),
             ]
+            self.assertEqual(result.content, expected_content)
 
-    @pytest.mark.asyncio
     async def test_call_with_reasoning_effort(self) -> None:
         """Test calling with reasoning effort enabled."""
         with patch("openai.AsyncClient") as mock_client_class:
@@ -189,16 +182,16 @@ class TestOpenAIChatModel:
             result = await model(messages)
 
             call_args = mock_client.chat.completions.create.call_args[1]
-            assert call_args["reasoning_effort"] == "high"
-            assert result.content == [
+            self.assertEqual(call_args["reasoning_effort"], "high")
+            expected_content = [
                 ThinkingBlock(
                     type="thinking",
                     thinking="Let me analyze this step by step...",
                 ),
                 TextBlock(type="text", text="Here's my analysis"),
             ]
+            self.assertEqual(result.content, expected_content)
 
-    @pytest.mark.asyncio
     async def test_call_with_structured_model_integration(self) -> None:
         """Test full integration of a structured model."""
         with patch("openai.AsyncClient") as mock_client_class:
@@ -222,14 +215,13 @@ class TestOpenAIChatModel:
 
             result = await model(messages, structured_model=SampleModel)
             call_args = mock_client.chat.completions.parse.call_args[1]
-            assert call_args["response_format"] == SampleModel
-            assert "tools" not in call_args
-            assert "tool_choice" not in call_args
-            assert "stream" not in call_args
-            assert isinstance(result, ChatResponse)
-            assert result.metadata == {"name": "John", "age": 30}
+            self.assertEqual(call_args["response_format"], SampleModel)
+            self.assertNotIn("tools", call_args)
+            self.assertNotIn("tool_choice", call_args)
+            self.assertNotIn("stream", call_args)
+            self.assertIsInstance(result, ChatResponse)
+            self.assertEqual(result.metadata, {"name": "John", "age": 30})
 
-    @pytest.mark.asyncio
     async def test_call_with_structured_model_warning(self) -> None:
         """Test warning when a structured model overrides tools."""
         with patch("openai.AsyncClient") as mock_client_class:
@@ -258,7 +250,6 @@ class TestOpenAIChatModel:
                 )
                 mock_logger.warning.assert_called_once()
 
-    @pytest.mark.asyncio
     async def test_streaming_response_processing(self) -> None:
         """Test processing of streaming response."""
         with patch("openai.AsyncClient") as mock_client_class:
@@ -273,7 +264,6 @@ class TestOpenAIChatModel:
             model.client = mock_client
 
             messages = [{"role": "user", "content": "Hello"}]
-            # Create simple stream mock
             stream_mock = self._create_stream_mock(
                 [
                     {"content": "Hello"},
@@ -287,18 +277,19 @@ class TestOpenAIChatModel:
             result = await model(messages)
 
             call_args = mock_client.chat.completions.create.call_args[1]
-            assert call_args["stream_options"] == {"include_usage": True}
+            self.assertEqual(
+                call_args["stream_options"],
+                {"include_usage": True},
+            )
             responses = []
             async for response in result:
                 responses.append(response)
 
-            assert len(responses) >= 1
+            self.assertGreaterEqual(len(responses), 1)
             final_response = responses[-1]
-            assert final_response.content == [
-                TextBlock(type="text", text="Hello there!"),
-            ]
+            expected_content = [TextBlock(type="text", text="Hello there!")]
+            self.assertEqual(final_response.content, expected_content)
 
-    @pytest.mark.asyncio
     async def test_streaming_with_reasoning_and_tools(self) -> None:
         """Test streaming with reasoning and tool calls."""
         with patch("openai.AsyncClient") as mock_client_class:
@@ -342,7 +333,7 @@ class TestOpenAIChatModel:
                 responses.append(response)
 
             final_response = responses[-1]
-            assert final_response.content == [
+            expected_content = [
                 ThinkingBlock(type="thinking", thinking="Let me think..."),
                 TextBlock(type="text", text="I'll calculate this for you."),
                 ToolUseBlock(
@@ -352,6 +343,7 @@ class TestOpenAIChatModel:
                     input={"expression": "2+2"},
                 ),
             ]
+            self.assertEqual(final_response.content, expected_content)
 
     # Auxiliary methods - ensure all Mock objects have complete attributes
     def _create_mock_response(
@@ -361,22 +353,18 @@ class TestOpenAIChatModel:
         completion_tokens: int = 20,
     ) -> Mock:
         """Create a standard mock response."""
-        # Create message mock, ensuring all necessary attributes are present
         message = Mock()
         message.content = content
         message.reasoning_content = None
-        message.tool_calls = []  # Real empty list
-        message.parsed = None  # For structured output, even if unused
+        message.tool_calls = []
+        message.parsed = None
 
-        # Create choice mock
         choice = Mock()
         choice.message = message
 
-        # Create response mock, ensuring choices is a real list
         response = Mock()
-        response.choices = [choice]  # Real list
+        response.choices = [choice]
 
-        # Create usage mock
         usage = Mock()
         usage.prompt_tokens = prompt_tokens
         usage.completion_tokens = completion_tokens
@@ -390,7 +378,6 @@ class TestOpenAIChatModel:
     ) -> Mock:
         """Create a mock response with tool calls."""
         response = self._create_mock_response(content)
-        # Create real list of tool call mocks
         tool_call_mocks = []
         for tool_call in tool_calls:
             tc_mock = Mock()
@@ -399,7 +386,6 @@ class TestOpenAIChatModel:
             tc_mock.function.name = tool_call["name"]
             tc_mock.function.arguments = tool_call["arguments"]
             tool_call_mocks.append(tc_mock)
-        # Set as real list
         response.choices[0].message.tool_calls = tool_call_mocks
         return response
 
@@ -415,24 +401,18 @@ class TestOpenAIChatModel:
 
     def _create_mock_response_with_structured_data(self, data: dict) -> Mock:
         """Create a mock response with structured data."""
-        # Create complete message mock
         message = Mock()
         message.parsed = Mock()
         message.parsed.model_dump.return_value = data
-        # Ensure all other attributes are present
         message.content = None
         message.reasoning_content = None
-        message.tool_calls = []  # Real empty list
+        message.tool_calls = []
 
-        # Create choice mock
         choice = Mock()
         choice.message = message
 
-        # Create response mock, ensuring choices is a real list
         response = Mock()
-        response.choices = [choice]  # Real list
-
-        # Add usage (though structured response may not need it)
+        response.choices = [choice]
         response.usage = None
 
         return response
@@ -467,11 +447,9 @@ class TestOpenAIChatModel:
                 chunk_data = self.chunks_data[self.index]
                 self.index += 1
 
-                # Create delta mock
                 delta = Mock()
                 delta.content = chunk_data.get("content")
                 delta.reasoning_content = chunk_data.get("reasoning_content")
-                # Handle tool_calls, ensuring it's always a list
                 if "tool_calls" in chunk_data:
                     tool_call_mocks = []
                     for tc_data in chunk_data["tool_calls"]:
@@ -484,15 +462,13 @@ class TestOpenAIChatModel:
                         tool_call_mocks.append(tc_mock)
                     delta.tool_calls = tool_call_mocks
                 else:
-                    delta.tool_calls = []  # Empty list instead of None
+                    delta.tool_calls = []
 
-                # Create choice mock
                 choice = Mock()
                 choice.delta = delta
 
-                # Create chunk mock, ensuring choices is a real list
                 chunk = Mock()
-                chunk.choices = [choice]  # Real list
+                chunk.choices = [choice]
                 chunk.usage = Mock()
                 chunk.usage.prompt_tokens = 5
                 chunk.usage.completion_tokens = 10
@@ -501,10 +477,9 @@ class TestOpenAIChatModel:
         return MockStream(chunks_data)
 
 
-class TestOpenAIIntegrationScenarios:
+class TestOpenAIIntegrationScenarios(IsolatedAsyncioTestCase):
     """Integration test scenarios for OpenAI model."""
 
-    @pytest.mark.asyncio
     async def test_complete_conversation_flow(self) -> None:
         """Test the complete conversation flow."""
         with patch("openai.AsyncClient") as mock_client_class:
@@ -520,21 +495,18 @@ class TestOpenAIIntegrationScenarios:
 
             messages = [{"role": "user", "content": "Hello, how are you?"}]
 
-            # Create complete message mock, ensuring all attributes are present
             message = Mock()
             message.content = "I'm doing well, thank you for asking!"
             message.reasoning_content = None
-            message.tool_calls = []  # Real empty list
+            message.tool_calls = []
             message.parsed = None
 
-            # Create choice mock
             choice = Mock()
             choice.message = message
-            # Create response mock, ensuring choices is a real list
-            response = Mock()
-            response.choices = [choice]  # Real list
 
-            # Create usage mock
+            response = Mock()
+            response.choices = [choice]
+
             usage = Mock()
             usage.prompt_tokens = 15
             usage.completion_tokens = 25
@@ -545,12 +517,13 @@ class TestOpenAIIntegrationScenarios:
             )
             result = await model(messages)
 
-            assert isinstance(result, ChatResponse)
-            assert result.content == [
+            self.assertIsInstance(result, ChatResponse)
+            expected_content = [
                 TextBlock(
                     type="text",
                     text="I'm doing well, thank you for asking!",
                 ),
             ]
-            assert result.usage.input_tokens == 15
-            assert result.usage.output_tokens == 25
+            self.assertEqual(result.content, expected_content)
+            self.assertEqual(result.usage.input_tokens, 15)
+            self.assertEqual(result.usage.output_tokens, 25)

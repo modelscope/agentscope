@@ -49,7 +49,6 @@ extra_requires = [
 dev_requires = [
     "pre-commit",
     "pytest",
-    "pytest-asyncio",
     "sphinx-gallery",
     "myst_parser",
     "sphinx_rtd_theme",

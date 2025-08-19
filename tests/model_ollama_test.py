@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Unit tests for Ollama API model class."""
 from typing import AsyncGenerator, Any
+from unittest.async_case import IsolatedAsyncioTestCase
 from unittest.mock import patch, AsyncMock
-import pytest
 from pydantic import BaseModel
 
 from agentscope.model import OllamaChatModel, ChatResponse
@@ -74,18 +74,18 @@ class SampleModel(BaseModel):
     age: int
 
 
-class TestOllamaChatModel:
+class TestOllamaChatModel(IsolatedAsyncioTestCase):
     """Test cases for OllamaChatModel."""
 
     def test_init_default_params(self) -> None:
         """Test initialization with default parameters."""
         with patch("ollama.AsyncClient") as mock_client:
             model = OllamaChatModel(model_name="llama3.2")
-            assert model.model_name == "llama3.2"
-            assert model.stream is False
-            assert model.options is None
-            assert model.keep_alive == "5m"
-            assert model.think is None
+            self.assertEqual(model.model_name, "llama3.2")
+            self.assertFalse(model.stream)
+            self.assertIsNone(model.options)
+            self.assertEqual(model.keep_alive, "5m")
+            self.assertIsNone(model.think)
             mock_client.assert_called_once_with(host=None)
 
     def test_init_with_custom_params(self) -> None:
@@ -101,11 +101,11 @@ class TestOllamaChatModel:
                 host="http://localhost:11434",
                 timeout=30,
             )
-            assert model.model_name == "qwen2.5"
-            assert model.stream is True
-            assert model.options == options
-            assert model.keep_alive == "10m"
-            assert model.think is True
+            self.assertEqual(model.model_name, "qwen2.5")
+            self.assertTrue(model.stream)
+            self.assertEqual(model.options, options)
+            self.assertEqual(model.keep_alive, "10m")
+            self.assertTrue(model.think)
             mock_client.assert_called_once_with(
                 host="http://localhost:11434",
                 timeout=30,
@@ -114,13 +114,12 @@ class TestOllamaChatModel:
     def test_init_missing_ollama_package(self) -> None:
         """Test initialization when ollama package is missing."""
         with patch("builtins.__import__", side_effect=ImportError):
-            with pytest.raises(
+            with self.assertRaisesRegex(
                 ImportError,
-                match="The package ollama is not found",
+                "The package ollama is not found",
             ):
                 OllamaChatModel(model_name="llama3.2")
 
-    @pytest.mark.asyncio
     async def test_call_with_regular_model(self) -> None:
         """Test calling a regular model."""
         with patch("ollama.AsyncClient") as mock_client_class:
@@ -138,15 +137,15 @@ class TestOllamaChatModel:
 
             result = await model(messages)
             call_args = mock_client.chat.call_args[1]
-            assert call_args["model"] == "llama3.2"
-            assert call_args["messages"] == messages
-            assert call_args["stream"] is False
-            assert isinstance(result, ChatResponse)
-            assert result.content == [
+            self.assertEqual(call_args["model"], "llama3.2")
+            self.assertEqual(call_args["messages"], messages)
+            self.assertFalse(call_args["stream"])
+            self.assertIsInstance(result, ChatResponse)
+            expected_content = [
                 TextBlock(type="text", text="Hello! How can I help you?"),
             ]
+            self.assertEqual(result.content, expected_content)
 
-    @pytest.mark.asyncio
     async def test_call_with_tools_integration(self) -> None:
         """Test full integration of tool calls."""
         with patch("ollama.AsyncClient") as mock_client_class:
@@ -188,9 +187,9 @@ class TestOllamaChatModel:
             result = await model(messages, tools=tools)
 
             call_args = mock_client.chat.call_args[1]
-            assert "tools" in call_args
-            assert call_args["tools"] == tools
-            assert result.content == [
+            self.assertIn("tools", call_args)
+            self.assertEqual(call_args["tools"], tools)
+            expected_content = [
                 TextBlock(type="text", text="I'll check the weather for you."),
                 ToolUseBlock(
                     type="tool_use",
@@ -199,8 +198,8 @@ class TestOllamaChatModel:
                     input={"location": "Beijing"},
                 ),
             ]
+            self.assertEqual(result.content, expected_content)
 
-    @pytest.mark.asyncio
     async def test_call_with_tool_choice_warning(self) -> None:
         """Test warning when tool_choice is provided."""
         with patch("ollama.AsyncClient") as mock_client_class:
@@ -221,7 +220,6 @@ class TestOllamaChatModel:
                     "Ollama does not support tool_choice yet, ignored.",
                 )
 
-    @pytest.mark.asyncio
     async def test_call_with_thinking_enabled(self) -> None:
         """Test calling with thinking functionality enabled."""
         with patch("ollama.AsyncClient") as mock_client_class:
@@ -250,16 +248,16 @@ class TestOllamaChatModel:
             result = await model(messages)
 
             call_args = mock_client.chat.call_args[1]
-            assert call_args["think"] is True
-            assert result.content == [
+            self.assertTrue(call_args["think"])
+            expected_content = [
                 ThinkingBlock(
                     type="thinking",
                     thinking="Let me analyze this step by step...",
                 ),
                 TextBlock(type="text", text="Here's my analysis"),
             ]
+            self.assertEqual(result.content, expected_content)
 
-    @pytest.mark.asyncio
     async def test_call_with_structured_model_integration(self) -> None:
         """Test full integration of a structured model."""
         with patch("ollama.AsyncClient") as mock_client_class:
@@ -277,15 +275,18 @@ class TestOllamaChatModel:
 
             result = await model(messages, structured_model=SampleModel)
             call_args = mock_client.chat.call_args[1]
-            assert "format" in call_args
-            assert call_args["format"] == SampleModel.model_json_schema()
-            assert isinstance(result, ChatResponse)
-            assert result.metadata == {"name": "John", "age": 30}
-            assert result.content == [
+            self.assertIn("format", call_args)
+            self.assertEqual(
+                call_args["format"],
+                SampleModel.model_json_schema(),
+            )
+            self.assertIsInstance(result, ChatResponse)
+            self.assertEqual(result.metadata, {"name": "John", "age": 30})
+            expected_content = [
                 TextBlock(type="text", text='{"name": "John", "age": 30}'),
             ]
+            self.assertEqual(result.content, expected_content)
 
-    @pytest.mark.asyncio
     async def test_structured_model_with_invalid_json_response(self) -> None:
         """Test structured model handling when response contains invalid
         JSON."""
@@ -302,13 +303,12 @@ class TestOllamaChatModel:
             )
             mock_client.chat = AsyncMock(return_value=mock_response)
 
-            with pytest.raises(
+            with self.assertRaisesRegex(
                 ValueError,
-                match="Failed to decode JSON string",
+                "Failed to decode JSON string",
             ):
                 await model(messages, structured_model=SampleModel)
 
-    @pytest.mark.asyncio
     async def test_streaming_response_processing(self) -> None:
         """Test processing of streaming response."""
         with patch("ollama.AsyncClient") as mock_client_class:
@@ -332,13 +332,11 @@ class TestOllamaChatModel:
             async for response in result:
                 responses.append(response)
 
-            assert len(responses) >= 1
+            self.assertGreaterEqual(len(responses), 1)
             final_response = responses[-1]
-            assert final_response.content == [
-                TextBlock(type="text", text="Hello there!"),
-            ]
+            expected_content = [TextBlock(type="text", text="Hello there!")]
+            self.assertEqual(final_response.content, expected_content)
 
-    @pytest.mark.asyncio
     async def test_streaming_with_thinking_and_tools(self) -> None:
         """Test streaming with thinking and tool calls."""
         with patch("ollama.AsyncClient") as mock_client_class:
@@ -381,9 +379,9 @@ class TestOllamaChatModel:
                 responses.append(response)
 
             final_response = responses[-1]
-            assert isinstance(final_response, ChatResponse)
+            self.assertIsInstance(final_response, ChatResponse)
 
-            assert final_response.content == [
+            expected_content = [
                 ThinkingBlock(
                     type="thinking",
                     thinking="Let me think...",
@@ -396,8 +394,8 @@ class TestOllamaChatModel:
                     input=tool_call_mock.function.arguments,
                 ),
             ]
+            self.assertEqual(final_response.content, expected_content)
 
-    @pytest.mark.asyncio
     async def test_options_integration(self) -> None:
         """Test integration of options parameter."""
         with patch("ollama.AsyncClient") as mock_client_class:
@@ -419,11 +417,10 @@ class TestOllamaChatModel:
             await model(messages, top_k=40)
 
             call_args = mock_client.chat.call_args[1]
-            assert call_args["options"] == options
-            assert call_args["keep_alive"] == "5m"
-            assert call_args["top_k"] == 40
+            self.assertEqual(call_args["options"], options)
+            self.assertEqual(call_args["keep_alive"], "5m")
+            self.assertEqual(call_args["top_k"], 40)
 
-    @pytest.mark.asyncio
     async def test_think_parameter_override(self) -> None:
         """Test think parameter can be overridden in call."""
         with patch("ollama.AsyncClient") as mock_client_class:
@@ -445,7 +442,7 @@ class TestOllamaChatModel:
             await model(messages, think=False)
 
             call_args = mock_client.chat.call_args[1]
-            assert call_args["think"] is False
+            self.assertFalse(call_args["think"])
 
     # Auxiliary methods
     def _create_mock_response(
@@ -503,10 +500,9 @@ class TestOllamaChatModel:
             yield item
 
 
-class TestOllamaIntegrationScenarios:
+class TestOllamaIntegrationScenarios(IsolatedAsyncioTestCase):
     """Integration test scenarios for Ollama model."""
 
-    @pytest.mark.asyncio
     async def test_complete_conversation_flow(self) -> None:
         """Test the complete conversation flow."""
         with patch("ollama.AsyncClient") as mock_client_class:
@@ -527,17 +523,17 @@ class TestOllamaIntegrationScenarios:
 
             mock_client.chat = AsyncMock(return_value=mock_response)
             result = await model(messages)
-            assert isinstance(result, ChatResponse)
-            assert result.content == [
+            self.assertIsInstance(result, ChatResponse)
+            expected_content = [
                 TextBlock(
                     type="text",
                     text="I'm doing well, thank you for asking!",
                 ),
             ]
-            assert result.usage.input_tokens == 15
-            assert result.usage.output_tokens == 25
+            self.assertEqual(result.content, expected_content)
+            self.assertEqual(result.usage.input_tokens, 15)
+            self.assertEqual(result.usage.output_tokens, 25)
 
-    @pytest.mark.asyncio
     async def test_multi_turn_conversation_with_tools(self) -> None:
         """Test multi-turn conversation with tools."""
         with patch("ollama.AsyncClient") as mock_client_class:
@@ -570,6 +566,7 @@ class TestOllamaIntegrationScenarios:
                 name="get_weather",
                 arguments={"location": "Beijing"},
             )
+            tool_call_mock = OllamaToolCallMock
             tool_call_mock = OllamaToolCallMock(function=function_mock)
             message_mock = OllamaMessageMock(
                 content="Let me check the weather for you.",
@@ -584,7 +581,7 @@ class TestOllamaIntegrationScenarios:
             mock_client.chat = AsyncMock(return_value=mock_response)
             result = await model(messages, tools=tools)
 
-            assert result.content == [
+            expected_content = [
                 TextBlock(
                     type="text",
                     text="Let me check the weather for you.",
@@ -596,8 +593,8 @@ class TestOllamaIntegrationScenarios:
                     input={"location": "Beijing"},
                 ),
             ]
+            self.assertEqual(result.content, expected_content)
 
-    @pytest.mark.asyncio
     async def test_streaming_with_complex_content(self) -> None:
         """Test streaming processing with complex content."""
         with patch("ollama.AsyncClient") as mock_client_class:
@@ -669,13 +666,13 @@ class TestOllamaIntegrationScenarios:
             async for response in result:
                 responses.append(response)
 
-            assert len(responses) >= 1
+            self.assertGreaterEqual(len(responses), 1)
             final_response = responses[-1]
 
             # Check that we have thinking, text, and tool use blocks
-            assert isinstance(final_response, ChatResponse)
+            self.assertIsInstance(final_response, ChatResponse)
 
-            assert final_response.content == [
+            expected_content = [
                 ThinkingBlock(
                     type="thinking",
                     thinking="Let me analyze this step by step. First, "
@@ -692,3 +689,4 @@ class TestOllamaIntegrationScenarios:
                     input={"expression": "2+2"},
                 ),
             ]
+            self.assertEqual(final_response.content, expected_content)
