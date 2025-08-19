@@ -42,7 +42,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: docs/tutorial/en/build/html
-          destination_dir: 'v0'
+          destination_dir: 'v0/en'
           cname: doc.agentscope.io
           keep_files: true
 
