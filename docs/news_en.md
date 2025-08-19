@@ -50,7 +50,7 @@ AgentScope supports ollama(A local CPU inference engine), DashScope and Google G
 
 - **[2024-03-19]** New examples ["Autonomous Conversation with Mentions"](https://github.com/modelscope/agentscope/blob/v0/examples/conversation_with_mentions) and ["Basic Conversation with LangChain library"](https://github.com/modelscope/agentscope/blob/v0/examples/conversation_with_langchain) are available now!
 
-- **[2024-03-19]** The [Chinese tutorial](https://modelscope.github.io/agentscope/zh_CN/index.html) of AgentScope is online now!
+- **[2024-03-19]** The [Chinese tutorial](https://doc.agentscope.io/v0/zh_CN) of AgentScope is online now!
 
 - **[2024-02-27]** We release **AgentScope v0.0.1** now, which is also
 available in [PyPI](https://pypi.org/project/agentscope/)!

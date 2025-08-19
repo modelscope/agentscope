@@ -40,7 +40,7 @@
 
 - **[2024-03-19]** 新しい例「[メンション付きの自律会話](https://github.com/modelscope/agentscope/blob/v0/examples/conversation_with_mentions)」および「[LangChainライブラリを使用した基本的な会話](https://github.com/modelscope/agentscope/blob/v0/examples/conversation_with_langchain)」が利用可能になりました。
 
-- **[2024-03-19]** AgentScopeの[中国語チュートリアル](https://modelscope.github.io/agentscope/zh_CN/index.html)がオンラインになりました。
+- **[2024-03-19]** AgentScopeの[中国語チュートリアル](https://doc.agentscope.io/v0/zh_CN)がオンラインになりました。
 
 - **[2024-02-27]** **AgentScope v0.0.1**がリリースされました。これは[PyPI](https://pypi.org/project/agentscope/)でも利用可能です。
 
