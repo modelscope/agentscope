@@ -78,7 +78,7 @@
 - **[2025-03-19]** AgentScopeは 🔧 ツールAPIをサポートしました。詳細は[チュートリアル](https://doc.agentscope.io/v0/en/build_tutorial/tool.html)をご覧ください。
 - **[2025-03-20]** Agentscopeは[MCP Server](https://github.com/modelcontextprotocol/servers)をサポートしました！[チュートリアル](https://doc.agentscope.io/v0/en/build_tutorial/MCP.html)で使い方を学べます。
 - **[2025-03-05]** [🎓 AgentScope Copilot](applications/multisource_rag_app/README.md)、マルチソースRAGアプリケーションがオープンソースになりました！
-- **[2025-02-24]** [🇨🇳 中国語版チュートリアル](https://doc.agentscope.io/v0/en/zh_CN)が公開されました！
+- **[2025-02-24]** [🇨🇳 中国語版チュートリアル](https://doc.agentscope.io/v0/zh_CN)が公開されました！
 - **[2025-02-13]** [SWE-Bench(Verified)](https://www.swebench.com/)における私たちのソリューションの[📁 技術報告書](https://doc.agentscope.io/v0/en/tutorial/swe.html)が公開されました！
 - **[2025-02-07]** 🎉🎉 AgentScopeは[SWE-Bench(Verified)](https://www.swebench.com/)で**63.4%の解決率**を達成しました！
 - **[2025-01-04]** AgentScopeはAnthropic APIをサポートしました。
