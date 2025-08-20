@@ -151,9 +151,9 @@ class AnthropicChatModel(ChatModelBase):
                 A Pydantic BaseModel class that defines the expected structure
                 for the model's output. When provided, the model will be forced
                 to return data that conforms to this schema by automatically
-                converting the BaseModel to a function tool and setting
+                converting the BaseModel to a tool function and setting
                 `tool_choice` to enforce its usage. This enables structured
-                output generation with automatic validation.
+                output generation.
 
                 .. note:: When `structured_model` is specified,
                     both `tools` and `tool_choice` parameters are ignored,
@@ -187,7 +187,7 @@ class AnthropicChatModel(ChatModelBase):
             kwargs["tool_choice"] = self._format_tool_choice(tool_choice)
 
         if structured_model:
-            if tools:
+            if tool_choice:
                 logger.warning(
                     "structured_model is provided. Both 'tools' and "
                     "'tool_choice' parameters will be overridden and "
@@ -329,8 +329,7 @@ class AnthropicChatModel(ChatModelBase):
                 for the model's output.
 
         Returns:
-            AsyncGenerator[ChatResponse, None] (`AsyncGenerator[ \
-            ChatResponse, None]`):
+            AsyncGenerator[ChatResponse, None]:
                 An async generator that yields ChatResponse objects containing
                 the content blocks and usage information for each chunk in
                 the streaming response.

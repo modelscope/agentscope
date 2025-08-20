@@ -213,7 +213,7 @@ def _remove_title_field(schema: dict) -> None:
 
 def _create_tool_from_base_model(
     structured_model: Type[BaseModel],
-    tool_name: str = "format_output",
+    tool_name: str = "generate_structured_output",
 ) -> Dict[str, Any]:
     """Create a function tool definition from a Pydantic BaseModel.
     This function converts a Pydantic BaseModel class into a tool definition
@@ -261,8 +261,8 @@ def _create_tool_from_base_model(
         "type": "function",
         "function": {
             "name": tool_name,
-            "description": f"Format output according to"
-            f" {structured_model.__name__} schema",
+            "description": "Generate the required structured output with "
+            "this function",
             "parameters": schema,
         },
     }

@@ -86,7 +86,6 @@ class DashScopeChatModel(ChatModelBase):
 
         self.api_key = api_key
         self.enable_thinking = enable_thinking
-        self.incremental_output = self.stream
         self.generate_kwargs = generate_kwargs or {}
 
     @trace_llm
@@ -123,9 +122,9 @@ class DashScopeChatModel(ChatModelBase):
                 A Pydantic BaseModel class that defines the expected structure
                 for the model's output. When provided, the model will be forced
                 to return data that conforms to this schema by automatically
-                converting the BaseModel to a function tool and setting
+                converting the BaseModel to a tool function and setting
                 `tool_choice` to enforce its usage. This enables structured
-                output generation with automatic validation.
+                output generation.
 
                 .. note:: When `structured_model` is specified,
                     both `tools` and `tool_choice` parameters are ignored,
@@ -173,7 +172,7 @@ class DashScopeChatModel(ChatModelBase):
             kwargs["enable_thinking"] = self.enable_thinking
 
         if structured_model:
-            if tools:
+            if tool_choice:
                 logger.warning(
                     "structured_model is provided. Both 'tools' and "
                     "'tool_choice' parameters will be overridden and "
@@ -242,8 +241,7 @@ class DashScopeChatModel(ChatModelBase):
                 for the model's output.
 
         Returns:
-            AsyncGenerator[ChatResponse, Any] (`AsyncGenerator[ChatResponse, \
-            Any]`):
+            AsyncGenerator[ChatResponse, Any]:
                 An async generator that yields ChatResponse objects containing
                 the content blocks and usage information for each chunk in the
                 streaming response.

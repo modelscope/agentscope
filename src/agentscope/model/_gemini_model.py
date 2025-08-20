@@ -140,7 +140,7 @@ class GeminiChatModel(ChatModelBase):
             self._validate_tool_choice(tool_choice, tools)
             config["tool_config"] = self._format_tool_choice(tool_choice)
         if structured_model:
-            if tools:
+            if tool_choice:
                 logger.warning(
                     "structured_model is provided. Both 'tools' and "
                     "'tool_choice' parameters will be overridden and "
@@ -203,8 +203,7 @@ class GeminiChatModel(ChatModelBase):
                 for the model's output.
 
         Returns:
-            AsyncGenerator[ChatResponse, None] (`AsyncGenerator[ \
-            ChatResponse, None]`):
+            AsyncGenerator[ChatResponse, None]:
                 An async generator that yields ChatResponse objects containing
                 the content blocks and usage information for each chunk in the
                 streaming response.
