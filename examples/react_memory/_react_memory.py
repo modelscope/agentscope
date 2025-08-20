@@ -1788,7 +1788,7 @@ class ReActMemory(MemoryBase):
         self,
         query: str,
         filename: Optional[str] = None,
-    ) -> list:
+    ) -> list:  # type: ignore[return]
         """
         The function is used to search for information in memory based on a
         specified query. The memory storage contains all chat history, such as

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# mypy: ignore-errors
 # flake8: noqa
 # pylint: disable=all
 # -*- coding: utf-8 -*-

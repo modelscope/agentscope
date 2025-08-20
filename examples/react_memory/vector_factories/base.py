@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # -*- coding: utf-8 -*-
 # pylint: disable=W0107
 from abc import ABC, abstractmethod

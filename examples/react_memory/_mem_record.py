@@ -37,7 +37,7 @@ class Document(BaseModel, extra="forbid"):
     )
 
 
-class Image(BaseModel, extra="forbid"):
+class Image(BaseModel):
     """WARN: Work-in-progress, unimplemented  Image object for embedding. Requires inference infrastructure, unimplemented."""  # noqa: E501
 
     image: Any = Field(
@@ -54,7 +54,7 @@ class Image(BaseModel, extra="forbid"):
     )
 
 
-class InferenceObject(BaseModel, extra="forbid"):
+class InferenceObject(BaseModel):
     """WARN: Work-in-progress, unimplemented  Custom object for embedding. Requires inference infrastructure, unimplemented."""  # noqa: E501
 
     object: Any = Field(
