@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=C0301, C0411, R1702, C0302, R0912, R0915, W1203, R0904, W0622
+# pylint: disable=R1728
 """The ReActMemory class for memory management in agents."""
 
 import logging
@@ -16,9 +18,15 @@ from typing import (
     Sequence,
     Union,
 )
-from transformers import AutoTokenizer
+import copy
 import re
-
+from vector_factories.base import VectorStoreBase
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from transformers import AutoTokenizer
+from agentscope.formatter import DashScopeChatFormatter
+from agentscope.model import DashScopeChatModel
+from agentscope.embedding import DashScopeTextEmbedding
+from agentscope.agent import AgentBase
 from agentscope.memory import MemoryBase
 from agentscope.message import Msg
 from _mem_record import (
@@ -28,13 +36,6 @@ from _mem_record import (
     deserialize_memrecord_list,
     deserialize_msg_list,
 )
-from vector_factories.base import VectorStoreBase
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from agentscope.formatter import DashScopeChatFormatter
-from agentscope.model import DashScopeChatModel
-from agentscope.embedding import DashScopeTextEmbedding
-from agentscope.agent import AgentBase
-import copy
 
 # Default values
 DEFAULT_MAX_CHAT_HISTORY_LEN = 28000
@@ -59,7 +60,7 @@ def time_order_check(unit: Sequence[Any]) -> bool:
             except Exception as e:
                 raise ValueError(
                     f"Invalid unit type: {type(unit)}, " f"error: {e}",
-                )
+                ) from e
 
     for i in range(len(unit) - 1):
         time_i, time_i_1 = get_time(unit[i]), get_time(unit[i + 1])
@@ -143,10 +144,9 @@ def count_words(tokenizer: AutoTokenizer, text: Any) -> int:
 
 
 def no_user_msg(mem: MemRecord) -> bool:
+    """Filter function: remove msgs from user"""
     return mem.metadata.get("role", "assistant") not in [
         "user",
-        "system",
-        "memory_manager",
     ]
 
 
@@ -413,7 +413,7 @@ class ReActMemory(MemoryBase):
         """
         if isinstance(mem_record, Msg):
             return mem_record
-        if isinstance(mem_record, MemRecord):
+        elif isinstance(mem_record, MemRecord):
             msg = Msg(
                 name=mem_record.metadata.get("name", "system"),
                 role=mem_record.metadata.get("role", "system"),
@@ -426,6 +426,7 @@ class ReActMemory(MemoryBase):
                 msg.content.extend(content)
             msg.id = mem_record.id
             return msg
+        raise TypeError(f"Expected Msg or MemRecord, got {type(mem_record)}")
 
     async def retrieve_from_vector_store(
         self,
@@ -546,21 +547,10 @@ class ReActMemory(MemoryBase):
             ) and not any(
                 c.get("type", None) == "tool_result" for c in content
             ):
-                """
-                If the message is a tool use, add it to the tmp_tool_use_log,
-                and skip the message.
-                It will be processed when the tool result is received.
-                """
                 self.tmp_tool_use_log.append(copy.deepcopy(msg))
             elif len(self.tmp_tool_use_log) > 0 and any(
                 c.get("type", None) == "tool_result" for c in content
             ):
-                """
-                If the message is a tool result, find its tool_use message
-                in the tmp_tool_use_log,
-                pop the last tool use log from the tmp_tool_use_log,
-                and combine the tool use log and tool result to a new message
-                """
                 last_tool_use_log = self.tmp_tool_use_log[-1]
                 content_to_add = []
                 match_flag = False
@@ -929,7 +919,7 @@ class ReActMemory(MemoryBase):
 
             return msg
         except Exception as e:
-            raise ValueError(f"Error calling model: {e}")
+            raise ValueError(f"Error calling model: {e}") from e
 
     async def add(
         self,
@@ -968,7 +958,7 @@ class ReActMemory(MemoryBase):
         )
         return
 
-    async def _process_actions(self, actions: List[dict]):
+    async def _process_actions(self, actions: List[dict]) -> None:
         """Process the actions to modify the memory.
 
         Args:
@@ -996,7 +986,7 @@ class ReActMemory(MemoryBase):
                             raise ValueError(
                                 "Error embedding the action content when"
                                 f"_process_actions, error: {e}",
-                            )
+                            ) from e
                     else:
                         embedding = None
                     if action_type == "ADD":
@@ -1015,7 +1005,7 @@ class ReActMemory(MemoryBase):
                             raise ValueError(
                                 "Error getting existing memory for update"
                                 f"action: {action}. Error: {e}",
-                            )
+                            ) from e
                         old_mem = existing_mem.payload.get("data", None)
                         if existing_mem is not None:
                             metadata = {
@@ -1050,8 +1040,9 @@ class ReActMemory(MemoryBase):
                                 )
                             else:
                                 logging.warning(
-                                    f"The memory {action['id']} is not found "
-                                    "in the self._memory",
+                                    "The memory %s is not found in the"
+                                    " self._memory",
+                                    action["id"],
                                 )
                         logging.info(
                             f"OLD: {old_mem} \n NEW: "
@@ -1429,6 +1420,9 @@ class ReActMemory(MemoryBase):
         return len(self._chat_history)
 
     async def delete(self, index: Union[Iterable, int]) -> None:
+        """
+        This is not supported.
+        """
         raise NotImplementedError(
             """
             `Delete` is not supported in ReActMemory, use
@@ -1445,7 +1439,7 @@ class ReActMemory(MemoryBase):
             "cur_memory_len": self.cur_memory_len,
         }
 
-    def load_state_dict(self, state_dict: dict, strict: bool = True) -> None:
+    def load_state_dict(self, state_dict: dict) -> None:
         """Load the memory from JSON data."""
         self._memory = [
             MemRecord.from_dict(
@@ -1556,7 +1550,7 @@ class ReActMemory(MemoryBase):
                         f"Expect a list of Msg/MemRecord objects, but get "
                         f"{type(unit)} instead.",
                     )
-        elif isinstance(load_memories, Union[Msg, MemRecord]):
+        elif isinstance(load_memories, (Msg, MemRecord)):
             load_memories = [load_memories]
         else:
             raise TypeError(
@@ -1576,9 +1570,11 @@ class ReActMemory(MemoryBase):
                 self._memory.extend(load_memories)
 
     async def direct_get_memory(self) -> list[MemRecord]:
+        """Direct get the original _memory"""
         return self._memory
 
     async def direct_get_chat_history(self) -> list[Msg]:
+        """Direct get the original _chat_history"""
         return self._chat_history
 
     async def direct_delete_memory(self, index: Union[uuid.UUID, str]) -> None:
@@ -1788,7 +1784,7 @@ class ReActMemory(MemoryBase):
         self,
         query: str,
         filename: Optional[str] = None,
-    ) -> list:  # type: ignore[return]
+    ) -> str:
         """
         The function is used to search for information in memory based on a
         specified query. The memory storage contains all chat history, such as
@@ -1837,7 +1833,8 @@ class ReActMemory(MemoryBase):
             )
         except Exception as e:
             logging.warning(
-                "Error in " "summarize_with_sequential_notes: " + str(e),
+                "Error in summarize_with_sequential_notes: %s",
+                str(e),
             )
             raise e
         return summary

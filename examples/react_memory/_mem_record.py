@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=C0301, C0411
+"""The MemRecord class for ReActMemory"""
+
 import json
 import uuid
 from typing import Any, Dict, List, Optional, Union
@@ -8,7 +11,7 @@ from pydantic import BaseModel, Field
 from pydantic.types import StrictFloat, StrictStr
 
 
-class SparseVector(BaseModel, extra="forbid"):
+class SparseVector(BaseModel):
     """
     Sparse vector structure
     """
@@ -20,7 +23,7 @@ class SparseVector(BaseModel, extra="forbid"):
     )
 
 
-class Document(BaseModel, extra="forbid"):
+class Document(BaseModel):
     """WARN: Work-in-progress, unimplemented  Text document for embedding. Requires inference infrastructure, unimplemented."""  # noqa: E501
 
     text: str = Field(

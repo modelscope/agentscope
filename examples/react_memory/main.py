@@ -3,6 +3,8 @@
 import asyncio
 import os
 
+from typing import Literal
+
 from agentscope.agent import ReActAgent
 from agentscope.formatter import DashScopeChatFormatter
 from agentscope.message import Msg
@@ -27,8 +29,10 @@ async def main() -> None:
         embedding_model_dims=1024,
         path="/tmp/vector_store",
     )
-    retrieve_type = "processed"
-    # all the messages will be processed by llm and then store in the vector store. Another choices are "source" and "auto":
+    retrieve_type: Literal["source", "processed", "auto"] = "processed"
+    # all the messages will be processed by llm and then store
+    # in the vector store.
+    # Another choices are "source" and "auto":
     react_memory = ReActMemory(
         model_config_name="qwen-max",
         embedding_model="text-embedding-v4",
