@@ -172,7 +172,7 @@ class DashScopeChatModel(ChatModelBase):
             kwargs["enable_thinking"] = self.enable_thinking
 
         if structured_model:
-            if tool_choice:
+            if tools or tool_choice:
                 logger.warning(
                     "structured_model is provided. Both 'tools' and "
                     "'tool_choice' parameters will be overridden and "

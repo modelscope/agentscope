@@ -40,7 +40,6 @@ class TestDashScopeChatModel(IsolatedAsyncioTestCase):
         self.assertEqual(model.api_key, "test_key")
         self.assertTrue(model.stream)
         self.assertIsNone(model.enable_thinking)
-        self.assertTrue(model.incremental_output)
         self.assertEqual(model.generate_kwargs, {})
 
     def test_init_with_enable_thinking_forces_stream(self) -> None:

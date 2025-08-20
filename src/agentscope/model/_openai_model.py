@@ -171,7 +171,7 @@ class OpenAIChatModel(ChatModelBase):
         start_datetime = datetime.now()
 
         if structured_model:
-            if tool_choice:
+            if tools or tool_choice:
                 logger.warning(
                     "structured_model is provided. Both 'tools' and "
                     "'tool_choice' parameters will be overridden and "
