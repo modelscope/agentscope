@@ -310,7 +310,7 @@ class OllamaChatModel(ChatModelBase):
                 for the model's output.
 
         Returns:
-            ChatResponse (`ChatResponse`):
+            `ChatResponse`:
                 A ChatResponse object containing the content blocks and usage.
 
         .. note::

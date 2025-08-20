@@ -203,7 +203,7 @@ class GeminiChatModel(ChatModelBase):
                 for the model's output.
 
         Returns:
-            AsyncGenerator[ChatResponse, None]:
+            `AsyncGenerator[ChatResponse, None]`:
                 An async generator that yields ChatResponse objects containing
                 the content blocks and usage information for each chunk in the
                 streaming response.
