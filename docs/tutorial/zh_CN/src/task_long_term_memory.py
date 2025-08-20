@@ -78,7 +78,7 @@ asyncio.run(basic_usage())
 # 与 ReAct 智能体集成
 # ----------------------------------------
 # AgentScope 中的 ``ReActAgent`` 在构造函数中包含 ``long_term_memory`` 和 ``long_term_memory_mode`` 两个参数，
-# 其中 ``long_term_memory`` 用于指定长期记忆实例，取值为 ``"agent_control"``, ``"static_control"`` 或 ``"both"``。
+# 其中 ``long_term_memory`` 用于指定长期记忆实例，``long_term_memory_mode``的取值为 ``"agent_control"``, ``"static_control"`` 或 ``"both"``。
 #
 # 当 ``long_term_memory_mode`` 设置为 ``"agent_control"`` 或 ``both`` 时，在 ``ReActAgent`` 的构造函数中将
 # 注册两个工具函数：``record_to_memory`` 和 ``retrieve_from_memory``。
