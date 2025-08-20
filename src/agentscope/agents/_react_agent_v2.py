@@ -128,7 +128,8 @@ class ReActAgentV2(AgentBase):
         """
         # Merge the schema of the structured output with the finish function
         if structured_model:
-            self._prepare_structured_output_schema(
+            self.service_toolkit.extend_function_schema(
+                self._finish_function,
                 structured_model,
             )
 
@@ -321,59 +322,6 @@ class ReActAgentV2(AgentBase):
             content="Success",
         )
 
-    def _prepare_structured_output_schema(
-        self,
-        structured_output: Type[BaseModel],
-    ) -> None:
-        """Merge the structured output into the schema of the finish function
-        as additional parameters.
-
-        Args:
-            structured_output (`Type[BaseModel]`):
-                A Pydantic model class that defines the structured output.
-
-        Returns:
-            `dict`:
-                The merged function schema with the structured output.
-        """
-
-        if not issubclass(structured_output, BaseModel):
-            raise TypeError(
-                f"structured_output must be a Pydantic model, "
-                f"but got {type(structured_output)}",
-            )
-
-        self._current_structured_model = structured_output
-
-        output_schema = structured_output.model_json_schema()
-
-        # Update the schema of the finish function by inserting the
-        # structured output schema
-        finish_function_schema = self.service_toolkit.json_schemas[
-            self._finish_function
-        ]
-
-        for key, value in output_schema["properties"].items():
-            if (
-                key
-                in finish_function_schema["function"]["parameters"][
-                    "properties"
-                ]
-            ):
-                raise ValueError(
-                    f"The key '{key}' in structured output already exists in "
-                    f"the finish function '{self._finish_function}'. "
-                    "Try to use another key name.",
-                )
-            finish_function_schema["function"]["parameters"]["properties"][
-                key
-            ] = value
-
-            if key in output_schema["required"]:
-                finish_function_schema["function"]["parameters"][
-                    "required"
-                ].append(key)
-
     def _clear_structured_output_hook(  # type: ignore
         self,  # pylint: disable=unused-argument
         *args,
@@ -382,8 +330,5 @@ class ReActAgentV2(AgentBase):
         """Clear the structured output."""
         self._current_structured_output = None
         self._current_structured_model = None
-        self.service_toolkit.remove(self._finish_function)
-        self.service_toolkit.add(
-            self.generate_response,
-            include_var_keyword=False,
-        )
+        # Remove the structured output schema from the finish function
+        self.service_toolkit.restore_function_schema(self._finish_function)
