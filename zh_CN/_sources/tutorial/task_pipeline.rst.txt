@@ -134,9 +134,9 @@
 
  .. code-block:: none
 
-    Alice: 您好，我叫Alice，今年50岁，是一名教师。很高兴认识您！请问有什么我可以帮助您的吗？
-    Bob: 您好，Alice。我叫Bob，今年35岁，是一名工程师。很高兴认识您！既然我们已经互相介绍过了，有什么特别的话题想要讨论吗？
-    Charlie: 您好，我叫Charlie，今年28岁，是一名设计师。很高兴认识你们两位！我们都有各自不同的专业背景，也许我们可以聊聊各自领域中的一些有趣的事情或者最近的项目。你们觉得如何？
+    Alice: 您好，我叫Alice，今年50岁，是一名教师。很高兴认识您！如果您有任何问题或需要帮助的地方，请随时告诉我。
+    Bob: 您好，我叫Bob，今年35岁，是一名工程师。很高兴认识你，Alice！如果你对科技或者工程方面有任何问题，也许我能帮上忙。
+    Charlie: 您好，我叫Charlie，今年28岁，是一名设计师。很高兴认识你们两位！如果你们有关于设计或者创意方面的问题，我很乐意提供帮助。
 
 
 
@@ -256,7 +256,7 @@ Alice 一无所知，因为他没有包含在 ``MsgHub`` 上下文中。
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (1 minutes 11.468 seconds)
+   **Total running time of the script:** (0 minutes 7.475 seconds)
 
 
 .. _sphx_glr_download_tutorial_task_pipeline.py:

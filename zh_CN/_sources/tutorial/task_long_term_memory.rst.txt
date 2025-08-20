@@ -126,7 +126,7 @@ AgentScope 为长期记忆提供了一个基类 ``LongTermMemoryBase`` 和一个
 与 ReAct 智能体集成
 ----------------------------------------
 AgentScope 中的 ``ReActAgent`` 在构造函数中包含 ``long_term_memory`` 和 ``long_term_memory_mode`` 两个参数，
-其中 ``long_term_memory`` 用于指定长期记忆实例，取值为 ``"agent_control"``, ``"static_control"`` 或 ``"both"``。
+其中 ``long_term_memory`` 用于指定长期记忆实例，``long_term_memory_mode``的取值为 ``"agent_control"``, ``"static_control"`` 或 ``"both"``。
 
 当 ``long_term_memory_mode`` 设置为 ``"agent_control"`` 或 ``both`` 时，在 ``ReActAgent`` 的构造函数中将
 注册两个工具函数：``record_to_memory`` 和 ``retrieve_from_memory``。
@@ -173,7 +173,14 @@ AgentScope 中的 ``ReActAgent`` 在构造函数中包含 ``long_term_memory`` �
 
  .. code-block:: none
 
-    Friday: 太好了！杭州是一个美丽的城市，有许多舒适的民宿可供选择。无论您是寻找风景如画的西湖附近的住宿，还是想体验历史悠久的河坊街周边的文化氛围，都能找到合适的民宿。如果您需要推荐或帮助预订，请告诉我您的具体需求和偏好，我会很乐意帮助您。祝您在杭州有一个愉快的旅行体验！
+    Friday: 很高兴听到你喜欢住民宿！杭州是一个美丽的城市，有许多独特的民宿可以提供与众不同的住宿体验。我之前了解到你喜欢住民宿，在选择民宿时，你可以考虑以下几个方面：
+
+    1. 位置：选择靠近你计划游览的景点的民宿，这样可以减少交通时间和费用。
+    2. 环境：可以通过查看在线图片、评论了解民宿周边的环境和内部设施，挑选一个舒适宜人的居住地。
+    3. 特色：一些民宿会具有地方特色或是主人精心设计的艺术空间，住在这样的民宿里本身就是一种享受。
+    4. 服务：好的服务可以让你的旅行更加愉快，比如提供早餐、行李寄存等服务。
+
+    希望这些建议能帮助到你，如果你需要具体的民宿推荐或者预订方面的帮助，请随时告诉我！
 
 
 
@@ -209,7 +216,7 @@ AgentScope 中的 ``ReActAgent`` 在构造函数中包含 ``long_term_memory`` �
 
  .. code-block:: none
 
-    Friday: 你偏好在旅行时住民宿。
+    Friday: 你有喜欢住民宿的偏好。
 
 
 
@@ -249,7 +256,7 @@ AgentScope 提供了 ``LongTermMemoryBase`` 基类，它定义了长期记忆的
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 35.552 seconds)
+   **Total running time of the script:** (0 minutes 30.377 seconds)
 
 
 .. _sphx_glr_download_tutorial_task_long_term_memory.py:
