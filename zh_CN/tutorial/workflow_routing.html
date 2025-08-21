@@ -401,7 +401,7 @@ to download the full example code.</p>
 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">example_router_explicit</span><span class="p">())</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Router: 好的，我来为你创作一首诗。
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Router: 好的，我将为您创作一首诗。
 结构化输出：
 {
     &quot;your_choice&quot;: &quot;Content Generation&quot;,
@@ -502,54 +502,63 @@ to download the full example code.</p>
     &quot;type&quot;: &quot;tool_use&quot;,
     &quot;name&quot;: &quot;generate_python&quot;,
     &quot;input&quot;: {
-        &quot;demand&quot;: &quot;生成一个快速排序函数&quot;
+        &quot;demand&quot;: &quot;需要一个快速排序函数&quot;
     },
-    &quot;id&quot;: &quot;call_211a880f180d4ca2bdd3e1&quot;
+    &quot;id&quot;: &quot;call_08838359d22647f9b8c047&quot;
 }
-PythonAgent: 以下是一个使用 Python 编写的快速排序算法的实现。这个函数接受一个列表作为输入，并返回一个排序后的列表。快速排序是一种分而治之的算法，它选择一个&#39;基准&#39;元素，然后将数组分为两部分，一部分包含所有小于基准的元素，另一部分包含所有大于或等于基准的元素。接着递归地对这两部分进行排序。
+PythonAgent: 这里是一个使用Python实现的快速排序函数。这个实现采用递归的方式，并且选择列表中的第一个元素作为基准值（pivot）。当然，你可以根据需要修改它来选择其他元素作为基准值。
 
 ```python
 def quicksort(arr):
     if len(arr) &lt;= 1:
         return arr
     else:
-        pivot = arr[len(arr) // 2]
-        left = [x for x in arr if x &lt; pivot]
-        middle = [x for x in arr if x == pivot]
-        right = [x for x in arr if x &gt; pivot]
-        return quicksort(left) + middle + quicksort(right)
+        pivot = arr[0]
+        less_than_pivot = [x for x in arr[1:] if x &lt;= pivot]
+        greater_than_pivot = [x for x in arr[1:] if x &gt; pivot]
+        return quicksort(less_than_pivot) + [pivot] + quicksort(greater_than_pivot)
+
+# 示例
+example_list = [3, 6, 8, 10, 1, 2, 1]
+sorted_list = quicksort(example_list)
+print(&#39;Sorted list:&#39;, sorted_list)
 ```
 
-这段代码中，我们选择了列表的中间元素作为基准。`left` 列表包含了所有严格小于基准的元素，`middle` 列表包含了所有与基准相等的元素（这在存在重复元素时很有用），`right` 列表包含了所有严格大于基准的元素。然后递归地对 `left` 和 `right` 进行快速排序，并将结果连接起来。
+这段代码首先检查输入数组 `arr` 的长度是否小于或等于 1，如果是，则直接返回数组（因为长度为 0 或 1 的数组已经是排好序的）。
+如果数组长度大于 1，那么就选择第一个元素作为基准值，然后创建两个新列表：一个用于存放所有小于或等于基准值的元素，另一个用于存放大于基准值的元素。
+之后，我们对这两个新列表递归地调用 `quicksort` 函数，并将结果与基准值合并起来形成最终的排序数组。
 system: {
     &quot;type&quot;: &quot;tool_result&quot;,
-    &quot;id&quot;: &quot;call_211a880f180d4ca2bdd3e1&quot;,
+    &quot;id&quot;: &quot;call_08838359d22647f9b8c047&quot;,
     &quot;name&quot;: &quot;generate_python&quot;,
     &quot;output&quot;: [
         {
             &quot;type&quot;: &quot;text&quot;,
-            &quot;text&quot;: &quot;以下是一个使用 Python 编写的快速排序算法的实现。这个函数接受一个列表作为输入，并返回一个排序后的列表。快速排序是一种分而治之的算法，它选择一个&#39;基准&#39;元素，然后将数组分为两部分，一部分包含所有小于基准的元素，另一部分包含所有大于或等于基准的元素。接着递归地对这两部分进行排序。\n\n```python\ndef quicksort(arr):\n    if len(arr) &lt;= 1:\n        return arr\n    else:\n        pivot = arr[len(arr) // 2]\n        left = [x for x in arr if x &lt; pivot]\n        middle = [x for x in arr if x == pivot]\n        right = [x for x in arr if x &gt; pivot]\n        return quicksort(left) + middle + quicksort(right)\n```\n\n这段代码中，我们选择了列表的中间元素作为基准。`left` 列表包含了所有严格小于基准的元素，`middle` 列表包含了所有与基准相等的元素（这在存在重复元素时很有用），`right` 列表包含了所有严格大于基准的元素。然后递归地对 `left` 和 `right` 进行快速排序，并将结果连接起来。&quot;
+            &quot;text&quot;: &quot;这里是一个使用Python实现的快速排序函数。这个实现采用递归的方式，并且选择列表中的第一个元素作为基准值（pivot）。当然，你可以根据需要修改它来选择其他元素作为基准值。\n\n```python\ndef quicksort(arr):\n    if len(arr) &lt;= 1:\n        return arr\n    else:\n        pivot = arr[0]\n        less_than_pivot = [x for x in arr[1:] if x &lt;= pivot]\n        greater_than_pivot = [x for x in arr[1:] if x &gt; pivot]\n        return quicksort(less_than_pivot) + [pivot] + quicksort(greater_than_pivot)\n\n# 示例\nexample_list = [3, 6, 8, 10, 1, 2, 1]\nsorted_list = quicksort(example_list)\nprint(&#39;Sorted list:&#39;, sorted_list)\n```\n\n这段代码首先检查输入数组 `arr` 的长度是否小于或等于 1，如果是，则直接返回数组（因为长度为 0 或 1 的数组已经是排好序的）。\n如果数组长度大于 1，那么就选择第一个元素作为基准值，然后创建两个新列表：一个用于存放所有小于或等于基准值的元素，另一个用于存放大于基准值的元素。\n之后，我们对这两个新列表递归地调用 `quicksort` 函数，并将结果与基准值合并起来形成最终的排序数组。&quot;
         }
     ]
 }
-Router: 这是一个使用 Python 编写的快速排序算法的实现。这个函数接受一个列表作为输入，并返回一个排序后的列表。快速排序是一种分而治之的算法，它选择一个&#39;基准&#39;元素，然后将数组分为两部分，一部分包含所有小于基准的元素，另一部分包含所有大于或等于基准的元素。接着递归地对这两部分进行排序。
+Router: 这是一个使用 Python 实现的快速排序函数。它采用了递归的方法，并选取列表中的第一个元素作为基准值（pivot）。您可以根据需要修改此代码来选择其他元素作为基准值。
 
 ```python
 def quicksort(arr):
     if len(arr) &lt;= 1:
         return arr
     else:
-        pivot = arr[len(arr) // 2]
-        left = [x for x in arr if x &lt; pivot]
-        middle = [x for x in arr if x == pivot]
-        right = [x for x in arr if x &gt; pivot]
-        return quicksort(left) + middle + quicksort(right)
-```
+        pivot = arr[0]
+        less_than_pivot = [x for x in arr[1:] if x &lt;= pivot]
+        greater_than_pivot = [x for x in arr[1:] if x &gt; pivot]
+        return quicksort(less_than_pivot) + [pivot] + quicksort(greater_than_pivot)
 
-在这段代码中，选择了列表的中间元素作为基准。`left` 列表包含了所有严格小于基准的元素，`middle` 列表包含了所有与基准相等的元素（这在存在重复元素时很有用），`right` 列表包含了所有严格大于基准的元素。之后递归地对 `left` 和 `right` 进行快速排序，并将结果连接起来。你可以直接使用这个 `quicksort` 函数来对你的列表进行排序。
+# 示例
+example_list = [3, 6, 8, 10, 1, 2, 1]
+sorted_list = quicksort(example_list)
+print(&#39;Sorted list:&#39;, sorted_list)
+```
+这段代码首先会检查输入数组 `arr` 的长度是否小于或等于 1，如果条件满足则直接返回该数组（因为长度为 0 或 1 的数组已经是排好序的状态）。如果数组长度大于 1，那么将选取第一个元素作为基准值，并创建两个新列表：一个存放所有不大于基准值的元素，另一个存放所有大于基准值的元素。接下来，我们对这两个新列表递归调用 `quicksort` 函数，并将结果与基准值连接起来形成最终排序后的数组。
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 25.877 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 45.089 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorial-workflow-routing-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/3266c75280f96697c4cc46d7d55a3ac8/workflow_routing.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">workflow_routing.ipynb</span></code></a></p>

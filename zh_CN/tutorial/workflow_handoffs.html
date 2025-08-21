@@ -337,9 +337,9 @@ to download the full example code.</p>
     &quot;type&quot;: &quot;tool_use&quot;,
     &quot;name&quot;: &quot;create_worker&quot;,
     &quot;input&quot;: {
-        &quot;task_description&quot;: &quot;在 Python 中编写并执行一个简单的 &#39;Hello, World!&#39; 程序。&quot;
+        &quot;task_description&quot;: &quot;在 Python 中打印 &#39;Hello, World!&#39; 并将结果返回&quot;
     },
-    &quot;id&quot;: &quot;call_04b06c202eb7486383088e&quot;
+    &quot;id&quot;: &quot;call_e1aea77c444b45e59dd265&quot;
 }
 Worker: {
     &quot;type&quot;: &quot;tool_use&quot;,
@@ -348,11 +348,11 @@ Worker: {
         &quot;code&quot;: &quot;print(&#39;Hello, World!&#39;)&quot;,
         &quot;timeout&quot;: 5
     },
-    &quot;id&quot;: &quot;call_1855fc1e30a94418acdec4&quot;
+    &quot;id&quot;: &quot;call_5ae38cb9197e4c1aa35a2d&quot;
 }
 system: {
     &quot;type&quot;: &quot;tool_result&quot;,
-    &quot;id&quot;: &quot;call_1855fc1e30a94418acdec4&quot;,
+    &quot;id&quot;: &quot;call_5ae38cb9197e4c1aa35a2d&quot;,
     &quot;name&quot;: &quot;execute_python_code&quot;,
     &quot;output&quot;: [
         {
@@ -361,23 +361,19 @@ system: {
         }
     ]
 }
-Worker: &#39;Hello, World!&#39; 程序已经成功执行，输出如下：
-
-```
-Hello, World!
-```
+Worker: Python 代码已成功执行，并打印出了 &#39;Hello, World!&#39;。
 system: {
     &quot;type&quot;: &quot;tool_result&quot;,
-    &quot;id&quot;: &quot;call_04b06c202eb7486383088e&quot;,
+    &quot;id&quot;: &quot;call_e1aea77c444b45e59dd265&quot;,
     &quot;name&quot;: &quot;create_worker&quot;,
     &quot;output&quot;: [
         {
             &quot;type&quot;: &quot;text&quot;,
-            &quot;text&quot;: &quot;&#39;Hello, World!&#39; 程序已经成功执行，输出如下：\n\n```\nHello, World!\n```&quot;
+            &quot;text&quot;: &quot;Python 代码已成功执行，并打印出了 &#39;Hello, World!&#39;。&quot;
         }
     ]
 }
-Orchestrator: 子智能体已经成功执行了 Python 中的 &#39;Hello, World!&#39; 程序。程序输出如下：
+Orchestrator: 子智能体已成功在 Python 中执行了 &quot;Hello, World!&quot; 的打印。以下是执行结果：
 
 ```
 Hello, World!
@@ -464,7 +460,7 @@ Hello, World!
 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">run_handoffs</span><span class="p">())</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 10.888 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 9.378 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorial-workflow-handoffs-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/91c90a0c5fa0aaee5502046f62e97d67/workflow_handoffs.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">workflow_handoffs.ipynb</span></code></a></p>

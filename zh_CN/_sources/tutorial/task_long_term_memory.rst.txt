@@ -173,14 +173,7 @@ AgentScope 中的 ``ReActAgent`` 在构造函数中包含 ``long_term_memory`` �
 
  .. code-block:: none
 
-    Friday: 很高兴听到你喜欢住民宿！杭州是一个美丽的城市，有许多独特的民宿可以提供与众不同的住宿体验。我之前了解到你喜欢住民宿，在选择民宿时，你可以考虑以下几个方面：
-
-    1. 位置：选择靠近你计划游览的景点的民宿，这样可以减少交通时间和费用。
-    2. 环境：可以通过查看在线图片、评论了解民宿周边的环境和内部设施，挑选一个舒适宜人的居住地。
-    3. 特色：一些民宿会具有地方特色或是主人精心设计的艺术空间，住在这样的民宿里本身就是一种享受。
-    4. 服务：好的服务可以让你的旅行更加愉快，比如提供早餐、行李寄存等服务。
-
-    希望这些建议能帮助到你，如果你需要具体的民宿推荐或者预订方面的帮助，请随时告诉我！
+    Friday: 很好，住民宿可以让你更深入地体验当地的文化和生活方式。杭州有很多具有特色和历史风情的民宿，你有没有特别喜欢的区域或者风格呢？这样我可以给你更好的建议。
 
 
 
@@ -216,7 +209,7 @@ AgentScope 中的 ``ReActAgent`` 在构造函数中包含 ``long_term_memory`` �
 
  .. code-block:: none
 
-    Friday: 你有喜欢住民宿的偏好。
+    Friday: 您在旅行时偏好住民宿，比如去杭州时就喜欢选择民宿作为住宿。
 
 
 
@@ -256,7 +249,7 @@ AgentScope 提供了 ``LongTermMemoryBase`` 基类，它定义了长期记忆的
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 30.377 seconds)
+   **Total running time of the script:** (0 minutes 26.509 seconds)
 
 
 .. _sphx_glr_download_tutorial_task_long_term_memory.py:
