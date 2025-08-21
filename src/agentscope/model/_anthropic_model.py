@@ -38,6 +38,7 @@ class AnthropicChatModel(ChatModelBase):
         max_tokens: int = 2048,
         stream: bool = True,
         thinking: dict | None = None,
+        enable_prompt_cache: bool = False,
         client_args: dict | None = None,
         generate_kwargs: dict[str, JSONSerializableObject] | None = None,
     ) -> None:
@@ -63,6 +64,26 @@ class AnthropicChatModel(ChatModelBase):
                         "budget_tokens": 1024
                     }
 
+            enable_prompt_cache (`bool`, default `False`):
+                Whether to cache prompt or not. For more details, please refer
+                to the `official document
+                <https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching>`_
+
+                .. note:: Prompt caching currently only supports caching
+                    system prompts.
+
+                    **Important considerations:**
+
+                    - **Additional Cost**: Enabling this feature incurs
+                      extra charges from the model provider
+                    - **Best Use Cases**: Recommended when using very long
+                      system prompts (typically >1024 tokens)
+                    - **Cost Savings**: Can significantly reduce token costs
+                      when cache hit rates are high due to repeated prompt
+                      usage
+                    - **Trade-off**: Balance between cache storage costs and
+                      token savings based on your usage pattern
+
             client_args (`dict | None`, optional):
                 The extra keyword arguments to initialize the Anthropic client.
             generate_kwargs (`dict[str, JSONSerializableObject] | None`, \
@@ -87,6 +108,7 @@ class AnthropicChatModel(ChatModelBase):
         )
         self.max_tokens = max_tokens
         self.thinking = thinking
+        self.enable_prompt_cache = enable_prompt_cache
         self.generate_kwargs = generate_kwargs or {}
 
     @trace_llm
@@ -136,8 +158,8 @@ class AnthropicChatModel(ChatModelBase):
             | None`, default `None`):
                 Controls which (if any) tool is called by the model.
                  Can be "auto", "none", "any", "required", or specific tool
-                 name. For more details, please refer to
-                 https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/implement-tool-use
+                 name. For more details, please refer to the `official document
+                 <https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/implement-tool-use>`_
             **generate_kwargs (`Any`):
                 The keyword arguments for Anthropic chat completions API,
                 e.g. `temperature`, `top_p`, etc. Please
@@ -167,6 +189,10 @@ class AnthropicChatModel(ChatModelBase):
         # Extract the system message
         if messages[0]["role"] == "system":
             kwargs["system"] = messages[0]["content"]
+            # FIXME: Only support cache system prompt now
+            if self.enable_prompt_cache:
+                for block in kwargs["system"]:
+                    block["cache_control"] = {"type": "ephemeral"}
             messages = messages[1:]
 
         kwargs["messages"] = messages
