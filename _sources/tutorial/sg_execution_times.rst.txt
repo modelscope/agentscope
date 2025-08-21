@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**03:36.083** total execution time for 25 files **from tutorial**:
+**04:55.275** total execution time for 25 files **from tutorial**:
 
 .. container::
 
@@ -32,59 +32,59 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
+   * - :ref:`sphx_glr_tutorial_task_pipeline.py` (``task_pipeline.py``)
+     - 01:15.983
+     - 0.0
    * - :ref:`sphx_glr_tutorial_workflow_multiagent_debate.py` (``workflow_multiagent_debate.py``)
-     - 00:46.271
-     - 0.0
-   * - :ref:`sphx_glr_tutorial_workflow_routing.py` (``workflow_routing.py``)
-     - 00:34.065
-     - 0.0
-   * - :ref:`sphx_glr_tutorial_task_long_term_memory.py` (``task_long_term_memory.py``)
-     - 00:30.723
+     - 01:05.078
      - 0.0
    * - :ref:`sphx_glr_tutorial_task_agent.py` (``task_agent.py``)
-     - 00:21.099
+     - 00:28.604
      - 0.0
-   * - :ref:`sphx_glr_tutorial_task_pipeline.py` (``task_pipeline.py``)
-     - 00:14.171
+   * - :ref:`sphx_glr_tutorial_task_long_term_memory.py` (``task_long_term_memory.py``)
+     - 00:26.966
+     - 0.0
+   * - :ref:`sphx_glr_tutorial_workflow_routing.py` (``workflow_routing.py``)
+     - 00:24.392
      - 0.0
    * - :ref:`sphx_glr_tutorial_workflow_conversation.py` (``workflow_conversation.py``)
-     - 00:13.115
-     - 0.0
-   * - :ref:`sphx_glr_tutorial_workflow_handoffs.py` (``workflow_handoffs.py``)
-     - 00:09.087
-     - 0.0
-   * - :ref:`sphx_glr_tutorial_task_model.py` (``task_model.py``)
-     - 00:08.297
-     - 0.0
-   * - :ref:`sphx_glr_tutorial_task_mcp.py` (``task_mcp.py``)
-     - 00:07.782
+     - 00:10.296
      - 0.0
    * - :ref:`sphx_glr_tutorial_task_eval.py` (``task_eval.py``)
-     - 00:07.118
-     - 0.0
-   * - :ref:`sphx_glr_tutorial_task_prompt.py` (``task_prompt.py``)
-     - 00:07.018
+     - 00:09.891
      - 0.0
    * - :ref:`sphx_glr_tutorial_quickstart_agent.py` (``quickstart_agent.py``)
-     - 00:06.343
+     - 00:09.256
+     - 0.0
+   * - :ref:`sphx_glr_tutorial_task_mcp.py` (``task_mcp.py``)
+     - 00:08.988
+     - 0.0
+   * - :ref:`sphx_glr_tutorial_task_model.py` (``task_model.py``)
+     - 00:08.680
+     - 0.0
+   * - :ref:`sphx_glr_tutorial_workflow_handoffs.py` (``workflow_handoffs.py``)
+     - 00:08.321
+     - 0.0
+   * - :ref:`sphx_glr_tutorial_task_prompt.py` (``task_prompt.py``)
+     - 00:07.591
      - 0.0
    * - :ref:`sphx_glr_tutorial_workflow_concurrent_agents.py` (``workflow_concurrent_agents.py``)
-     - 00:03.005
+     - 00:03.004
      - 0.0
    * - :ref:`sphx_glr_tutorial_task_state.py` (``task_state.py``)
-     - 00:02.837
+     - 00:02.756
      - 0.0
    * - :ref:`sphx_glr_tutorial_task_embedding.py` (``task_embedding.py``)
-     - 00:02.384
-     - 0.0
-   * - :ref:`sphx_glr_tutorial_quickstart_installation.py` (``quickstart_installation.py``)
-     - 00:01.190
+     - 00:02.525
      - 0.0
    * - :ref:`sphx_glr_tutorial_task_tool.py` (``task_tool.py``)
-     - 00:01.022
+     - 00:01.021
+     - 0.0
+   * - :ref:`sphx_glr_tutorial_quickstart_installation.py` (``quickstart_installation.py``)
+     - 00:01.000
      - 0.0
    * - :ref:`sphx_glr_tutorial_task_token.py` (``task_token.py``)
-     - 00:00.550
+     - 00:00.918
      - 0.0
    * - :ref:`sphx_glr_tutorial_quickstart_message.py` (``quickstart_message.py``)
      - 00:00.004
@@ -92,18 +92,18 @@ Computation times
    * - :ref:`sphx_glr_tutorial_task_hook.py` (``task_hook.py``)
      - 00:00.002
      - 0.0
-   * - :ref:`sphx_glr_tutorial_task_tracing.py` (``task_tracing.py``)
+   * - :ref:`sphx_glr_tutorial_faq.py` (``faq.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_tutorial_task_memory.py` (``task_memory.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_tutorial_faq.py` (``faq.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_tutorial_quickstart_key_concept.py` (``quickstart_key_concept.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_tutorial_task_studio.py` (``task_studio.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_tutorial_task_tracing.py` (``task_tracing.py``)
      - 00:00.000
      - 0.0
