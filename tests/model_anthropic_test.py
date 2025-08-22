@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=too-many-lines
 """Unit tests for Anthropic API model class."""
 from typing import Any, AsyncGenerator
 from unittest.async_case import IsolatedAsyncioTestCase
