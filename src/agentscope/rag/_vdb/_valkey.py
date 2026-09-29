@@ -14,7 +14,7 @@ the constructor arguments:
     (``valkey-bundle`` or a custom build with ``valkeysearch``).
 
 .. note:: The ``valkey-glide`` package is required. Install it with
-    ``pip install "valkey-glide>=2.4.0,<3.0.0"``.
+    ``pip install "valkey-glide>=2.5.2,<3.0.0"``.
 """
 
 import asyncio
@@ -57,7 +57,7 @@ class ValkeyStore(VectorStoreBase):
     configurable distance metrics (Cosine, L2, IP).
 
     .. note:: The ``valkey-glide`` package is required. Install it
-        with ``pip install "valkey-glide>=2.4.0,<3.0.0"``.
+        with ``pip install "valkey-glide>=2.5.2,<3.0.0"``.
 
     .. code-block:: python
 
@@ -215,6 +215,7 @@ class ValkeyStore(VectorStoreBase):
                 use_tls=self._use_tls,
                 credentials=server_credentials,
                 client_name=self._client_name,
+                client_info_tag="agentscope",
                 request_timeout=self._request_timeout,
             )
             return await GlideClusterClient.create(config)
@@ -224,6 +225,7 @@ class ValkeyStore(VectorStoreBase):
             use_tls=self._use_tls,
             credentials=server_credentials,
             client_name=self._client_name,
+            client_info_tag="agentscope",
             request_timeout=self._request_timeout,
         )
         return await GlideClient.create(config)
