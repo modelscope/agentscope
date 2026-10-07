@@ -492,16 +492,27 @@ function DetailPanel({
 	const probeModel = useCallback(
 		async (id: string) => {
 			setProbeStatus((s) => ({ ...s, [id]: 'checking' }));
-			try {
-				const res = await credentialApi.verifyModel(credential.id, id, {
-					silent: true,
-				});
-				setProbeStatus((s) => ({
-					...s,
-					[id]: res.ok ? 'ok' : 'fail',
-				}));
-			} catch {
-				setProbeStatus((s) => ({ ...s, [id]: 'fail' }));
+			// One retry: a transient 429/timeout must not read as a dead model.
+			for (let attempt = 0; ; attempt++) {
+				if (attempt > 0) {
+					await new Promise((resolve) => setTimeout(resolve, 1500));
+					setProbeStatus((s) => ({ ...s, [id]: 'checking' }));
+				}
+				try {
+					const res = await credentialApi.verifyModel(credential.id, id, {
+						silent: true,
+					});
+					setProbeStatus((s) => ({
+						...s,
+						[id]: res.ok ? 'ok' : 'fail',
+					}));
+					return;
+				} catch {
+					if (attempt > 0) {
+						setProbeStatus((s) => ({ ...s, [id]: 'fail' }));
+						return;
+					}
+				}
 			}
 		},
 		[credential.id],
@@ -853,20 +864,27 @@ function DetailPanel({
 																	</span>
 																);
 															}
-															if (st === 'ok') {
-																return (
-																	<span className="ml-auto shrink-0 text-[11px] text-emerald-600">
-																		✓
-																	</span>
-																);
-															}
-															if (st === 'fail') {
-																return (
-																	<span className="ml-auto shrink-0 text-[11px] text-destructive">
-																		✗
-																	</span>
-																);
-															}
+											if (st === 'ok' || st === 'fail') {
+												return (
+													<button
+														type="button"
+														title={t('credential.modelManage.reprobe')}
+														className={cn(
+															'ml-auto shrink-0 rounded px-1 text-[11px] hover:bg-row-hover',
+															st === 'ok'
+																? 'text-emerald-600'
+																: 'text-destructive',
+														)}
+														onClick={(e) => {
+															e.preventDefault();
+															e.stopPropagation();
+															probeModel(id);
+														}}
+													>
+														{st === 'ok' ? '✓' : '✗'}
+													</button>
+												);
+											}
 															return (
 																<button
 																	type="button"

@@ -362,6 +362,7 @@
 			"probe": "Probe",
 			"probeAll": "Probe checked",
 			"probing": "Probing…",
+			"reprobe": "Click to probe again",
 			"selectAll": "Select all",
 			"selectNone": "Select none",
 			"keepAvailable": "Keep available",

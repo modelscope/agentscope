@@ -362,6 +362,7 @@
 			"probe": "探活",
 			"probeAll": "一键探活",
 			"probing": "探活中…",
+			"reprobe": "点击重新探活",
 			"selectAll": "全选",
 			"selectNone": "取消全选",
 			"keepAvailable": "保留可用",
