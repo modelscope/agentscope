@@ -65,6 +65,8 @@ from ._credential import (
     ListCredentialsResponse,
     ListCredentialSchemasResponse,
     ListRemoteModelsResponse,
+    VerifyModelRequest,
+    VerifyModelResponse,
 )
 from ._knowledge_base import (
     ChunkerInfo,

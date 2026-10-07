@@ -6,6 +6,7 @@ import {
 	Plus,
 	Trash2,
 	Pen,
+	Zap,
 } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 
@@ -465,6 +466,45 @@ function DetailPanel({
 		});
 	}, []);
 
+	// Per-model liveness probe — one tiny real request, binary answer.
+	const [probeStatus, setProbeStatus] = useState<
+		Record<string, 'checking' | 'ok' | 'fail'>
+	>({});
+	useEffect(() => setProbeStatus({}), [credential.id]);
+
+	const probeModel = useCallback(
+		async (id: string) => {
+			setProbeStatus((s) => ({ ...s, [id]: 'checking' }));
+			try {
+				const res = await credentialApi.verifyModel(credential.id, id, {
+					silent: true,
+				});
+				setProbeStatus((s) => ({
+					...s,
+					[id]: res.ok ? 'ok' : 'fail',
+				}));
+			} catch {
+				setProbeStatus((s) => ({ ...s, [id]: 'fail' }));
+			}
+		},
+		[credential.id],
+	);
+
+	const probeChecked = useCallback(async () => {
+		const ids = [...(manage?.checked ?? [])];
+		let cursor = 0;
+		const workers = Array.from(
+			{ length: Math.min(4, ids.length) },
+			async () => {
+				while (cursor < ids.length) {
+					const id = ids[cursor++];
+					await probeModel(id);
+				}
+			},
+		);
+		await Promise.all(workers);
+	}, [manage, probeModel]);
+
 	useEffect(() => {
 		if (!type) return;
 		setModelsLoading(true);
@@ -659,16 +699,30 @@ function DetailPanel({
 												})}
 											</p>
 										)}
-										<input
-											value={manage.filter}
-											onChange={(e) =>
-												setManage((s) =>
-													s ? { ...s, filter: e.target.value } : s,
-												)
-											}
-											placeholder={t('credential.modelManage.filter')}
-											className="w-full rounded border border-border bg-transparent px-2 py-1 font-mono text-[11px] text-foreground outline-none placeholder:text-text-tertiary"
-										/>
+										<div className="flex items-center gap-x-2">
+											<input
+												value={manage.filter}
+												onChange={(e) =>
+													setManage((s) =>
+														s ? { ...s, filter: e.target.value } : s,
+													)
+												}
+												placeholder={t('credential.modelManage.filter')}
+												className="min-w-0 flex-1 rounded border border-border bg-transparent px-2 py-1 font-mono text-[11px] text-foreground outline-none placeholder:text-text-tertiary"
+											/>
+											<Button
+												size="sm"
+												variant="ghost"
+												className="h-7 shrink-0 gap-x-1.5 text-[11px] text-text-secondary hover:text-foreground"
+												onClick={probeChecked}
+												disabled={
+													manage.checked.size === 0 || manage.saving
+												}
+											>
+												<Zap />
+												{t('credential.modelManage.probeAll')}
+											</Button>
+										</div>
 										<div className="mt-2 flex max-h-56 flex-col gap-y-0.5 overflow-y-auto">
 											{manage.remote
 												.filter((id) =>
@@ -687,9 +741,46 @@ function DetailPanel({
 															checked={manage.checked.has(id)}
 															onChange={() => toggleModel(id)}
 														/>
-														<span className="font-mono text-[11px] text-foreground">
+														<span className="min-w-0 flex-1 truncate font-mono text-[11px] text-foreground">
 															{id}
 														</span>
+														{(() => {
+															const st = probeStatus[id];
+															if (st === 'checking') {
+																return (
+																	<span className="ml-auto shrink-0 text-[10px] text-text-tertiary">
+																		{t('credential.modelManage.probing')}
+																	</span>
+																);
+															}
+															if (st === 'ok') {
+																return (
+																	<span className="ml-auto shrink-0 text-[11px] text-emerald-600">
+																		✓
+																	</span>
+																);
+															}
+															if (st === 'fail') {
+																return (
+																	<span className="ml-auto shrink-0 text-[11px] text-destructive">
+																		✗
+																	</span>
+																);
+															}
+															return (
+																<button
+																	type="button"
+																	className="ml-auto shrink-0 rounded px-1 text-[10px] text-text-tertiary hover:text-foreground"
+																	onClick={(e) => {
+																		e.preventDefault();
+																		e.stopPropagation();
+																		probeModel(id);
+																	}}
+																>
+																	{t('credential.modelManage.probe')}
+																</button>
+															);
+														})()}
 													</label>
 												))}
 										</div>

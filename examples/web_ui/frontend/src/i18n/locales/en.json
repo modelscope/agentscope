@@ -358,7 +358,10 @@
 			"save": "Save",
 			"saving": "Saving…",
 			"cancel": "Cancel",
-			"notInRemote": "Enabled models missing from the endpoint list (removed on save): {{names}}"
+			"notInRemote": "Enabled models missing from the endpoint list (removed on save): {{names}}",
+			"probe": "Probe",
+			"probeAll": "Probe checked",
+			"probing": "Probing…"
 		},
 		"table": {
 			"model": "Model",

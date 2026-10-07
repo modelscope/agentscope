@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """Credential router — CRUD endpoints for API key credentials."""
+import asyncio
+
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from ..access import ResourceKind
@@ -15,10 +17,13 @@ from ._schema import (
     ListCredentialSchemasResponse,
     ListRemoteModelsResponse,
     UpdateCredentialRequest,
+    VerifyModelRequest,
+    VerifyModelResponse,
 )
 from .._service import CredentialView, ResourceAccessService
 from ..storage import StorageBase
 from ...credential import CredentialFactory
+from ...message import UserMsg
 
 credential_router = APIRouter(
     prefix="/credential",
@@ -249,3 +254,57 @@ async def list_remote_models(
             ),
         )
     return ListRemoteModelsResponse(models=models, total=len(models))
+
+
+@credential_router.post(
+    "/{credential_id}/verify-model",
+    response_model=VerifyModelResponse,
+    summary="Probe one model with a 1-token request",
+)
+async def verify_model(
+    credential_id: str,
+    body: VerifyModelRequest,
+    user_id: str = Depends(get_current_user_id),
+    access: ResourceAccessService = Depends(get_resource_access_service),
+) -> VerifyModelResponse:
+    """Answer one question about one model: does it answer, yes or no.
+
+    A tiny real request (max 1 output token) is sent through the
+    credential's own chat model, so quota, product activation and key
+    validity are all exercised exactly as a real chat would. No error
+    taxonomy — the caller only gets ``ok``; the reason lives upstream.
+
+    Args:
+        credential_id (`str`): The credential making the call.
+        body (VerifyModelRequest): The model ID to probe.
+        user_id (`str`): Injected authenticated user ID.
+        access (`ResourceAccessService`): Injected access service —
+            resolves the raw (unmasked) credential payload.
+
+    Returns:
+        `VerifyModelResponse`: ``ok=True`` when the model answered.
+    """
+    record = await access.resolve_credential(user_id, credential_id)
+    credential = CredentialFactory.from_dict(record.data)
+    model_cls = credential.get_chat_model_class()
+
+    try:
+        parameters = model_cls.Parameters(**{"max_tokens": 1})
+    except Exception:  # pylint: disable=broad-except
+        parameters = None
+
+    model = model_cls(
+        credential=credential,
+        model=body.model,
+        parameters=parameters,
+        stream=False,
+    )
+
+    try:
+        await asyncio.wait_for(
+            model([UserMsg(name="user", content="ping")]),
+            timeout=30,
+        )
+    except Exception:  # pylint: disable=broad-except
+        return VerifyModelResponse(ok=False)
+    return VerifyModelResponse(ok=True)

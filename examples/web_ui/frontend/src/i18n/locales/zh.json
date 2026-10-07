@@ -358,7 +358,10 @@
 			"save": "保存",
 			"saving": "保存中…",
 			"cancel": "取消",
-			"notInRemote": "以下已启用模型不在端点列表中，保存后将移除：{{names}}"
+			"notInRemote": "以下已启用模型不在端点列表中，保存后将移除：{{names}}",
+			"probe": "探活",
+			"probeAll": "一键探活",
+			"probing": "探活中…"
 		},
 		"table": {
 			"model": "模型",

@@ -148,6 +148,17 @@ class CredentialRemoteModelsTest(IsolatedAsyncioTestCase):
         self.assertEqual(response.status_code, 404)
 
 
+    def test_verify_model_unknown_credential_maps_to_404(self) -> None:
+        """Probing an unknown credential answers 404 like other routes."""
+        response = self._client.post(
+            "/credential/nonexistent/verify-model",
+            headers={**HEADERS, "Content-Type": "application/json"},
+            json={"model": "whatever"},
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+
 class CredentialListRemoteModelsTest(IsolatedAsyncioTestCase):
     """Unit-test the per-credential URL and header construction."""
 

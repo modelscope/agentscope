@@ -50,3 +50,17 @@ class ListRemoteModelsResponse(BaseModel):
         description="Sorted raw model IDs reported by the endpoint.",
     )
     total: int = Field(description="Total number of models.")
+
+
+class VerifyModelRequest(BaseModel):
+    """Request body for probing one model on a credential."""
+
+    model: str = Field(description="The model ID to probe.")
+
+
+class VerifyModelResponse(BaseModel):
+    """Response body for a model probe."""
+
+    ok: bool = Field(
+        description="True when the model answered a 1-token request.",
+    )
