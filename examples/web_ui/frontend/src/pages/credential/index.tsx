@@ -1,4 +1,12 @@
-import { Cable, Eye, EyeOff, Plus, Trash2, Pen } from 'lucide-react';
+import {
+	Cable,
+	Eye,
+	EyeOff,
+	ListChecks,
+	Plus,
+	Trash2,
+	Pen,
+} from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 
 import { ApiError } from '@/api/client';
@@ -55,6 +63,16 @@ type EndpointCheckState =
 	| { status: 'ok'; remote: string[] }
 	| { status: 'unsupported'; detail: string }
 	| { status: 'error'; detail: string };
+
+/** State of the enabled-model manager panel. */
+type ManageState = {
+	/** Live model IDs from the endpoint; null until fetched. */
+	remote: string[] | null;
+	/** IDs the user checked for this credential. */
+	checked: Set<string>;
+	filter: string;
+	saving: boolean;
+};
 
 // ─── Masked value ─────────────────────────────────────────────────────────────
 
@@ -336,9 +354,16 @@ interface DetailPanelProps {
 	schema: CredentialSchema | null;
 	onEdit: () => void;
 	onDelete: () => void;
+	onUpdated: () => void;
 }
 
-function DetailPanel({ credential, schema, onEdit, onDelete }: DetailPanelProps) {
+function DetailPanel({
+	credential,
+	schema,
+	onEdit,
+	onDelete,
+	onUpdated,
+}: DetailPanelProps) {
 	const { t } = useTranslation();
 	const [models, setModels] = useState<ModelCard[]>([]);
 	const [ttsModels, setTtsModels] = useState<TTSModelCard[]>([]);
@@ -381,6 +406,65 @@ function DetailPanel({ credential, schema, onEdit, onDelete }: DetailPanelProps)
 		}
 	}, [credential.id]);
 
+	// Enabled-model manager — fetch the endpoint's live list, let the user
+	// check the models this credential should offer, and persist the
+	// selection on the credential itself.
+	const enabledModels =
+		(credential.data.enabled_models as string[] | undefined) ?? [];
+	const [manage, setManage] = useState<ManageState | null>(null);
+	useEffect(() => setManage(null), [credential.id]);
+
+	const fetchModelList = useCallback(async () => {
+		setManage({
+			remote: null,
+			checked: new Set(enabledModels),
+			filter: '',
+			saving: false,
+		});
+		try {
+			const res = await credentialApi.remoteModels(credential.id, {
+				silent: true,
+			});
+			setManage({
+				remote: res.models,
+				checked: new Set(
+					enabledModels.filter((m) => res.models.includes(m)),
+				),
+				filter: '',
+				saving: false,
+			});
+		} catch {
+			setManage(null);
+		}
+	}, [credential.id, enabledModels]);
+
+	const saveEnabled = useCallback(async () => {
+		if (!manage?.remote) return;
+		setManage((s) => (s ? { ...s, saving: true } : s));
+		try {
+			await credentialApi.update(credential.id, {
+				data: {
+					...credential.data,
+					enabled_models: [...manage.checked].sort(),
+				},
+			});
+			setManage(null);
+			onUpdated();
+		} finally {
+			setManage((s) => (s ? { ...s, saving: false } : s));
+		}
+	}, [manage, credential, onUpdated]);
+
+	const toggleModel = useCallback((id: string) => {
+		setManage((s) => {
+			if (!s) return s;
+			const checked = new Set(s.checked);
+			if (checked.has(id)) checked.delete(id);
+			else checked.add(id);
+			return { ...s, checked };
+		});
+	}, []);
+
 	useEffect(() => {
 		if (!type) return;
 		setModelsLoading(true);
@@ -407,12 +491,17 @@ function DetailPanel({ credential, schema, onEdit, onDelete }: DetailPanelProps)
 	}, [credential.id, type]);
 
 	// Fields to display: use schema properties order, skip id/type/const fields
+	// (enabled_models is curated through the model-list picker, not hand-edited)
 	const displayFields = schema
 		? Object.entries(schema.properties).filter(
-				([key, prop]) => key !== 'id' && key !== 'type' && prop.const === undefined,
+				([key, prop]) =>
+					key !== 'id' &&
+					key !== 'type' &&
+					key !== 'enabled_models' &&
+					prop.const === undefined,
 			)
 		: Object.entries(credential.data)
-				.filter(([key]) => key !== 'id' && key !== 'type')
+				.filter(([key]) => key !== 'id' && key !== 'type' && key !== 'enabled_models')
 				.map(
 					([key]) =>
 						[key, { title: key, writeOnly: false }] as [
@@ -522,6 +611,110 @@ function DetailPanel({ credential, schema, onEdit, onDelete }: DetailPanelProps)
 								check={endpointCheck}
 								catalog={models.map((m) => m.name)}
 							/>
+						)}
+					</div>
+
+					{/* Enabled models — fetch the endpoint's live list, check
+					    the ones this credential should offer, and persist the
+					    selection on the credential itself. */}
+					<div className="mt-4 px-[18px]">
+						<div className="flex items-center justify-between rounded-[12px] border border-border px-3 py-2">
+							<span className="flex items-center gap-x-1.5 text-[11px] text-text-secondary">
+								{t('credential.modelManage.title')}
+								<span className="font-mono text-[10px] text-text-data">
+									{enabledModels.length}
+								</span>
+							</span>
+							<Button
+								size="sm"
+								variant="ghost"
+								className="h-7 gap-x-1.5 text-[11.5px] text-text-secondary hover:text-foreground"
+								onClick={fetchModelList}
+								disabled={manage?.saving === true}
+							>
+								<ListChecks />
+								{t('credential.modelManage.fetch')}
+							</Button>
+						</div>
+						{manage && (
+							<div className="mt-2 rounded-[12px] border border-border p-3">
+								{manage.remote === null ? (
+									<p className="text-[11px] text-text-tertiary">
+										{t('credential.modelManage.fetching')}
+									</p>
+								) : manage.remote.length === 0 ? (
+									<p className="text-[11px] text-text-tertiary">
+										{t('credential.modelManage.none')}
+									</p>
+								) : (
+									<>
+										{enabledModels.some(
+											(m) => !manage.remote!.includes(m),
+										) && (
+											<p className="mb-2 text-[10.5px] break-all text-destructive">
+												{t('credential.modelManage.notInRemote', {
+													names: enabledModels
+														.filter((m) => !manage.remote!.includes(m))
+														.join(', '),
+												})}
+											</p>
+										)}
+										<input
+											value={manage.filter}
+											onChange={(e) =>
+												setManage((s) =>
+													s ? { ...s, filter: e.target.value } : s,
+												)
+											}
+											placeholder={t('credential.modelManage.filter')}
+											className="w-full rounded border border-border bg-transparent px-2 py-1 font-mono text-[11px] text-foreground outline-none placeholder:text-text-tertiary"
+										/>
+										<div className="mt-2 flex max-h-56 flex-col gap-y-0.5 overflow-y-auto">
+											{manage.remote
+												.filter((id) =>
+													id
+														.toLowerCase()
+														.includes(manage.filter.toLowerCase()),
+												)
+												.map((id) => (
+													<label
+														key={id}
+														className="flex cursor-pointer items-center gap-x-2 rounded px-1 py-0.5 hover:bg-row-hover"
+													>
+														<input
+															type="checkbox"
+															className="accent-foreground"
+															checked={manage.checked.has(id)}
+															onChange={() => toggleModel(id)}
+														/>
+														<span className="font-mono text-[11px] text-foreground">
+															{id}
+														</span>
+													</label>
+												))}
+										</div>
+										<div className="mt-2 flex items-center justify-end gap-x-2">
+											<Button
+												size="sm"
+												variant="ghost"
+												onClick={() => setManage(null)}
+												disabled={manage.saving}
+											>
+												{t('credential.modelManage.cancel')}
+											</Button>
+											<Button
+												size="sm"
+												onClick={saveEnabled}
+												disabled={manage.saving}
+											>
+												{manage.saving
+													? t('credential.modelManage.saving')
+													: t('credential.modelManage.save')}
+											</Button>
+										</div>
+									</>
+								)}
+							</div>
 						)}
 					</div>
 
@@ -783,6 +976,7 @@ export const CredentialPage = () => {
 						schema={selectedSchema}
 						onEdit={() => setEditOpen(true)}
 						onDelete={() => setDeleteOpen(true)}
+						onUpdated={() => refetch()}
 					/>
 				) : (
 					<div className="flex h-full items-center justify-center">

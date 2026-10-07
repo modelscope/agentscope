@@ -349,6 +349,17 @@
 			"catalogOnly": "目录有但端点没有（可能是死条目）：{{count}}",
 			"unsupported": "该凭证类型不支持端点检测。"
 		},
+		"modelManage": {
+			"title": "已启用模型",
+			"fetch": "获取模型列表",
+			"fetching": "正在获取端点模型列表…",
+			"none": "端点未返回任何模型。",
+			"filter": "筛选模型",
+			"save": "保存",
+			"saving": "保存中…",
+			"cancel": "取消",
+			"notInRemote": "以下已启用模型不在端点列表中，保存后将移除：{{names}}"
+		},
 		"table": {
 			"model": "模型",
 			"context": "上下文",

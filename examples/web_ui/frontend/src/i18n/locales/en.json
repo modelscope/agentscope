@@ -349,6 +349,17 @@
 			"catalogOnly": "Listed in the catalog but not served (likely dead entries): {{count}}",
 			"unsupported": "This credential type does not support endpoint checks."
 		},
+		"modelManage": {
+			"title": "Enabled models",
+			"fetch": "Fetch model list",
+			"fetching": "Fetching the endpoint's model list…",
+			"none": "The endpoint returned no models.",
+			"filter": "Filter models",
+			"save": "Save",
+			"saving": "Saving…",
+			"cancel": "Cancel",
+			"notInRemote": "Enabled models missing from the endpoint list (removed on save): {{names}}"
+		},
 		"table": {
 			"model": "Model",
 			"context": "Context",

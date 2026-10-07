@@ -116,5 +116,10 @@ class CredentialFactory:
         """Return JSON schemas for all registered credential types.
 
         Used by the frontend to render credential forms dynamically.
+        ``enabled_models`` is curated through the model-list picker rather
+        than hand-edited, so it is kept out of the form schemas.
         """
-        return [c.model_json_schema() for c in cls._classes]
+        schemas = [c.model_json_schema() for c in cls._classes]
+        for schema in schemas:
+            schema.get("properties", {}).pop("enabled_models", None)
+        return schemas
