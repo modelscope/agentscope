@@ -363,6 +363,7 @@
 			"probeAll": "一键探活",
 			"probing": "探活中…",
 			"selectAll": "全选",
+			"selectNone": "取消全选",
 			"keepAvailable": "保留可用",
 			"keepAvailableHint": "先探活后再使用",
 			"keepAvailableDone": "已剔除 {{count}} 个探活失败的模型",

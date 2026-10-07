@@ -78,6 +78,16 @@ type ManageState = {
 	saving: boolean;
 };
 
+/** Model IDs the picker shows under the current filter — the scope every
+    bulk action (select-all, probe checked, keep available) operates on. */
+function visibleModelIds(state: ManageState): string[] {
+	if (!state.remote) return [];
+	const filter = state.filter.toLowerCase();
+	return filter
+		? state.remote.filter((id) => id.toLowerCase().includes(filter))
+		: state.remote;
+}
+
 // ─── Masked value ─────────────────────────────────────────────────────────────
 
 function MaskedValue({ value }: { value: string }) {
@@ -419,9 +429,13 @@ function DetailPanel({
 	useEffect(() => setManage(null), [credential.id]);
 
 	const fetchModelList = useCallback(async () => {
+		// Refreshing while the panel is open keeps the unsaved selection;
+		// only a fresh open starts from the credential's enabled models.
+		const prev = manage;
+		const keep = prev ? [...prev.checked] : null;
 		setManage({
 			remote: null,
-			checked: new Set(enabledModels),
+			checked: new Set(keep ?? enabledModels),
 			filter: '',
 			saving: false,
 		});
@@ -432,15 +446,15 @@ function DetailPanel({
 			setManage({
 				remote: res.models,
 				checked: new Set(
-					enabledModels.filter((m) => res.models.includes(m)),
+					(keep ?? enabledModels).filter((m) => res.models.includes(m)),
 				),
 				filter: '',
 				saving: false,
 			});
 		} catch {
-			setManage(null);
+			setManage(keep === null ? null : prev);
 		}
-	}, [credential.id, enabledModels]);
+	}, [credential.id, enabledModels, manage]);
 
 	const saveEnabled = useCallback(async () => {
 		if (!manage?.remote) return;
@@ -494,7 +508,10 @@ function DetailPanel({
 	);
 
 	const probeChecked = useCallback(async () => {
-		const ids = [...(manage?.checked ?? [])];
+		if (!manage?.remote) return;
+		const ids = visibleModelIds(manage).filter((id) =>
+			manage.checked.has(id),
+		);
 		let cursor = 0;
 		const workers = Array.from(
 			{ length: Math.min(4, ids.length) },
@@ -515,22 +532,41 @@ function DetailPanel({
 		(st) => st === 'checking',
 	);
 	const anyProbed = Object.values(probeStatus).some((st) => st !== 'checking');
+	const visible = manage?.remote ? visibleModelIds(manage) : [];
+	const allVisibleSelected =
+		!!manage && visible.length > 0 && visible.every((id) => manage.checked.has(id));
+	const probeableCount = manage
+		? visible.filter((id) => manage.checked.has(id)).length
+		: 0;
 	const keepAvailableTitle = anyProbing
 		? t('credential.modelManage.probing')
 		: anyProbed
 			? undefined
 			: t('credential.modelManage.keepAvailableHint');
 
+	// Bulk actions are scoped to the rows in view: with a filter active,
+	// select-all toggles only the visible models in and out of the
+	// selection, leaving hidden rows untouched.
 	const selectAllModels = useCallback(() => {
-		setManage((s) => (s?.remote ? { ...s, checked: new Set(s.remote) } : s));
+		setManage((s) => {
+			if (!s?.remote) return s;
+			const ids = visibleModelIds(s);
+			const checked = new Set(s.checked);
+			const allIn = ids.every((id) => checked.has(id));
+			for (const id of ids) {
+				if (allIn) checked.delete(id);
+				else checked.add(id);
+			}
+			return { ...s, checked };
+		});
 	}, []);
 
-	// Drop only the checked models a probe has proven dead; models never
-	// probed stay selected.
+	// Drop only the checked models a probe has proven dead, within the
+	// rows in view; models never probed stay selected.
 	const dropFailedModels = useCallback(() => {
-		if (!manage) return;
-		const failed = [...manage.checked].filter(
-			(id) => probeStatus[id] === 'fail',
+		if (!manage?.remote) return;
+		const failed = visibleModelIds(manage).filter(
+			(id) => manage.checked.has(id) && probeStatus[id] === 'fail',
 		);
 		if (failed.length === 0) {
 			toast.info(t('credential.modelManage.keepAvailableNone'));
@@ -757,7 +793,9 @@ function DetailPanel({
 												disabled={manage.saving}
 											>
 												<SquareCheck />
-												{t('credential.modelManage.selectAll')}
+												{allVisibleSelected
+													? t('credential.modelManage.selectNone')
+													: t('credential.modelManage.selectAll')}
 											</Button>
 											<Button
 												size="sm"
@@ -776,7 +814,9 @@ function DetailPanel({
 												className="h-7 shrink-0 gap-x-1.5 text-[11px] text-text-secondary hover:text-foreground"
 												onClick={probeChecked}
 												disabled={
-													manage.checked.size === 0 || manage.saving
+													probeableCount === 0 ||
+													manage.saving ||
+													anyProbing
 												}
 											>
 												<Zap />
