@@ -361,7 +361,12 @@
 			"notInRemote": "Enabled models missing from the endpoint list (removed on save): {{names}}",
 			"probe": "Probe",
 			"probeAll": "Probe checked",
-			"probing": "Probing…"
+			"probing": "Probing…",
+			"selectAll": "Select all",
+			"keepAvailable": "Keep available",
+			"keepAvailableHint": "Run a probe first",
+			"keepAvailableDone": "Removed {{count}} model(s) that failed the probe",
+			"keepAvailableNone": "No checked model failed the probe"
 		},
 		"table": {
 			"model": "Model",

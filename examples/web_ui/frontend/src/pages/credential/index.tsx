@@ -1,13 +1,16 @@
 import {
 	Cable,
+	CheckCheck,
 	Eye,
 	EyeOff,
 	ListChecks,
 	Plus,
+	SquareCheck,
 	Trash2,
 	Pen,
 	Zap,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useState, useEffect, useCallback } from 'react';
 
 import { ApiError } from '@/api/client';
@@ -505,6 +508,42 @@ function DetailPanel({
 		await Promise.all(workers);
 	}, [manage, probeModel]);
 
+	// Bulk picker actions. ``probeStatus`` outlives the picker panel (it
+	// resets only on credential switch), so a probe result stays usable for
+	// the keep-available action across picker close/open within a credential.
+	const anyProbing = Object.values(probeStatus).some(
+		(st) => st === 'checking',
+	);
+	const anyProbed = Object.values(probeStatus).some((st) => st !== 'checking');
+	const keepAvailableTitle = anyProbing
+		? t('credential.modelManage.probing')
+		: anyProbed
+			? undefined
+			: t('credential.modelManage.keepAvailableHint');
+
+	const selectAllModels = useCallback(() => {
+		setManage((s) => (s?.remote ? { ...s, checked: new Set(s.remote) } : s));
+	}, []);
+
+	// Drop only the checked models a probe has proven dead; models never
+	// probed stay selected.
+	const dropFailedModels = useCallback(() => {
+		if (!manage) return;
+		const failed = [...manage.checked].filter(
+			(id) => probeStatus[id] === 'fail',
+		);
+		if (failed.length === 0) {
+			toast.info(t('credential.modelManage.keepAvailableNone'));
+			return;
+		}
+		const checked = new Set(manage.checked);
+		for (const id of failed) checked.delete(id);
+		setManage({ ...manage, checked });
+		toast.success(
+			t('credential.modelManage.keepAvailableDone', { count: failed.length }),
+		);
+	}, [manage, probeStatus, t]);
+
 	useEffect(() => {
 		if (!type) return;
 		setModelsLoading(true);
@@ -710,6 +749,27 @@ function DetailPanel({
 												placeholder={t('credential.modelManage.filter')}
 												className="min-w-0 flex-1 rounded border border-border bg-transparent px-2 py-1 font-mono text-[11px] text-foreground outline-none placeholder:text-text-tertiary"
 											/>
+											<Button
+												size="sm"
+												variant="ghost"
+												className="h-7 shrink-0 gap-x-1.5 text-[11px] text-text-secondary hover:text-foreground"
+												onClick={selectAllModels}
+												disabled={manage.saving}
+											>
+												<SquareCheck />
+												{t('credential.modelManage.selectAll')}
+											</Button>
+											<Button
+												size="sm"
+												variant="ghost"
+												className="h-7 shrink-0 gap-x-1.5 text-[11px] text-text-secondary hover:text-foreground"
+												onClick={dropFailedModels}
+												disabled={manage.saving || anyProbing || !anyProbed}
+												title={keepAvailableTitle}
+											>
+												<CheckCheck />
+												{t('credential.modelManage.keepAvailable')}
+											</Button>
 											<Button
 												size="sm"
 												variant="ghost"

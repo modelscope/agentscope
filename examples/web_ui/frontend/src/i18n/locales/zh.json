@@ -361,7 +361,12 @@
 			"notInRemote": "以下已启用模型不在端点列表中，保存后将移除：{{names}}",
 			"probe": "探活",
 			"probeAll": "一键探活",
-			"probing": "探活中…"
+			"probing": "探活中…",
+			"selectAll": "全选",
+			"keepAvailable": "保留可用",
+			"keepAvailableHint": "先探活后再使用",
+			"keepAvailableDone": "已剔除 {{count}} 个探活失败的模型",
+			"keepAvailableNone": "没有探活失败的模型"
 		},
 		"table": {
 			"model": "模型",
