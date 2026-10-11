@@ -1992,7 +1992,9 @@ class ExcelParserTest(IsolatedAsyncioTestCase):
             ExcelParser(table_format="csv")  # type: ignore[arg-type]
 
 
-class WordParserTest(IsolatedAsyncioTestCase):
+class WordParserTest(  # pylint: disable=too-many-public-methods
+    IsolatedAsyncioTestCase,
+):
     """Behavioural coverage for :class:`WordParser`."""
 
     async def test_invalid_input_errors(self) -> None:
