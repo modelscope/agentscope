@@ -4,7 +4,7 @@ import base64
 import fnmatch
 from abc import ABC
 from typing import Any
-from urllib.parse import unquote
+from urllib.request import url2pathname
 
 import requests
 from pydantic import Field
@@ -338,7 +338,10 @@ class _AnthropicFormatterBase(FormatterBase, ABC):
         elif isinstance(source, URLSource):
             url = str(source.url)
             if url.startswith("file://"):
-                with open(unquote(url.removeprefix("file://")), "rb") as f:
+                with open(
+                    url2pathname(url.removeprefix("file://")),
+                    "rb",
+                ) as f:
                     data = base64.b64encode(f.read()).decode("utf-8")
             else:
                 response = requests.get(url, timeout=30)
