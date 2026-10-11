@@ -3,6 +3,7 @@
 transport — no network, no sound card."""
 # pylint: disable=protected-access, unused-argument
 import asyncio
+import base64
 from typing import Any, AsyncIterator, Sequence
 from unittest.async_case import IsolatedAsyncioTestCase
 from utils import AnyString, MockModel
@@ -45,7 +46,13 @@ from agentscope.event import (
     ToolResultTextDeltaEvent,
     UserConfirmResultEvent,
 )
-from agentscope.message import TextBlock, ToolCallBlock, ToolResultBlock
+from agentscope.message import (
+    Base64Source,
+    DataBlock,
+    TextBlock,
+    ToolCallBlock,
+    ToolResultBlock,
+)
 from agentscope.permission import (
     PermissionBehavior,
     PermissionContext,
@@ -1348,6 +1355,116 @@ class RealtimeAgentTranscriptionTest(IsolatedAsyncioTestCase):
                 "context": [("user", "hello")],
             },
         )
+
+    async def test_split_transcript_merge_joins_the_halves(self) -> None:
+        """Both halves of a transcript split by endpointing stay one turn."""
+        model = ScriptedModel(
+            [
+                [
+                    me.SpeechStartedEvent(item_id="u1"),
+                    me.SpeechEndedEvent(item_id="u1"),
+                    me.InputTranscriptionEvent(item_id="u1", text="帮我订张机票"),
+                    me.SpeechStartedEvent(item_id="u2"),
+                    me.SpeechEndedEvent(item_id="u2"),
+                    me.InputTranscriptionEvent(item_id="u2", text="去上海的"),
+                ],
+            ],
+        )
+        agent = RealtimeAgent(
+            "Friday",
+            "be brief",
+            model,
+            aggregator=TurnAggregator(merge_window_ms=60_000),
+        )
+
+        async with agent:
+            transport = FakeTransport(frames=3)
+            async with transport:
+                async for _ in agent.reply_stream(transport):
+                    pass
+
+        self.assertListEqual(
+            [
+                [block.text for block in message.content]
+                for message in agent.state.context
+            ],
+            [["帮我订张机票去上海的"]],
+        )
+
+    async def test_split_transcript_merge_keeps_attached_blocks(self) -> None:
+        """Merging the second half of a split transcript appends its text
+        to the previous turn instead of replacing it, so blocks the user
+        attached between the halves survive."""
+        model = QueueSessionModel()
+        model.supports_text_input = True
+        agent = RealtimeAgent(
+            "Friday",
+            "be brief",
+            model,
+            aggregator=TurnAggregator(merge_window_ms=60_000),
+        )
+        transport = GatedTransport([])
+
+        async def _collect() -> None:
+            async for _ in agent.reply_stream(transport):
+                pass
+
+        async with agent, transport:
+            await model.iterator_started[0].wait()
+            stream_task = asyncio.create_task(_collect())
+            queue = model.event_queues[0]
+
+            # Half 1: endpointing splits the user's sentence at a pause.
+            queue.put_nowait(me.SpeechStartedEvent(item_id="u1"))
+            queue.put_nowait(me.SpeechEndedEvent(item_id="u1"))
+            queue.put_nowait(
+                me.InputTranscriptionEvent(item_id="u1", text="帮我订张机票"),
+            )
+            while not agent.state.context:
+                await asyncio.sleep(0)
+
+            # Between the halves the user attaches a photo to the turn.
+            photo = UserMsg(
+                name="user",
+                content=[
+                    TextBlock(text="这是行程参考图"),
+                    DataBlock(
+                        source=Base64Source(
+                            data=base64.b64encode(b"png-bytes").decode(),
+                            media_type="image/png",
+                        ),
+                        name="trip.png",
+                    ),
+                ],
+            )
+            await agent.send(photo)
+
+            # Half 2 lands inside the merge window, so it continues the
+            # turn the photo is attached to.
+            queue.put_nowait(me.SpeechStartedEvent(item_id="u2"))
+            queue.put_nowait(me.SpeechEndedEvent(item_id="u2"))
+            queue.put_nowait(
+                me.InputTranscriptionEvent(item_id="u2", text="去上海的"),
+            )
+            queue.put_nowait(None)
+            await asyncio.wait_for(
+                model.iterator_finished[0].wait(),
+                timeout=1,
+            )
+            transport.gate.set()
+            await stream_task
+
+        merged = agent.state.context[-1]
+        self.assertListEqual(
+            [
+                [block.type for block in message.content]
+                for message in agent.state.context
+            ],
+            [["text"], ["text", "data", "text"]],
+        )
+        self.assertEqual(merged.content[0].text, "这是行程参考图")
+        self.assertEqual(merged.content[2].text, "去上海的")
+        self.assertIs(merged.content[1], photo.content[1])
 
 
 class RealtimeAgentLifecycleTest(IsolatedAsyncioTestCase):

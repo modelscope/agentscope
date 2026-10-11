@@ -848,8 +848,11 @@ class RealtimeAgent:
                 context.pop()
         if not context or context[-1].role != "user":
             return False
-        previous = context[-1].get_text_content() or ""
-        context[-1].content = [TextBlock(text=f"{previous}{text}")]
+        blocks = context[-1].content
+        if blocks and isinstance(blocks[-1], TextBlock):
+            blocks[-1].text += text
+        else:
+            blocks.append(TextBlock(text=text))
         return True
 
     def _start_reply(self, item_id: str) -> _Reply | None:
