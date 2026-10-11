@@ -273,8 +273,6 @@ class TestLocalWorkspaceOffload(IsolatedAsyncioTestCase):
         is not a JSON record and broke every line-oriented consumer of
         ``context.jsonl``.
         """
-        import json as jsonlib
-
         session_id = "test_session_empty_batch"
         msgs1 = [UserMsg(name="user", content="First message")]
         file_path = await self.workspace.offload_context(session_id, msgs1)
@@ -287,7 +285,7 @@ class TestLocalWorkspaceOffload(IsolatedAsyncioTestCase):
         for line in content.decode("utf-8").splitlines():
             self.assertTrue(line.strip())
             Msg.model_validate_json(line)
-            jsonlib.loads(line)
+            json.loads(line)
 
     async def test_offload_context_with_datablock(self) -> None:
         """Test offloading messages with DataBlock content.
