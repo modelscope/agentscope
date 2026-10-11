@@ -266,6 +266,29 @@ class TestLocalWorkspaceOffload(IsolatedAsyncioTestCase):
             msg = Msg.model_validate_json(line)
             self.assertIsNotNone(msg)
 
+    async def test_offload_context_empty_msgs_appends_nothing(self) -> None:
+        """Offloading an empty batch must not append a blank JSONL line.
+
+        The empty join used to be written as a standalone ``\\n``, which
+        is not a JSON record and broke every line-oriented consumer of
+        ``context.jsonl``.
+        """
+        import json as jsonlib
+
+        session_id = "test_session_empty_batch"
+        msgs1 = [UserMsg(name="user", content="First message")]
+        file_path = await self.workspace.offload_context(session_id, msgs1)
+        await self.workspace.offload_context(session_id, [])
+
+        async with aiofiles.open(file_path, "rb") as f:
+            content = await f.read()
+
+        self.assertFalse(content.endswith(b"\n\n"))
+        for line in content.decode("utf-8").splitlines():
+            self.assertTrue(line.strip())
+            Msg.model_validate_json(line)
+            jsonlib.loads(line)
+
     async def test_offload_context_with_datablock(self) -> None:
         """Test offloading messages with DataBlock content.
 
