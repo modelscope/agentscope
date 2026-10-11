@@ -6,6 +6,7 @@ Tests cover both non-streaming and streaming modes.
 """
 import base64
 import io
+import struct
 import wave
 from typing import Any
 import unittest
@@ -580,6 +581,58 @@ class TestDashScopeStream(IsolatedAsyncioTestCase):
             self.assertEqual(wav.getframerate(), 24000)
             frames = wav.readframes(wav.getnframes())
         self.assertEqual(frames, pcm_full)
+
+    async def test_stream_audio_final_block_declares_real_wav_sizes(
+        self,
+    ) -> None:
+        """The final ``is_last`` audio block declares real RIFF/data sizes.
+
+        Only the live deltas may carry the streaming header, whose sizes
+        are the 0xFFFFFFFF placeholder. The final block is a complete
+        buffer the agent stores as the completed response, so its header
+        must declare the real sizes like the non-streaming path does;
+        otherwise consumers that trust the header (``wave.getnframes``,
+        duration, seeking) see garbage.
+        """
+        pcm1 = bytes([1, 2, 3, 4])
+        pcm2 = bytes([5, 6, 7, 8])
+        pcm3 = bytes([9, 10, 11, 12])
+        pcm_full = pcm1 + pcm2 + pcm3
+
+        chunks = [
+            _make_stream_chunk(
+                delta_audio={"data": base64.b64encode(pcm1).decode()},
+            ),
+            _make_stream_chunk(
+                delta_audio={"data": base64.b64encode(pcm2).decode()},
+            ),
+            _make_stream_chunk(
+                delta_audio={"data": base64.b64encode(pcm3).decode()},
+            ),
+            _make_stream_chunk(
+                has_choices=False,
+                usage={"prompt_tokens": 5, "completion_tokens": 3},
+            ),
+        ]
+        mock_create = AsyncMock(return_value=_MockAsyncStream(chunks))
+        self.mock_client.chat.completions.create = mock_create
+
+        gen = await self.model([])
+        responses = [r async for r in gen]
+
+        final = responses[-1]
+        self.assertTrue(final.is_last)
+        final_audio = next(
+            b for b in final.content if isinstance(b, DataBlock)
+        )
+        wav_bytes = base64.b64decode(final_audio.source.data)
+        # Real chunk sizes, not the 0xFFFFFFFF streaming placeholder.
+        riff_size = struct.unpack("<I", wav_bytes[4:8])[0]
+        data_size = struct.unpack("<I", wav_bytes[40:44])[0]
+        self.assertEqual(riff_size, 36 + len(pcm_full))
+        self.assertEqual(data_size, len(pcm_full))
+        with wave.open(io.BytesIO(wav_bytes), "rb") as wav:
+            self.assertEqual(wav.getnframes(), len(pcm_full) // 2)
 
     async def test_stream_audio_transcript_yields_text(
         self,
