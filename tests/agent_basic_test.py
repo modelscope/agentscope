@@ -18,9 +18,12 @@ from agentscope.permission import (
     PermissionContext,
 )
 from agentscope.message import (
+    AssistantMsg,
+    Msg,
     TextBlock,
     ThinkingBlock,
     ToolCallBlock,
+    ToolResultBlock,
     UserMsg,
 )
 from agentscope.types import ReplyFinishedReason
@@ -100,7 +103,9 @@ class MockConcurrentTool(ToolBase):
         )
 
 
-class AgentBasicTest(IsolatedAsyncioTestCase):
+class AgentBasicTest(  # pylint: disable=too-many-public-methods
+    IsolatedAsyncioTestCase,
+):
     """The basic test of the agent class."""
 
     async def asyncSetUp(self) -> None:
@@ -680,6 +685,213 @@ class AgentBasicTest(IsolatedAsyncioTestCase):
         ]
         context_dicts = [msg.model_dump() for msg in self.agent.state.context]
         self.assertListEqual(context_dicts, expected_context_after_reply)
+
+    @staticmethod
+    def _content_signature(blocks: list) -> list:
+        """Reduce content blocks to (type, payload) tuples for equality
+        checks, ignoring volatile fields such as ids and timestamps."""
+        signature: list[tuple[Any, ...]] = []
+        for block in blocks:
+            if isinstance(block, TextBlock):
+                signature.append(("text", block.text))
+            elif isinstance(block, ThinkingBlock):
+                signature.append(("thinking", block.thinking))
+            elif isinstance(block, ToolCallBlock):
+                signature.append(
+                    ("tool_call", block.id, block.name, block.input),
+                )
+            elif isinstance(block, ToolResultBlock):
+                output = (
+                    block.output
+                    if isinstance(block.output, str)
+                    else [
+                        inner.text
+                        if isinstance(inner, TextBlock)
+                        else inner.type
+                        for inner in block.output
+                    ]
+                )
+                signature.append(("tool_result", block.id, output))
+            else:
+                signature.append((block.type,))
+        return signature
+
+    async def test_non_streaming_multi_text_blocks_stay_separate(self) -> None:
+        """The text blocks of a non-streaming response must stay separate
+        blocks in the event stream instead of being glued into one.
+
+        A non-streaming response carries one TextBlock per part (e.g. one
+        per Gemini part), and the context keeps them apart, so the events
+        must do the same.
+        """
+        # Set up a non-streaming response with two text blocks
+        self.model.set_responses(
+            [
+                ChatResponse(
+                    content=[
+                        TextBlock(text="Hello"),
+                        TextBlock(text="world"),
+                    ],
+                    is_last=True,
+                    usage=None,
+                ),
+            ],
+        )
+        self.assertFalse(self.model.stream)
+
+        # Test replyStream interface
+        events = []
+        async for event in self.agent.reply_stream(
+            UserMsg(name="user", content="Hi"),
+        ):
+            events.append(event.model_dump())
+
+        # Verify events
+        session_id = self.agent.state.session_id
+        reply_id = self.agent.state.reply_id
+
+        expected_events = [
+            {
+                "type": "REPLY_START",
+                "session_id": session_id,
+                "name": "Friday",
+                "role": "assistant",
+            },
+            {
+                "type": "MODEL_CALL_START",
+                "model_name": "mock-model",
+            },
+            {
+                "type": "TEXT_BLOCK_START",
+                "block_id": AnyString(),
+            },
+            {
+                "type": "TEXT_BLOCK_DELTA",
+                "block_id": AnyString(),
+                "delta": "Hello",
+            },
+            {
+                "type": "TEXT_BLOCK_END",
+                "block_id": AnyString(),
+                "text": None,
+            },
+            {
+                "type": "TEXT_BLOCK_START",
+                "block_id": AnyString(),
+            },
+            {
+                "type": "TEXT_BLOCK_DELTA",
+                "block_id": AnyString(),
+                "delta": "world",
+            },
+            {
+                "type": "TEXT_BLOCK_END",
+                "block_id": AnyString(),
+                "text": None,
+            },
+            {
+                "type": "MODEL_CALL_END",
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "cache_input_tokens": 0,
+                "cache_creation_input_tokens": 0,
+                "finished_reason": "completed",
+            },
+            {
+                "type": "REPLY_END",
+                "error": None,
+                "session_id": session_id,
+                "finished_reason": "completed",
+            },
+        ]
+
+        basic_dict = self._get_event_base(reply_id)
+        self.assertListEqual(
+            events,
+            [{**basic_dict, **_} for _ in expected_events],
+        )
+
+        # Assert the context keeps the two blocks separate
+        assistant_blocks = self.agent.state.context[-1].content
+        self.assertEqual(
+            [block.text for block in assistant_blocks],
+            ["Hello", "world"],
+        )
+
+    async def test_non_streaming_interleaved_text_and_tool_call_keeps_order(
+        self,
+    ) -> None:
+        """The message rebuilt from replyStream events must match the
+        assistant message saved to the context, also when a non-streaming
+        response interleaves text and tool call blocks (e.g. Anthropic
+        text -> tool_use -> text).
+        """
+        # Register the tool called by the mock response
+        self.agent.toolkit = Toolkit(tools=[MockSequentialTool()])
+
+        # Set up a non-streaming response interleaving text and tool call
+        self.model.set_responses(
+            [
+                ChatResponse(
+                    content=[
+                        TextBlock(text="Let me check."),
+                        ToolCallBlock(
+                            id="tool_call_1",
+                            name="mock_sequential_tool",
+                            input='{"input": "test"}',
+                        ),
+                        TextBlock(text="Done checking."),
+                    ],
+                    is_last=True,
+                ),
+                ChatResponse(
+                    content=[TextBlock(text="All done.")],
+                    is_last=True,
+                ),
+            ],
+        )
+        self.assertFalse(self.model.stream)
+
+        # Rebuild the reply message from the event stream the same way
+        # SSE consumers (e.g. the chat service) do
+        reply_id = None
+        agent_events = []
+        async for event in self.agent.reply_stream(
+            UserMsg(name="user", content="Test"),
+        ):
+            if isinstance(event, Msg):
+                continue
+            if reply_id is None:
+                reply_id = event.reply_id
+            agent_events.append(event)
+
+        rebuilt = AssistantMsg(id=reply_id, name="Friday", content=[])
+        for event in agent_events:
+            rebuilt.append_event(event)
+
+        saved = next(
+            msg for msg in self.agent.state.context if msg.id == reply_id
+        )
+        expected_signature = [
+            ("text", "Let me check."),
+            (
+                "tool_call",
+                "tool_call_1",
+                "mock_sequential_tool",
+                '{"input": "test"}',
+            ),
+            ("text", "Done checking."),
+            ("tool_result", "tool_call_1", ["Sequential result: test"]),
+            ("text", "All done."),
+        ]
+        self.assertEqual(
+            self._content_signature(saved.content),
+            expected_signature,
+        )
+        self.assertEqual(
+            self._content_signature(rebuilt.content),
+            expected_signature,
+        )
 
     async def test_usage_cache_tokens_are_not_dropped(self) -> None:
         """Regression test for issue #2305.

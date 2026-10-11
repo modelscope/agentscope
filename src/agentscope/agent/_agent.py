@@ -3815,43 +3815,59 @@ class Agent:
             )
             block_ids["thinking"] = None
 
-        # Handle the text stream: continue/open or close.  Placed after
+        # Handle the text stream: close the stream of the previous chunk
+        # when the current chunk carries no text blocks.  Placed after
         # thinking so that a chunk carrying both ThinkingBlock and TextBlock
         # emits thinking events first.
-        if text_blocks:
-            if not block_ids.get("text"):
-                block_ids["text"] = _generate_id()
-                yield TextBlockStartEvent(
-                    reply_id=self.state.reply_id,
-                    block_id=block_ids["text"],
-                )
-            yield TextBlockDeltaEvent(
-                reply_id=self.state.reply_id,
-                block_id=block_ids["text"],
-                delta="".join([_.text for _ in text_blocks]),
-            )
-        elif block_ids.get("text") and not data_blocks:
+        if not text_blocks and block_ids.get("text") and not data_blocks:
             yield TextBlockEndEvent(
                 reply_id=self.state.reply_id,
                 block_id=block_ids["text"],
             )
             block_ids["text"] = None
 
-        # Handle the tool calls that exist in the current chunk
-        for tool_call in tool_call_blocks:
-            # Not in previous chunk, start with a start event
-            if tool_call.id not in block_ids["tools"]:
-                block_ids["tools"].append(tool_call.id)
-                yield ToolCallStartEvent(
+        # Emit the text and tool call blocks in their original order so
+        # that the message rebuilt from the events keeps the block order
+        # of the response.  Only the first text block continues the
+        # stream of the previous chunk; every further text block in the
+        # same chunk opens a separate one.
+        is_first_text_block = True
+        for block in chunk.content:
+            if isinstance(block, TextBlock):
+                if is_first_text_block:
+                    is_first_text_block = False
+                elif block_ids.get("text"):
+                    yield TextBlockEndEvent(
+                        reply_id=self.state.reply_id,
+                        block_id=block_ids["text"],
+                    )
+                    block_ids["text"] = None
+                if not block_ids.get("text"):
+                    block_ids["text"] = _generate_id()
+                    yield TextBlockStartEvent(
+                        reply_id=self.state.reply_id,
+                        block_id=block_ids["text"],
+                    )
+                yield TextBlockDeltaEvent(
                     reply_id=self.state.reply_id,
-                    tool_call_id=tool_call.id,
-                    tool_call_name=tool_call.name,
+                    block_id=block_ids["text"],
+                    delta=block.text,
                 )
-            yield ToolCallDeltaEvent(
-                reply_id=self.state.reply_id,
-                tool_call_id=tool_call.id,
-                delta=tool_call.input,
-            )
+
+            elif isinstance(block, ToolCallBlock):
+                # Not in previous chunk, start with a start event
+                if block.id not in block_ids["tools"]:
+                    block_ids["tools"].append(block.id)
+                    yield ToolCallStartEvent(
+                        reply_id=self.state.reply_id,
+                        tool_call_id=block.id,
+                        tool_call_name=block.name,
+                    )
+                yield ToolCallDeltaEvent(
+                    reply_id=self.state.reply_id,
+                    tool_call_id=block.id,
+                    delta=block.input,
+                )
 
         # Handle the tool calls that exist in the previous chunk but not in the
         # current chunk
