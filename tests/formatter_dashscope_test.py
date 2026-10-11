@@ -8,6 +8,7 @@ import tempfile
 from pathlib import Path
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import mock_open, patch
+from urllib.request import url2pathname
 
 from agentscope.formatter import (
     DashScopeChatFormatter,
@@ -531,7 +532,10 @@ class TestDashScopeFormatter(IsolatedAsyncioTestCase):
             ],
             res,
         )
-        mocked_open.assert_called_once_with("/tmp/audio.wav", "rb")
+        mocked_open.assert_called_once_with(
+            url2pathname("/tmp/audio.wav"),
+            "rb",
+        )
 
     async def test_chat_formatter_url_image_in_tool_result(
         self,
