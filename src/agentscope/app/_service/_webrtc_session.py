@@ -26,6 +26,12 @@ _CHECKPOINT_LOCK_TTL_SECS = (
 )
 
 
+def _stream_id_key(entry_id: str) -> tuple[int, int]:
+    """Return the sortable numeric components of a message-bus stream ID."""
+    major, minor = entry_id.split("-", maxsplit=1)
+    return int(major), int(minor)
+
+
 class WebRTCSession:
     """Run and persist one realtime agent over a peer connection."""
 
@@ -178,9 +184,13 @@ class WebRTCSession:
                                     self._open_user_replies.discard(
                                         event.reply_id,
                                     )
-                                if (
-                                    checkpoint is not None
-                                    and not self._open_user_replies
+                                if checkpoint is not None and (
+                                    not self._open_user_replies
+                                    or getattr(
+                                        self.agent,
+                                        "allows_open_user_reply_checkpoint",
+                                        False,
+                                    )
                                 ):
                                     try:
                                         await self._checkpoint_state(
@@ -241,6 +251,13 @@ class WebRTCSession:
             MessageBusKeys.session_event_checkpoint_lock(self.session_id),
             ttl_secs=_CHECKPOINT_LOCK_TTL_SECS,
         ):
+            if (
+                entry_id is not None
+                and self._checkpoint_entry_id is not None
+                and _stream_id_key(entry_id)
+                <= _stream_id_key(self._checkpoint_entry_id)
+            ):
+                return
             await self._persist_state(state)
             if entry_id is not None:
                 await self._set_checkpoint_cursor(entry_id)
