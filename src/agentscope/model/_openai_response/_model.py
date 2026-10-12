@@ -367,13 +367,13 @@ class OpenAIResponseModel(ChatModelBase):
 
                 elif event_type == "response.function_call_arguments.delta":
                     item_id = event.item_id
-                    if item_id in tool_call_mapping:
+                    if item_id in tool_call_mapping and event.delta:
                         call_id, name = tool_call_mapping[item_id]
                         tool_calls_with_input.add(item_id)
                         delta_res.append_tool_call(
                             block_id=call_id,
                             name=name,
-                            input=event.delta or "",
+                            input=event.delta,
                         )
 
                 elif event_type == "response.function_call_arguments.done":

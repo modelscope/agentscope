@@ -1391,9 +1391,9 @@ class TestOpenAIResponseStream(IsolatedAsyncioTestCase):
     async def test_stream_function_call_without_arguments(self) -> None:
         """A function call with no arguments still streams as a {} block.
 
-        Empty-argument calls emit no ``function_call_arguments.delta``
-        events, so the block used to be dropped entirely instead of
-        matching the non-streaming ``input or "{}"`` result.
+        Empty-argument calls may emit no argument delta or an empty one, so
+        the block used to be dropped entirely instead of matching the
+        non-streaming ``input or "{}"`` result.
         """
         fc_item = MagicMock()
         fc_item.type = "function_call"
@@ -1410,54 +1410,83 @@ class TestOpenAIResponseStream(IsolatedAsyncioTestCase):
         completed_resp.usage.output_tokens = 5
         completed_resp.usage.input_tokens_details = None
 
-        events = [
-            _make_event(
-                "response.output_item.added",
-                item=fc_item,
-                response=MagicMock(id="resp-4"),
-            ),
-            _make_event(
-                "response.function_call_arguments.done",
-                item_id="fc_1",
-                arguments="",
-            ),
-            _make_event("response.completed", response=completed_resp),
-        ]
-        mock_create = AsyncMock(
-            return_value=_MockAsyncEventStream(events),
+        non_stream_model = _make_model(stream=False)
+        non_stream_model.client = self.mock_client
+        non_stream_resp = _mock_completion(
+            function_calls=[
+                {
+                    "id": "fc_1",
+                    "call_id": "call-1",
+                    "name": "get_current_time",
+                    "arguments": "",
+                },
+            ],
+            response_id="resp-4",
         )
-        self.mock_client.responses.create = mock_create
 
-        gen = await self.model([])
-        responses = [r async for r in gen]
-
-        self.assertListEqual(
-            [(r.is_last, r.content) for r in responses],
-            [
-                (
-                    False,
-                    [
-                        ToolCallBlock.model_construct(
-                            id="call-1",
-                            created_at=A,
-                            name="get_current_time",
-                            input="{}",
-                        ),
-                    ],
-                ),
-                (
-                    True,
-                    [
-                        ToolCallBlock.model_construct(
-                            id="call-1",
-                            created_at=A,
-                            name="get_current_time",
-                            input="{}",
-                        ),
-                    ],
+        cases = {
+            "no_delta": [],
+            "empty_delta": [
+                _make_event(
+                    "response.function_call_arguments.delta",
+                    item_id="fc_1",
+                    delta="",
                 ),
             ],
+        }
+        expected_block = ToolCallBlock.model_construct(
+            id="call-1",
+            created_at=A,
+            name="get_current_time",
+            input="{}",
         )
+        for name, argument_events in cases.items():
+            with self.subTest(name=name):
+                events = [
+                    _make_event(
+                        "response.output_item.added",
+                        item=fc_item,
+                        response=MagicMock(id="resp-4"),
+                    ),
+                    *argument_events,
+                    _make_event(
+                        "response.function_call_arguments.done",
+                        item_id="fc_1",
+                        arguments="",
+                    ),
+                    _make_event(
+                        "response.completed",
+                        response=completed_resp,
+                    ),
+                ]
+                self.mock_client.responses.create = AsyncMock(
+                    side_effect=[
+                        _MockAsyncEventStream(events),
+                        non_stream_resp,
+                    ],
+                )
+
+                gen = await self.model([])
+                responses = [r async for r in gen]
+                non_stream = await non_stream_model([])
+
+                self.assertListEqual(
+                    [(r.is_last, r.content) for r in responses],
+                    [
+                        (False, [expected_block]),
+                        (True, [expected_block]),
+                    ],
+                )
+                self.assertListEqual(
+                    [
+                        (block.id, block.name, block.input)
+                        for block in (
+                            responses[-1].content[0],
+                            non_stream.content[0],
+                        )
+                    ],
+                    [("call-1", "get_current_time", "{}")] * 2,
+                )
 
 
 # ---------------------------------------------------------------------------
