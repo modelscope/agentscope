@@ -8,7 +8,7 @@ from abc import ABC
 
 from pydantic import Field
 
-from ._formatter_base import FormatterBase
+from ._formatter_base import FormatterBase, local_path_from_file_url
 from .._logging import logger
 from ..message import (
     Msg,
@@ -124,8 +124,8 @@ class _DashScopeFormatterBase(FormatterBase, ABC):
             url = f"data:{source.media_type};base64,{source.data}"
         elif isinstance(source, URLSource):
             url_str = str(source.url)
-            if url_str.startswith("file://"):
-                local_path = url_str.removeprefix("file://")
+            local_path = local_path_from_file_url(url_str)
+            if local_path is not None:
                 with open(local_path, "rb") as f:
                     encoded = base64.b64encode(f.read()).decode("utf-8")
                 url = f"data:{source.media_type};base64,{encoded}"
@@ -153,8 +153,8 @@ class _DashScopeFormatterBase(FormatterBase, ABC):
             url = f"data:{source.media_type};base64,{source.data}"
         elif isinstance(source, URLSource):
             url_str = str(source.url)
-            if url_str.startswith("file://"):
-                local_path = url_str.removeprefix("file://")
+            local_path = local_path_from_file_url(url_str)
+            if local_path is not None:
                 with open(local_path, "rb") as f:
                     encoded = base64.b64encode(f.read()).decode("utf-8")
                 url = f"data:{source.media_type};base64,{encoded}"
@@ -193,8 +193,8 @@ class _DashScopeFormatterBase(FormatterBase, ABC):
 
         if isinstance(source, URLSource):
             url_str = str(source.url)
-            if url_str.startswith("file://"):
-                local_path = url_str.removeprefix("file://")
+            local_path = local_path_from_file_url(url_str)
+            if local_path is not None:
                 with open(local_path, "rb") as f:
                     encoded = base64.b64encode(f.read()).decode("utf-8")
                 return {

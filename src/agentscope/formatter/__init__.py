@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The formatter module in agentscope."""
 
-from ._formatter_base import FormatterBase
+from ._formatter_base import FormatterBase, local_path_from_file_url
 from ._dashscope_formatter import (
     DashScopeChatFormatter,
     DashScopeMultiAgentFormatter,
@@ -49,6 +49,7 @@ from ._volcengine_formatter import (
 
 __all__ = [
     "FormatterBase",
+    "local_path_from_file_url",
     "DashScopeChatFormatter",
     "DashScopeMultiAgentFormatter",
     "OpenAIChatFormatter",

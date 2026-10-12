@@ -6,6 +6,7 @@ import tempfile
 from abc import abstractmethod
 from fnmatch import fnmatch
 from typing import Any, List, AsyncGenerator
+from urllib.parse import unquote, urlparse
 
 from pydantic import BaseModel, Field
 
@@ -15,6 +16,27 @@ from ..message import (
     TextBlock,
     URLSource,
 )
+
+
+def local_path_from_file_url(url: str) -> str | None:
+    """Return the local path a ``file://`` URL points at, or ``None``.
+
+    ``URLSource`` stores its URL as a pydantic ``AnyUrl``, which percent-
+    encodes characters such as spaces, ``#`` and ``%``: a local image passed
+    as ``Path("/tmp/my file.png").as_uri()`` therefore arrives as
+    ``file:///tmp/my%20file.png``. Stripping the scheme without decoding looks
+    for a file that does not exist, so the path is decoded before it reaches
+    ``open()``. Returns ``None`` for a remote URL so callers keep their
+    download branch unchanged.
+    """
+    if not url.startswith("file://"):
+        return None
+    path = unquote(urlparse(url).path)
+    # A Windows file URI is ``file:///C:/dir``; the leading slash belongs to
+    # the empty authority, not to the drive path.
+    if len(path) > 2 and path[0] == "/" and path[2] == ":":
+        path = path[1:]
+    return path
 
 
 class FormatterBase(BaseModel):

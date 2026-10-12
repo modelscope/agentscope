@@ -8,7 +8,7 @@ from typing import Any
 import requests
 from pydantic import Field
 
-from ._formatter_base import FormatterBase
+from ._formatter_base import FormatterBase, local_path_from_file_url
 from .._logging import logger
 from .._utils._common import _json_loads_with_repair
 from ..message import (
@@ -336,8 +336,9 @@ class _AnthropicFormatterBase(FormatterBase, ABC):
             data = source.data
         elif isinstance(source, URLSource):
             url = str(source.url)
-            if url.startswith("file://"):
-                with open(url.removeprefix("file://"), "rb") as f:
+            local_path = local_path_from_file_url(url)
+            if local_path is not None:
+                with open(local_path, "rb") as f:
                     data = base64.b64encode(f.read()).decode("utf-8")
             else:
                 response = requests.get(url, timeout=30)

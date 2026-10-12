@@ -13,7 +13,7 @@ from typing import Any, List
 
 from pydantic import Field
 
-from ._formatter_base import FormatterBase
+from ._formatter_base import FormatterBase, local_path_from_file_url
 from .._logging import logger
 from ..message import (
     Msg,
@@ -73,8 +73,8 @@ def _xai_user_args_from_blocks(
                 continue
             if isinstance(sub.source, URLSource):
                 url_str = str(sub.source.url)
-                if url_str.startswith("file://"):
-                    local_path = url_str.removeprefix("file://")
+                local_path = local_path_from_file_url(url_str)
+                if local_path is not None:
                     with open(local_path, "rb") as f:
                         encoded = base64.b64encode(f.read()).decode(
                             "utf-8",
