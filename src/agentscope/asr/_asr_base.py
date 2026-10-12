@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 """Base interface for speech recognition models."""
 
-import asyncio
 from abc import ABC, abstractmethod
-from collections.abc import AsyncGenerator, AsyncIterable, AsyncIterator
 import inspect
 from pathlib import Path
 from typing import Any, TYPE_CHECKING
@@ -21,13 +19,22 @@ if TYPE_CHECKING:
 class ASRModelBase(ABC):
     """Base class for batch and realtime speech recognition models.
 
-    Batch implementations transcribe complete audio with :meth:`transcribe`.
-    Realtime implementations send audio and receive transcription events
-    concurrently through :meth:`transcribe_stream`.
+    Batch implementations transcribe complete audio by calling
+    :meth:`transcribe` directly. Realtime implementations use the asynchronous
+    context manager, call :meth:`push` for each audio chunk, and finally call
+    :meth:`transcribe` without audio to finalize the current transcription.
+
+    Every concrete implementation must override :meth:`transcribe`. Realtime
+    implementations must additionally override :meth:`connect`,
+    :meth:`close`, and :meth:`push`.
     """
 
     class Parameters(BaseModel):
-        """Provider-specific transcription parameters."""
+        """Base schema for provider-specific transcription parameters.
+
+        Concrete ASR implementations should override this class with the
+        parameters supported by their provider.
+        """
 
     credential: CredentialBase
     """The credential used to authenticate against the ASR provider."""
@@ -47,12 +54,31 @@ class ASRModelBase(ABC):
         model: str,
         parameters: BaseModel | None = None,
     ) -> None:
+        """Initialize the ASR model.
+
+        Args:
+            credential (`CredentialBase`):
+                The credential used to authenticate with the provider.
+            model (`str`):
+                The provider model name.
+            parameters (`BaseModel | None`, defaults to `None`):
+                Provider-specific parameters. When omitted, an instance of
+                :attr:`Parameters` is created.
+        """
         self.credential = credential
         self.model = model
         self.parameters = parameters or self.Parameters()
 
     async def __aenter__(self) -> "ASRModelBase":
-        """Enter the realtime model lifecycle when required."""
+        """Enter the model's asynchronous context.
+
+        Realtime models establish their provider connection by calling
+        :meth:`connect`. Entering a batch model is a no-op.
+
+        Returns:
+            `ASRModelBase`:
+                This model instance.
+        """
         if self.realtime:
             await self.connect()
         return self
@@ -63,23 +89,40 @@ class ASRModelBase(ABC):
         exc_value: Any,
         traceback: Any,
     ) -> None:
-        """Exit the realtime model lifecycle when required."""
+        """Exit the model's asynchronous context.
+
+        Realtime models close their provider connection by calling
+        :meth:`close`, including when the context exits with an exception.
+        Exiting a batch model is a no-op.
+
+        Args:
+            exc_type (`Any`):
+                The type of the exception that caused the context to exit, or
+                ``None`` for a normal exit.
+            exc_value (`Any`):
+                The exception instance, or ``None`` for a normal exit.
+            traceback (`Any`):
+                The exception traceback, or ``None`` for a normal exit.
+        """
         if self.realtime:
             await self.close()
 
     async def connect(self) -> None:
-        """Connect to a realtime ASR provider.
+        """Establish the realtime provider connection.
 
-        Realtime subclasses must override this method. The default is a no-op
-        so batch implementations do not need lifecycle hooks.
+        Realtime implementations must override this method and prepare any
+        provider resources needed by :meth:`push` and :meth:`transcribe`. The
+        default is a no-op so batch implementations do not need lifecycle
+        hooks.
         """
         return
 
     async def close(self) -> None:
-        """Close a realtime ASR connection.
+        """Close the realtime provider connection.
 
-        Realtime subclasses must override this method. The default is a no-op
-        so batch implementations do not need lifecycle hooks.
+        Realtime implementations must override this method and release any
+        resources created by :meth:`connect`. The default is a no-op so batch
+        implementations do not need lifecycle hooks.
         """
         return
 
@@ -87,81 +130,55 @@ class ASRModelBase(ABC):
         self,
         audio: bytes,
         **kwargs: Any,
-    ) -> None:
-        """Send an audio chunk to a realtime ASR provider.
+    ) -> ASRResponse:
+        """Send an audio chunk and return currently available text.
 
-        Realtime subclasses must override this method. Transcription results
-        are produced independently by :meth:`receive`.
-        """
-        raise NotImplementedError(
-            f"{type(self).__name__} does not support realtime audio input",
-        )
-
-    async def finish(self) -> None:
-        """Signal that no more realtime audio chunks will be sent.
-
-        Realtime subclasses must override this method and let
-        :meth:`receive` finish after yielding all remaining responses.
-        """
-        raise NotImplementedError(
-            f"{type(self).__name__} does not support realtime audio input",
-        )
-
-    def receive(self) -> AsyncIterator[ASRResponse]:
-        """Subscribe to realtime incremental transcription results.
-
-        Realtime subclasses must override this method with an asynchronous
-        iterator that ends after :meth:`finish` has been fully processed.
-        """
-        raise NotImplementedError(
-            f"{type(self).__name__} does not support realtime audio input",
-        )
-
-    async def transcribe_stream(
-        self,
-        audio: AsyncIterable[bytes],
-        **kwargs: Any,
-    ) -> AsyncGenerator[ASRResponse, None]:
-        """Transcribe an asynchronous stream of audio chunks in realtime.
-
-        Audio sending and transcription receiving run concurrently, allowing
-        callers to display partial results while input is still arriving.
+        Realtime implementations must override this method. It should send the
+        audio without waiting for the complete transcription and return any
+        text already available from the provider.
 
         Args:
-            audio (`AsyncIterable[bytes]`):
-                The asynchronous source of audio chunks.
+            audio (`bytes`):
+                An incremental audio chunk in the format expected by the
+                provider.
             **kwargs (`Any`):
-                Additional keyword arguments passed to :meth:`push`.
+                Provider-specific options for this audio chunk.
 
-        Yields:
+        Returns:
             `ASRResponse`:
-                Incremental text deltas from the provider. The last response
-                has ``is_last=True``.
+                A non-final incremental response. Its content is ``None`` when
+                no new text is available yet.
+
+        Raises:
+            RuntimeError:
+                If this model does not support realtime audio input.
         """
-        if not self.realtime:
-            raise RuntimeError(
-                f"{type(self).__name__} does not support realtime "
-                f"transcription",
-            )
-
-        async def send_audio() -> None:
-            """Forward input chunks while responses are received."""
-            async for chunk in audio:
-                await self.push(chunk, **kwargs)
-            await self.finish()
-
-        async with self:
-            async with asyncio.TaskGroup() as task_group:
-                task_group.create_task(send_audio())
-                async for response in self.receive():
-                    yield response
+        raise RuntimeError(
+            f"{type(self).__name__} does not support realtime audio input",
+        )
 
     @classmethod
     def list_models(
         cls,
         custom_yaml_dir: str | None = None,
     ) -> list["ASRModelCard"]:
-        """List model cards associated with a concrete implementation."""
+        """List model cards associated with the concrete implementation.
+
+        Cards whose ``realtime`` value differs from the implementation are
+        excluded. Invalid cards are logged and skipped so they do not prevent
+        other cards from being discovered.
+
+        Args:
+            custom_yaml_dir (`str | None`, defaults to `None`):
+                Directory containing model-card YAML files. When omitted, the
+                ``_models`` directory beside the concrete implementation is
+                used.
+
+        Returns:
+            `list[ASRModelCard]`:
+                Valid model cards compatible with the implementation's
+                realtime mode.
+        """
         from ._asr_model_card import ASRModelCard
 
         yaml_dir = (
@@ -191,12 +208,32 @@ class ASRModelBase(ABC):
     @abstractmethod
     async def transcribe(
         self,
-        audio: bytes,
+        audio: bytes | None = None,
         filename: str = "audio.wav",
         **kwargs: Any,
     ) -> ASRResponse:
-        """Transcribe complete audio.
+        """Transcribe complete audio or finalize realtime input.
+
+        Batch subclasses require complete ``audio``. Realtime subclasses use
+        ``audio=None`` to finalize previously pushed chunks and may accept a
+        final audio chunk before finalizing. The final response has
+        ``is_last=True``.
 
         ``filename`` supplies the format extension required by batch
         multipart APIs when ``audio`` comes from memory.
+
+        Args:
+            audio (`bytes | None`, defaults to `None`):
+                Complete in-memory audio for a batch model. For a realtime
+                model, ``None`` finalizes previously pushed audio; a byte
+                string may provide one last chunk before finalization.
+            filename (`str`, defaults to `"audio.wav"`):
+                Filename metadata used by multipart batch APIs to identify the
+                in-memory audio format.
+            **kwargs (`Any`):
+                Provider-specific transcription options.
+
+        Returns:
+            `ASRResponse`:
+                The completed transcription response with ``is_last=True``.
         """

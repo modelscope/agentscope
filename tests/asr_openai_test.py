@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """Unit tests for batch and realtime ASR model behavior."""
 
-import asyncio
-from collections.abc import AsyncGenerator
 from typing import Any
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -22,8 +20,6 @@ class _RealtimeASRModel(ASRModelBase):
         super().__init__(credential=credential, model="realtime-test")
         self.events: list[str] = []
         self.push_options: list[dict[str, Any]] = []
-        self.partial_received = asyncio.Event()
-        self.responses: asyncio.Queue[ASRResponse | None] = asyncio.Queue()
         self.response_index = 0
 
     async def connect(self) -> None:
@@ -38,101 +34,92 @@ class _RealtimeASRModel(ASRModelBase):
         self,
         audio: bytes,
         **kwargs: Any,
-    ) -> None:
-        """Send audio and queue an incremental transcription event."""
+    ) -> ASRResponse:
+        """Send audio and return an available transcription event."""
         text = audio.decode("utf-8")
         self.events.append(f"push:{text}")
         self.push_options.append(kwargs)
         self.response_index += 1
-        await self.responses.put(
-            ASRResponse(
-                content=TextBlock(
-                    text=text,
-                    id=f"text-id-{self.response_index}",
-                    created_at=f"text-created-at-{self.response_index}",
-                ),
-                id=f"response-id-{self.response_index}",
-                created_at=f"response-created-at-{self.response_index}",
-                is_last=False,
-            ),
+        content = (
+            TextBlock(
+                text=text,
+                id=f"text-id-{self.response_index}",
+                created_at=f"text-created-at-{self.response_index}",
+            )
+            if text
+            else None
         )
-
-    async def finish(self) -> None:
-        """Queue the last text delta and close the response stream."""
-        self.events.append("finish")
-        self.response_index += 1
-        await self.responses.put(
-            ASRResponse(
-                content=TextBlock(
-                    text=".",
-                    id=f"text-id-{self.response_index}",
-                    created_at=f"text-created-at-{self.response_index}",
-                ),
-                id=f"response-id-{self.response_index}",
-                created_at=f"response-created-at-{self.response_index}",
-            ),
+        return ASRResponse(
+            content=content,
+            id=f"response-id-{self.response_index}",
+            created_at=f"response-created-at-{self.response_index}",
+            is_last=False,
         )
-        await self.responses.put(None)
-
-    def receive(self) -> AsyncGenerator[ASRResponse, None]:
-        """Return the asynchronous transcription event iterator."""
-        return self._receive()
-
-    async def _receive(self) -> AsyncGenerator[ASRResponse, None]:
-        """Yield queued transcription events until input is finished."""
-        self.events.append("receive")
-        while (response := await self.responses.get()) is not None:
-            self.events.append(f"receive:{response.content.text}")
-            if not response.is_last:
-                self.partial_received.set()
-            yield response
-        self.events.append("receive_done")
 
     async def transcribe(  # pylint: disable=unused-argument
         self,
-        audio: bytes,
+        audio: bytes | None = None,
         filename: str = "audio.wav",
         **kwargs: Any,
     ) -> ASRResponse:
-        """Reject batch transcription in this realtime-only test model."""
-        raise NotImplementedError(
-            f"{type(self).__name__} only supports realtime transcription",
+        """Finalize realtime input and return the last event."""
+        text = f"{audio.decode('utf-8')}." if audio is not None else "."
+        self.events.append(
+            f"transcribe:{audio.decode('utf-8')}"
+            if audio is not None
+            else "transcribe",
         )
+        self.response_index += 1
+        return ASRResponse(
+            content=TextBlock(
+                text=text,
+                id=f"text-id-{self.response_index}",
+                created_at=f"text-created-at-{self.response_index}",
+            ),
+            id=f"response-id-{self.response_index}",
+            created_at=f"response-created-at-{self.response_index}",
+        )
+
+
+class _IncompleteASRModel(ASRModelBase):
+    """ASR implementation missing the required transcription method."""
 
 
 class TestASRModelBase(IsolatedAsyncioTestCase):
     """Test the shared ASR model lifecycle."""
 
+    def test_requires_transcribe_implementation(self) -> None:
+        """Reject concrete models without a transcription implementation."""
+        model_class: Any = _IncompleteASRModel
+
+        with self.assertRaisesRegex(
+            TypeError,
+            "Can't instantiate abstract class _IncompleteASRModel",
+        ):
+            type.__call__(
+                model_class,
+                credential=OpenAICredential(api_key="test"),
+                model="incomplete-test",
+            )
+
     async def test_realtime_lifecycle(self) -> None:
-        """Send audio while receiving incremental text results."""
+        """Push incremental audio and finalize within one connection."""
         model = _RealtimeASRModel(OpenAICredential(api_key="test"))
 
-        async def audio_chunks() -> AsyncGenerator[bytes, None]:
-            """Wait for the first partial result before sending more audio."""
-            yield b"hello "
-            await model.partial_received.wait()
-            yield b"world"
-
-        responses = [
-            response
-            async for response in model.transcribe_stream(
-                audio_chunks(),
-                sample_rate=16000,
-            )
-        ]
+        async with model:
+            responses = [
+                await model.push(b"hello ", sample_rate=16000),
+                await model.push(b"world", sample_rate=16000),
+                await model.transcribe(),
+            ]
 
         self.assertEqual(
             model.events,
             [
                 "connect",
-                "receive",
                 "push:hello ",
-                "receive:hello ",
                 "push:world",
-                "finish",
-                "receive:world",
-                "receive:.",
-                "receive_done",
+                "transcribe",
                 "close",
             ],
         )
@@ -185,22 +172,140 @@ class TestASRModelBase(IsolatedAsyncioTestCase):
             ],
         )
 
-    async def test_batch_model_rejects_realtime_transcription(self) -> None:
-        """Reject the realtime helper for a batch-only model."""
+    async def test_closes_realtime_model_on_error(self) -> None:
+        """Close the realtime connection when processing fails."""
+        model = _RealtimeASRModel(OpenAICredential(api_key="test"))
+
+        with self.assertRaisesRegex(RuntimeError, "processing stopped"):
+            async with model:
+                response = await model.push(b"hello")
+                raise RuntimeError("processing stopped")
+
+        self.assertEqual(
+            dict(response),
+            {
+                "content": TextBlock(
+                    text="hello",
+                    id="text-id-1",
+                    created_at="text-created-at-1",
+                ),
+                "id": "response-id-1",
+                "created_at": "response-created-at-1",
+                "type": "asr",
+                "metadata": None,
+                "is_last": False,
+            },
+        )
+        self.assertEqual(
+            model.events,
+            [
+                "connect",
+                "push:hello",
+                "close",
+            ],
+        )
+
+    async def test_returns_empty_realtime_response(self) -> None:
+        """Represent a push with no available text using empty content."""
+        model = _RealtimeASRModel(OpenAICredential(api_key="test"))
+
+        async with model:
+            responses = [
+                await model.push(b""),
+                await model.push(b"hello"),
+                await model.transcribe(),
+            ]
+
+        self.assertEqual(
+            [dict(response) for response in responses],
+            [
+                {
+                    "content": None,
+                    "id": "response-id-1",
+                    "created_at": "response-created-at-1",
+                    "type": "asr",
+                    "metadata": None,
+                    "is_last": False,
+                },
+                {
+                    "content": TextBlock(
+                        text="hello",
+                        id="text-id-2",
+                        created_at="text-created-at-2",
+                    ),
+                    "id": "response-id-2",
+                    "created_at": "response-created-at-2",
+                    "type": "asr",
+                    "metadata": None,
+                    "is_last": False,
+                },
+                {
+                    "content": TextBlock(
+                        text=".",
+                        id="text-id-3",
+                        created_at="text-created-at-3",
+                    ),
+                    "id": "response-id-3",
+                    "created_at": "response-created-at-3",
+                    "type": "asr",
+                    "metadata": None,
+                    "is_last": True,
+                },
+            ],
+        )
+        self.assertEqual(
+            model.events,
+            [
+                "connect",
+                "push:",
+                "push:hello",
+                "transcribe",
+                "close",
+            ],
+        )
+
+    async def test_realtime_transcribe_accepts_final_audio(self) -> None:
+        """Send an optional final chunk while finalizing realtime input."""
+        model = _RealtimeASRModel(OpenAICredential(api_key="test"))
+
+        async with model:
+            response = await model.transcribe(b"last")
+
+        self.assertEqual(
+            dict(response),
+            {
+                "content": TextBlock(
+                    text="last.",
+                    id="text-id-1",
+                    created_at="text-created-at-1",
+                ),
+                "id": "response-id-1",
+                "created_at": "response-created-at-1",
+                "type": "asr",
+                "metadata": None,
+                "is_last": True,
+            },
+        )
+        self.assertEqual(
+            model.events,
+            [
+                "connect",
+                "transcribe:last",
+                "close",
+            ],
+        )
+
+    async def test_batch_model_rejects_realtime_input(self) -> None:
+        """Reject realtime operations on a batch-only model."""
         model = OpenAIASRModel(
             credential=OpenAICredential(api_key="test"),
         )
 
-        async def audio_chunks() -> AsyncGenerator[bytes, None]:
-            """Provide one audio chunk."""
-            yield b"audio"
-
         with self.assertRaisesRegex(
             RuntimeError,
-            "OpenAIASRModel does not support realtime transcription",
+            "OpenAIASRModel does not support realtime audio input",
         ):
-            async for _ in model.transcribe_stream(audio_chunks()):
-                pass
+            await model.push(b"audio")
 
 
 class TestOpenAIASRModel(IsolatedAsyncioTestCase):
@@ -313,6 +418,25 @@ class TestOpenAIASRModel(IsolatedAsyncioTestCase):
             response_format="json",
             language="en",
             prompt="AgentScope",
+        )
+
+    async def test_call_parameters_override_model_parameters(self) -> None:
+        """Prefer per-call options over configured model parameters."""
+        model = self.make_model(
+            OpenAIASRModel.Parameters(language="en", prompt="AgentScope"),
+        )
+        await model.transcribe(
+            b"audio",
+            language="fr",
+            prompt="Override",
+        )
+
+        model.client.audio.transcriptions.create.assert_awaited_once_with(
+            file=("audio.wav", b"audio"),
+            model="gpt-4o-mini-transcribe",
+            response_format="json",
+            language="fr",
+            prompt="Override",
         )
 
     async def test_rejects_empty_audio(self) -> None:

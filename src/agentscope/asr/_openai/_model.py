@@ -50,7 +50,7 @@ class OpenAIASRModel(ASRModelBase):
 
     async def transcribe(
         self,
-        audio: bytes,
+        audio: bytes | None = None,
         filename: str = "audio.wav",
         **kwargs: Any,
     ) -> ASRResponse:
@@ -61,11 +61,11 @@ class OpenAIASRModel(ASRModelBase):
             raise ValueError("filename must not be empty")
 
         options = self.parameters.model_dump(exclude_none=True)
+        options.update(kwargs)
         result = await self.client.audio.transcriptions.create(
             file=(filename, audio),
             model=self.model,
             response_format="json",
             **options,
-            **kwargs,
         )
         return ASRResponse(content=TextBlock(text=result.text))

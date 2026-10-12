@@ -14,8 +14,8 @@ from ..types import JSONSerializableObject
 class ASRResponse(DictMixin):
     """The text produced by an ASR model."""
 
-    content: TextBlock
-    """The transcribed text content."""
+    content: TextBlock | None
+    """The transcribed text content, or ``None`` when no text is ready."""
 
     id: str = field(default_factory=lambda: _get_timestamp(True))
     """The unique identifier of the response."""
