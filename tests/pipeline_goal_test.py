@@ -168,16 +168,8 @@ class GoalPipelineTest(IsolatedAsyncioTestCase):
                         "fail",
                         "两处未达标",
                         issues=[
-                            {
-                                "issue": "缺 requirements.txt",
-                                "severity": "critical",
-                                "suggestion": "补上依赖清单",
-                            },
-                            {
-                                "issue": "没有重试逻辑",
-                                "severity": "minor",
-                                "suggestion": "请求失败后重试三次",
-                            },
+                            "[critical] 缺 requirements.txt - 补上依赖清单",
+                            "[minor] 没有重试逻辑 - 请求失败后重试三次",
                         ],
                     ),
                 ],
@@ -191,9 +183,9 @@ class GoalPipelineTest(IsolatedAsyncioTestCase):
         feedback = executor.received[1].get_text_content()
         self.assertIn("两处未达标", feedback)
         self.assertIn("- [critical] 缺 requirements.txt", feedback)
-        self.assertIn("Suggestion: 补上依赖清单", feedback)
+        self.assertIn("补上依赖清单", feedback)
         self.assertIn("- [minor] 没有重试逻辑", feedback)
-        self.assertIn("Suggestion: 请求失败后重试三次", feedback)
+        self.assertIn("请求失败后重试三次", feedback)
 
     async def test_resets_verifier_conversation_between_refused_rounds(
         self,
