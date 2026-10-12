@@ -4,7 +4,7 @@ retry / accumulation / interrupt wrapper around ``_call_api``."""
 import asyncio
 import base64
 import struct
-from typing import Any
+from typing import Any, AsyncGenerator
 from unittest.async_case import IsolatedAsyncioTestCase
 
 from utils import AnyString, MockModel
@@ -1353,3 +1353,93 @@ class StructuredOutputStrategyTest(IsolatedAsyncioTestCase):
                 ("auto", {}),
             ],
         )
+
+
+class _TrackedCleanupModel(MockModel):
+    """Model with observable asynchronous stream cleanup."""
+
+    def __init__(self) -> None:
+        """Initialize cleanup events."""
+        super().__init__(model="mock-model", stream=True)
+        self.cleanup_started = asyncio.Event()
+        self.cleanup_finished = asyncio.Event()
+        self.release_cleanup = asyncio.Event()
+
+    async def _call_api(
+        self,
+        *args: Any,
+        **kwargs: Any,
+    ) -> AsyncGenerator[ChatResponse, None]:
+        """Return a stream with gated cleanup."""
+        del args, kwargs
+        release_cleanup = self.release_cleanup
+        cleanup_started = self.cleanup_started
+        cleanup_finished = self.cleanup_finished
+
+        async def _inner() -> AsyncGenerator[ChatResponse, None]:
+            try:
+                yield ChatResponse(
+                    content=[TextBlock(text="hello", id="t1")],
+                    is_last=False,
+                )
+                yield ChatResponse(
+                    content=[TextBlock(text=" world", id="t1")],
+                    is_last=False,
+                )
+            finally:
+                cleanup_started.set()
+                await release_cleanup.wait()
+                cleanup_finished.set()
+
+        return _inner()
+
+
+class StreamDelegatedCloseTest(IsolatedAsyncioTestCase):
+    """Test delegated stream cleanup."""
+
+    async def test_aclose_after_first_chunk_closes_delegated_stream(
+        self,
+    ) -> None:
+        """Close the delegated stream after one chunk."""
+        model = _TrackedCleanupModel()
+        model.release_cleanup.set()
+        messages = [UserMsg(name="user", content="hi")]
+        gen = await model(messages=messages)
+        try:
+            first = await anext(gen)
+            self.assertEqual(first.content[0].text, "hello")
+            self.assertFalse(model.cleanup_finished.is_set())
+            await gen.aclose()
+            self.assertTrue(model.cleanup_started.is_set())
+            self.assertTrue(model.cleanup_finished.is_set())
+        finally:
+            model.release_cleanup.set()
+            await gen.aclose()
+
+    async def test_aclose_waits_for_asynchronous_cleanup(self) -> None:
+        """Wait for delegated asynchronous cleanup."""
+        model = _TrackedCleanupModel()
+        messages = [UserMsg(name="user", content="hi")]
+        gen = await model(messages=messages)
+        returned: list[str] = []
+
+        async def _close() -> None:
+            await gen.aclose()
+            returned.append("returned")
+
+        try:
+            first = await anext(gen)
+            self.assertEqual(first.content[0].text, "hello")
+            close_task = asyncio.create_task(_close())
+            await asyncio.wait_for(model.cleanup_started.wait(), timeout=1)
+            await asyncio.sleep(0)
+            self.assertFalse(close_task.done())
+            self.assertFalse(model.cleanup_finished.is_set())
+            self.assertEqual(returned, [])
+            model.release_cleanup.set()
+            await asyncio.wait_for(close_task, timeout=1)
+            self.assertEqual(returned, ["returned"])
+            self.assertTrue(model.cleanup_finished.is_set())
+        finally:
+            model.release_cleanup.set()
+            await gen.aclose()
