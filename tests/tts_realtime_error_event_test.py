@@ -19,6 +19,10 @@ from unittest.mock import MagicMock, Mock, patch
 from agentscope.credential import DashScopeCredential
 from agentscope.tts import DashScopeRealtimeTTSModel, TTSResponse
 
+# The streaming WAV header the model prepends, as in the DashScope TTS
+# tests.
+_WAV_HEADER_LEN = 44
+
 
 def _mock_dashscope_modules() -> dict:
     """Mock the ``dashscope`` modules the model imports lazily."""
@@ -148,5 +152,20 @@ class RealtimeTTSErrorEventTest(IsolatedAsyncioTestCase):
         response = await model.synthesize("Hello")
 
         self.assertIsInstance(response, TTSResponse)
-        pcm = base64.b64decode(response.content.source.data)
-        self.assertTrue(pcm.endswith(b"ALLPCM"))
+        payload = base64.b64decode(response.content.source.data)
+        self.assertEqual(
+            {
+                "magic": payload[:4],
+                "wave_tag": payload[8:12],
+                "pcm": payload[_WAV_HEADER_LEN:],
+                "media_type": response.content.source.media_type,
+                "is_last": response.is_last,
+            },
+            {
+                "magic": b"RIFF",
+                "wave_tag": b"WAVE",
+                "pcm": b"ALLPCM",
+                "media_type": "audio/wav",
+                "is_last": True,
+            },
+        )
