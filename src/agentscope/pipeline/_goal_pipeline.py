@@ -31,6 +31,29 @@ class _ExecutionReport(BaseModel):
     )
 
 
+class _VerificationIssue(BaseModel):
+    """A single issue that keeps the goal from passing."""
+
+    issue: str = Field(
+        description=(
+            "What exactly does not meet the goal, including where to "
+            "exactly find it (e.g., file paths, line numbers)."
+        ),
+    )
+
+    severity: Literal["critical", "major", "minor"] = Field(
+        description=(
+            "How badly the issue blocks the goal: 'critical' means the "
+            "goal is unmet at its core, 'major' means a significant part "
+            "of the goal is unmet, 'minor' means a small deviation."
+        ),
+    )
+
+    suggestion: str = Field(
+        description=("How to fix the issue."),
+    )
+
+
 class _VerificationResult(BaseModel):
     """The result of a verification."""
 
@@ -44,10 +67,19 @@ class _VerificationResult(BaseModel):
 
     message: str = Field(
         description=(
-            "If not passed, the message should explain why it "
-            "failed, and what needs to be fixed. List the specific "
-            "issues that need to be addressed, including where to "
-            "exactly find them (e.g., file paths, line numbers)."
+            "If not passed, a summary of why it failed. List the specific "
+            "issues that need to be addressed one by one in 'issues', "
+            "including where to exactly find them (e.g., file paths, line "
+            "numbers)."
+        ),
+    )
+
+    issues: list[_VerificationIssue] = Field(
+        default_factory=list,
+        description=(
+            "The specific issues that need to be addressed when the result "
+            "is 'fail', ordered by severity. Leave it empty for 'pass' "
+            "or 'impossible'."
         ),
     )
 
@@ -317,7 +349,9 @@ class GoalPipeline:
                         break
 
                     # Feedback to the executor for further improvement
-                    feedback = final_msg.structured_output.get("message")
+                    feedback = self._format_feedback(
+                        final_msg.structured_output,
+                    )
                     executor_inputs = UserMsg(
                         name="system",
                         content=(
@@ -331,3 +365,17 @@ class GoalPipeline:
             if break_loop:
                 # Break the loop for hitl events or verification passed
                 break
+
+    @staticmethod
+    def _format_feedback(structured_output: dict) -> str:
+        """Render a failed verification as executor feedback: an issue list
+        with severity and fix suggestion when the verifier supplied one,
+        its summary message otherwise."""
+        issues = structured_output.get("issues") or []
+        if not issues:
+            return structured_output.get("message", "")
+        lines = [
+            f"- [{_['severity']}] {_['issue']} Suggestion: {_['suggestion']}"
+            for _ in issues
+        ]
+        return f"{structured_output.get('message', '')}\n" + "\n".join(lines)
