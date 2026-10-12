@@ -498,6 +498,30 @@ Usage:
         _agent_state: AgentState | None,
     ) -> ToolChunk:
         """Read a text file and return with line numbers."""
+        # Validate offset and limit before slicing: a non-positive offset
+        # would negative-slice the file and silently return its tail.
+        if offset < 1:
+            return ToolChunk(
+                content=[
+                    TextBlock(
+                        text=f"Error: offset must be at least 1, "
+                        f"got: {offset}.",
+                    ),
+                ],
+                state=ToolResultState.ERROR,
+                is_last=True,
+            )
+        if limit < 1 or limit > 2000:
+            return ToolChunk(
+                content=[
+                    TextBlock(
+                        text=f"Error: limit must be between 1 and "
+                        f"2000, got: {limit}.",
+                    ),
+                ],
+                state=ToolResultState.ERROR,
+                is_last=True,
+            )
         try:
             # Read file content via backend
             lines = None

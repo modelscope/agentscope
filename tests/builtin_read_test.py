@@ -177,6 +177,35 @@ class ReadToolTest(IsolatedAsyncioTestCase):
         self.assertIn("Line 3", content)
         self.assertNotIn("Line 4", content)
 
+    async def test_non_positive_offset_returns_error(self) -> None:
+        """Test an offset below 1 returns an error, not the file tail."""
+        for offset, text in [
+            (0, "Error: offset must be at least 1, got: 0."),
+            (-3, "Error: offset must be at least 1, got: -3."),
+        ]:
+            chunk = await self.read_tool(
+                file_path=self.temp_file.name,
+                offset=offset,
+            )
+
+            self.assertEqual(chunk.state, "error", offset)
+            self.assertEqual(chunk.content[0].text, text, offset)
+
+    async def test_invalid_limit_returns_error(self) -> None:
+        """Test a limit outside 1..2000 returns an error, not empty."""
+        for limit, text in [
+            (0, "Error: limit must be between 1 and 2000, got: 0."),
+            (-1, "Error: limit must be between 1 and 2000, got: -1."),
+            (2001, "Error: limit must be between 1 and 2000, got: 2001."),
+        ]:
+            chunk = await self.read_tool(
+                file_path=self.temp_file.name,
+                limit=limit,
+            )
+
+            self.assertEqual(chunk.state, "error", limit)
+            self.assertEqual(chunk.content[0].text, text, limit)
+
     async def test_read_nonexistent_file(self) -> None:
         """Test reading a non-existent file."""
         missing_path = os.path.join(
