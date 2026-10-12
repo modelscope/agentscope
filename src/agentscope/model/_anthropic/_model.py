@@ -258,11 +258,11 @@ class AnthropicChatModel(ChatModelBase):
 
         if "thinking" not in kwargs:
             thinking, expanded_max_tokens = self._build_thinking_config(
-                max_tokens,
+                kwargs["max_tokens"],
             )
             if thinking is not None:
                 kwargs["thinking"] = thinking
-            if expanded_max_tokens != max_tokens:
+            if expanded_max_tokens != kwargs["max_tokens"]:
                 kwargs["max_tokens"] = expanded_max_tokens
 
         # Effort travels inside ``output_config``, not as a top-level field.
