@@ -8,6 +8,7 @@ resolved back to real types before being handed to pydantic.
 """
 from __future__ import annotations
 
+from functools import partial
 from typing import Annotated
 from unittest import TestCase
 
@@ -21,6 +22,12 @@ class Location(BaseModel):
     """A location model used as a parameter type."""
 
     city: str = Field(description="The city name")
+
+
+class SearchQuery(BaseModel):
+    """A structured catalog-search query."""
+
+    text: str = Field(description="The query text")
 
 
 def annotated_tool(
@@ -42,6 +49,30 @@ def model_tool(location: Location) -> str:
         location: Where to report the weather for.
     """
     return location.city
+
+
+def catalog_search(
+    catalog: str,
+    query: Annotated[SearchQuery, Field(description="The search query")],
+    limit: Annotated[int, Field(gt=0, description="Maximum results")] = 5,
+) -> str:
+    """Search a catalog.
+
+    Args:
+        query: The structured query to run.
+    """
+    return f"{catalog}:{query.text}:{limit}"
+
+
+def primitive_parameter_with_unresolvable_return(value: int) -> str:
+    """Keep the parameter annotation usable when the return hint is not."""
+    return str(value)
+
+
+primitive_parameter_with_unresolvable_return.__annotations__ = {
+    "value": int,
+    "return": "NotDefined",
+}
 
 
 class LazyAnnotationsTest(TestCase):
@@ -141,5 +172,92 @@ class LazyAnnotationsTest(TestCase):
                     },
                 },
                 "required": ["query"],
+            },
+        )
+
+    def test_positional_partial_resolves_lazy_model_annotations(self) -> None:
+        """A partial keeps its signature while using its function's hints."""
+        tool_func = partial(catalog_search, "catalog-a")
+        expected = {
+            "type": "object",
+            "$defs": {
+                "SearchQuery": {
+                    "type": "object",
+                    "description": "A structured catalog-search query.",
+                    "properties": {
+                        "text": {
+                            "type": "string",
+                            "description": "The query text",
+                        },
+                    },
+                    "required": ["text"],
+                },
+            },
+            "properties": {
+                "query": {
+                    "$ref": "#/$defs/SearchQuery",
+                    "description": "The search query",
+                },
+                "limit": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "description": "Maximum results",
+                    "default": 5,
+                },
+            },
+            "required": ["query"],
+        }
+
+        self.assertDictEqual(_extract_input_schema(tool_func), expected)
+        self.assertDictEqual(
+            FunctionTool(tool_func, name="catalog_search").input_schema,
+            expected,
+        )
+
+    def test_nested_partial_uses_remaining_keyword_default(self) -> None:
+        """Nested partials retain the signature-provided default."""
+        tool_func = partial(partial(catalog_search, "catalog-a"), limit=3)
+        schema = _extract_input_schema(tool_func)
+
+        self.assertEqual(schema["required"], ["query"])
+        self.assertEqual(schema["properties"]["limit"]["default"], 3)
+        self.assertEqual(
+            schema["properties"]["query"]["$ref"],
+            "#/$defs/SearchQuery",
+        )
+
+    def test_partial_uses_its_own_annotations_before_underlying_function(
+        self,
+    ) -> None:
+        """Explicit annotations on a partial override its function hints."""
+        tool_func = partial(catalog_search, "catalog-a")
+        tool_func.__annotations__ = {"query": str, "limit": int}
+
+        self.assertDictEqual(
+            _extract_input_schema(tool_func),
+            {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string"},
+                    "limit": {"type": "integer", "default": 5},
+                },
+                "required": ["query"],
+            },
+        )
+
+    def test_partial_falls_back_to_usable_raw_parameter_annotation(
+        self,
+    ) -> None:
+        """An unresolvable return hint does not discard a usable parameter."""
+        schema = _extract_input_schema(
+            partial(primitive_parameter_with_unresolvable_return),
+        )
+
+        self.assertDictEqual(
+            schema,
+            {
+                "type": "object",
+                "properties": {"value": {"type": "integer"}},
+                "required": ["value"],
             },
         )

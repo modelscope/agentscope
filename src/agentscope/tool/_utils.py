@@ -2,6 +2,7 @@
 """The tool module utils."""
 import inspect
 import typing
+from functools import partial
 from typing import Any, Dict, Callable
 
 from docstring_parser import parse
@@ -103,9 +104,23 @@ def _extract_input_schema(
     # outside the function's own module. Resolve them here instead.
     try:
         type_hints = typing.get_type_hints(tool_func, include_extras=True)
+    except TypeError:
+        if isinstance(tool_func, partial):
+            annotated_func = tool_func
+            while isinstance(annotated_func, partial):
+                annotated_func = annotated_func.func
+            try:
+                type_hints = typing.get_type_hints(
+                    annotated_func,
+                    include_extras=True,
+                )
+            except Exception:
+                type_hints = {}
+        else:
+            type_hints = {}
     except Exception:
-        # e.g. `functools.partial` objects, or annotations referencing
-        # TYPE_CHECKING-only names; fall back to the raw annotations
+        # e.g. annotations referencing TYPE_CHECKING-only names; fall back
+        # to the raw annotations
         type_hints = {}
 
     # Create a dynamic model with the function signature
