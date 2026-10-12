@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=protected-access
 """Unit tests for OllamaEmbeddingModel."""
+import tempfile
 from dataclasses import asdict
+from types import SimpleNamespace
 from typing import Any
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import AsyncMock
@@ -10,6 +12,7 @@ from utils import AnyValue
 
 from agentscope.credential import OllamaCredential
 from agentscope.embedding import (
+    FileEmbeddingCache,
     OllamaEmbeddingModel,
     EmbeddingResponse,
     EmbeddingUsage,
@@ -104,3 +107,39 @@ class OllamaEmbeddingCallTest(IsolatedAsyncioTestCase):
             },
         )
         self.assertEqual(call_count, 2)
+
+
+class OllamaEmbeddingCacheHostTest(IsolatedAsyncioTestCase):
+    """The embedding cache must not be shared across Ollama hosts."""
+
+    async def test_cache_is_isolated_by_host(self) -> None:
+        """Two hosts serving the same model name must not reuse each
+        other's cached vectors."""
+        cache = FileEmbeddingCache(cache_dir=tempfile.mkdtemp())
+
+        def make(host: str, vector: list[float]) -> OllamaEmbeddingModel:
+            model = OllamaEmbeddingModel(
+                credential=OllamaCredential(host=host),
+                model="embed",
+                dimensions=2,
+                embedding_cache=cache,
+            )
+            model.client = SimpleNamespace(
+                embed=AsyncMock(
+                    return_value=SimpleNamespace(embeddings=[vector]),
+                ),
+            )
+            return model
+
+        model_a = make("http://host-a:11434", [1.0, 0.0])
+        model_b = make("http://host-b:11434", [0.0, 1.0])
+
+        res_a = await model_a(["hello"])
+        res_b = await model_b(["hello"])
+
+        self.assertEqual(res_a.embeddings, [[1.0, 0.0]])
+        self.assertEqual(res_b.embeddings, [[0.0, 1.0]])
+        self.assertEqual(res_b.source, "api")
+        model_b.client.embed.assert_awaited_once()
+        # The host must stay out of the request sent to Ollama.
+        self.assertNotIn("host", model_b.client.embed.await_args.kwargs)

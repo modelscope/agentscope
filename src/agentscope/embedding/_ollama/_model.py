@@ -105,9 +105,13 @@ class OllamaEmbeddingModel(EmbeddingModelBase[str | TextBlock]):
             **kwargs,
         }
 
+        # Two Ollama hosts can serve different weights under the same model
+        # name, so the host is part of the cache key (but not of the
+        # request payload).
+        cache_identifier = {"host": self.host, **api_kwargs}
         if self.embedding_cache:
             cached = await self.embedding_cache.retrieve(
-                identifier=api_kwargs,
+                identifier=cache_identifier,
             )
             if cached:
                 return EmbeddingResponse(
@@ -122,7 +126,7 @@ class OllamaEmbeddingModel(EmbeddingModelBase[str | TextBlock]):
 
         if self.embedding_cache:
             await self.embedding_cache.store(
-                identifier=api_kwargs,
+                identifier=cache_identifier,
                 embeddings=response.embeddings,
             )
 
