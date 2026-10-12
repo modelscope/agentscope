@@ -3,6 +3,7 @@
 retry / accumulation / interrupt wrapper around ``_call_api``."""
 import asyncio
 import base64
+import struct
 from typing import Any
 from unittest.async_case import IsolatedAsyncioTestCase
 
@@ -866,6 +867,74 @@ class ChatModelBaseCallTest(IsolatedAsyncioTestCase):
                             "media_type": "audio/wav",
                         },
                         "name": "out.wav",
+                    },
+                ],
+                is_last=True,
+                finished_reason=FinishedReason.COMPLETED,
+            ),
+        )
+
+    async def test_stream_extended_wav_header_is_preserved(self) -> None:
+        """A non-canonical WAV chunk layout must not be rewritten."""
+        pcm = bytes([1, 2, 3, 4])
+        extended_wav = (
+            b"RIFF"
+            + b"\xff" * 4
+            + b"WAVE"
+            + b"fmt "
+            + struct.pack(
+                "<IHHIIHHH",
+                18,
+                1,
+                1,
+                24000,
+                48000,
+                2,
+                16,
+                0,
+            )
+            + b"data"
+            + b"\xff" * 4
+            + pcm
+        )
+        deltas = [
+            ChatResponse(
+                content=[
+                    DataBlock(
+                        id="audio-1",
+                        source=Base64Source(
+                            data=base64.b64encode(extended_wav).decode(
+                                "ascii",
+                            ),
+                            media_type="audio/wav",
+                        ),
+                    ),
+                ],
+                is_last=False,
+            ),
+        ]
+        self.model.set_responses([deltas])
+
+        gen = await self.model(messages=self.messages)
+        last_chunk = None
+        async for chunk in gen:
+            last_chunk = chunk
+
+        self.assertDictEqual(
+            _dump(last_chunk),
+            _expected(
+                content=[
+                    {
+                        "type": "data",
+                        "id": "audio-1",
+                        "source": {
+                            "type": "base64",
+                            "data": base64.b64encode(extended_wav).decode(
+                                "ascii",
+                            ),
+                            "media_type": "audio/wav",
+                        },
+                        "name": None,
                     },
                 ],
                 is_last=True,

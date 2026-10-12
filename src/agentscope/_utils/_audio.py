@@ -101,8 +101,9 @@ def _finalize_streaming_wav(wav_bytes: bytes) -> bytes:
     header from :func:`_build_streaming_wav_header`. Once the buffer is
     complete, the RIFF and ``data`` chunk sizes are rewritten with the real
     values, so the result is a well-formed WAV just like
-    :func:`_build_wav_header` produces. A buffer without the placeholder
-    header is returned unchanged.
+    :func:`_build_wav_header` produces. Only the canonical 44-byte layout
+    emitted by :func:`_build_streaming_wav_header` is rewritten; other RIFF
+    layouts are returned unchanged.
 
     Args:
         wav_bytes (`bytes`):
@@ -112,11 +113,13 @@ def _finalize_streaming_wav(wav_bytes: bytes) -> bytes:
         `bytes`:
             The buffer with real chunk sizes in its WAV header.
     """
+    placeholder_size = struct.pack("<I", 0xFFFFFFFF)
     if (
         len(wav_bytes) >= 44
         and wav_bytes[:4] == b"RIFF"
-        and wav_bytes[8:12] == b"WAVE"
-        and wav_bytes[4:8] == b"\xff\xff\xff\xff"
+        and wav_bytes[4:8] == placeholder_size
+        and wav_bytes[8:20] == b"WAVEfmt " + struct.pack("<I", 16)
+        and wav_bytes[36:44] == b"data" + placeholder_size
     ):
         data_len = len(wav_bytes) - 44
         finalized = bytearray(wav_bytes)
