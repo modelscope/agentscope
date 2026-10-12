@@ -285,7 +285,7 @@ class GeminiChatModel(ChatModelBase):
         """
         formatted_messages = await self.formatter.format(messages)
 
-        config: dict[str, Any] = {**config_kwargs}
+        config: dict[str, Any] = {}
 
         if self.parameters.max_tokens is not None:
             config["max_output_tokens"] = self.parameters.max_tokens
@@ -296,19 +296,19 @@ class GeminiChatModel(ChatModelBase):
         if self.parameters.top_p is not None:
             config["top_p"] = self.parameters.top_p
 
-        # A caller-provided thinking_config wins over the parameter-derived
-        # default, like the thinking kwargs of the other providers.
-        if "thinking_config" not in config:
-            if self.parameters.thinking_enable:
-                config["thinking_config"] = {
-                    "include_thoughts": True,
-                    "thinking_budget": self.parameters.thinking_budget or 1024,
-                }
-            else:
-                config["thinking_config"] = {
-                    "include_thoughts": False,
-                    "thinking_budget": 0,
-                }
+        if self.parameters.thinking_enable:
+            config["thinking_config"] = {
+                "include_thoughts": True,
+                "thinking_budget": self.parameters.thinking_budget or 1024,
+            }
+        else:
+            config["thinking_config"] = {
+                "include_thoughts": False,
+                "thinking_budget": 0,
+            }
+
+        # Per-call config takes precedence over model-level defaults.
+        config.update(config_kwargs)
 
         fmt_tools, fmt_tool_choice = self._format_tools(tools, tool_choice)
 
