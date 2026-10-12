@@ -14,9 +14,23 @@ from unittest import IsolatedAsyncioTestCase
 from unittest.mock import AsyncMock, MagicMock
 
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
+from utils import AnyValue
 
 from agentscope.credential import MoonshotCredential
 from agentscope.model import MoonshotChatModel
+
+
+def _expected_usage(cache_input_tokens: int) -> dict[str, Any]:
+    """The whole ``ChatUsage`` a Kimi response should report."""
+    return {
+        "input_tokens": 1000,
+        "output_tokens": 20,
+        "time": AnyValue(),
+        "cache_creation_input_tokens": 0,
+        "cache_input_tokens": cache_input_tokens,
+        "type": "chat",
+        "metadata": None,
+    }
 
 
 KIMI_USAGE_WITH_CACHE: dict[str, Any] = {
@@ -136,9 +150,7 @@ class TestMoonshotCacheTokens(IsolatedAsyncioTestCase):
 
         res = await self.model([])
 
-        self.assertEqual(res.usage.input_tokens, 1000)
-        self.assertEqual(res.usage.output_tokens, 20)
-        self.assertEqual(res.usage.cache_input_tokens, 832)
+        self.assertEqual(dict(res.usage), _expected_usage(832))
 
     async def test_stream_cached_tokens(self) -> None:
         """The streaming path reports the same cached prompt tokens."""
@@ -157,9 +169,7 @@ class TestMoonshotCacheTokens(IsolatedAsyncioTestCase):
         responses = [r async for r in gen]
 
         self.assertEqual(len(responses), 2)
-        self.assertEqual(responses[-1].usage.input_tokens, 1000)
-        self.assertEqual(responses[-1].usage.output_tokens, 20)
-        self.assertEqual(responses[-1].usage.cache_input_tokens, 832)
+        self.assertEqual(dict(responses[-1].usage), _expected_usage(832))
 
     async def test_non_stream_without_prompt_tokens_details(self) -> None:
         """A payload without the nested details object still accounts."""
@@ -169,6 +179,4 @@ class TestMoonshotCacheTokens(IsolatedAsyncioTestCase):
 
         res = await self.model([])
 
-        self.assertEqual(res.usage.input_tokens, 1000)
-        self.assertEqual(res.usage.output_tokens, 20)
-        self.assertEqual(res.usage.cache_input_tokens, 0)
+        self.assertEqual(dict(res.usage), _expected_usage(0))
