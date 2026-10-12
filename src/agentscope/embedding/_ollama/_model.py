@@ -112,7 +112,7 @@ class OllamaEmbeddingModel(EmbeddingModelBase[str | TextBlock]):
         # Two Ollama endpoints can serve different weights under the same
         # model name, so the resolved endpoint is part of the cache key but
         # not of the request payload.
-        cache_identifier = {
+        cache_identifier: dict[str, Any] = {
             "endpoint": self._cache_endpoint,
             "api_kwargs": api_kwargs,
         }
