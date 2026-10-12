@@ -283,10 +283,7 @@ class AskUserUI(Vertical):
             else (
                 "Enter submit answer · Esc choices · Ctrl+C interrupt"
                 if self._editing_other
-                else (
-                    "↑/↓ select · Enter choose · ← previous "
-                    "· Ctrl+C interrupt"
-                )
+                else ("↑/↓ select · Enter choose · ←/→ switch · Ctrl+C interrupt")
             ),
         )
 
@@ -513,5 +510,12 @@ class AskUserUI(Vertical):
                 event.stop()
                 event.prevent_default()
                 self._question_index -= 1
+                self._render_form()
+                self.call_later(self.focus_action)
+        elif event.key == "right" and not self._editing_other:
+            if self._question_index + 1 < len(self._answers):
+                event.stop()
+                event.prevent_default()
+                self._question_index += 1
                 self._render_form()
                 self.call_later(self.focus_action)
