@@ -1517,15 +1517,15 @@ class TestOpenAIResponseFormatTools(unittest.TestCase):
 
 
 class _TrackedBody(httpx.AsyncByteStream):
-    """SSE body that stays open until ``aclose`` releases it."""
+    """HTTP body with observable cleanup."""
 
     def __init__(self) -> None:
-        """Record whether provider-response cleanup has run."""
+        """Initialize the body state."""
         self.closed = False
         self.stop = asyncio.Event()
 
     async def __aiter__(self) -> Any:
-        """Yield one Responses text delta, then wait to be closed."""
+        """Yield one SSE event and wait."""
         yield (
             b'data: {"type":"response.output_text.delta",'
             b'"sequence_number":0,"item_id":"msg_1","output_index":0,'
@@ -1534,20 +1534,16 @@ class _TrackedBody(httpx.AsyncByteStream):
         await self.stop.wait()
 
     async def aclose(self) -> None:
-        """Mark the HTTP body closed and unblock iteration."""
+        """Close and unblock the body."""
         self.closed = True
         self.stop.set()
 
 
 class TestPublicModelStreamClose(IsolatedAsyncioTestCase):
-    """Closing the public model stream must close the provider response."""
+    """Test public stream cleanup."""
 
     async def test_aclose_closes_offline_httpx_response(self) -> None:
-        """``aclose`` waits for the SDK stream to close its HTTP body.
-
-        Uses the real OpenAI SSE parser and an in-process
-        ``httpx.MockTransport``. No network call is made.
-        """
+        """Test cleanup through the OpenAI SDK and HTTPX transport."""
         body = _TrackedBody()
 
         def _handler(_request: httpx.Request) -> httpx.Response:

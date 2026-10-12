@@ -284,12 +284,8 @@ class ChatModelBase:
                 acc_res.finished_reason = FinishedReason.INTERRUPTED
                 yield_acc_res = True
             finally:
-                # ``async for`` does not close its iterator when this
-                # wrapper is suspended in the loop body, so a consumer
-                # ``aclose()`` would otherwise return before the delegated
-                # provider stream exits its response context. Await that
-                # close here, including on interruption. Iterators without
-                # ``aclose`` are left untouched.
+                # Closing this wrapper does not close the delegated iterator.
+                # Wait for provider cleanup before ``aclose`` returns.
                 aclose = getattr(res, "aclose", None)
                 if aclose is not None:
                     maybe_awaitable = aclose()

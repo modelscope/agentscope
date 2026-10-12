@@ -1287,10 +1287,10 @@ class StructuredOutputStrategyTest(IsolatedAsyncioTestCase):
 
 
 class _TrackedCleanupModel(MockModel):
-    """Delegated stream that records when asynchronous cleanup finishes."""
+    """Model with observable asynchronous stream cleanup."""
 
     def __init__(self) -> None:
-        """Initialize the events that gate delegated ``aclose``."""
+        """Initialize cleanup events."""
         super().__init__(model="mock-model", stream=True)
         self.cleanup_started = asyncio.Event()
         self.cleanup_finished = asyncio.Event()
@@ -1301,7 +1301,7 @@ class _TrackedCleanupModel(MockModel):
         *args: Any,
         **kwargs: Any,
     ) -> AsyncGenerator[ChatResponse, None]:
-        """Return two chunks whose close waits on ``release_cleanup``."""
+        """Return a stream with gated cleanup."""
         del args, kwargs
         release_cleanup = self.release_cleanup
         cleanup_started = self.cleanup_started
@@ -1326,12 +1326,12 @@ class _TrackedCleanupModel(MockModel):
 
 
 class StreamDelegatedCloseTest(IsolatedAsyncioTestCase):
-    """Public stream ``aclose`` must await the delegated generator."""
+    """Test delegated stream cleanup."""
 
     async def test_aclose_after_first_chunk_closes_delegated_stream(
         self,
     ) -> None:
-        """Closing after the first chunk awaits delegated cleanup."""
+        """Close the delegated stream after one chunk."""
         model = _TrackedCleanupModel()
         model.release_cleanup.set()
         messages = [UserMsg(name="user", content="hi")]
@@ -1348,7 +1348,7 @@ class StreamDelegatedCloseTest(IsolatedAsyncioTestCase):
             await gen.aclose()
 
     async def test_aclose_waits_for_asynchronous_cleanup(self) -> None:
-        """``aclose`` returns only after delegated cleanup finishes."""
+        """Wait for delegated asynchronous cleanup."""
         model = _TrackedCleanupModel()
         messages = [UserMsg(name="user", content="hi")]
         gen = await model(messages=messages)
