@@ -280,15 +280,22 @@ class MoonshotChatModel(ChatModelBase):
 
                 if chunk.usage:
                     u = chunk.usage
+                    # Kimi reports cached prompt tokens one level deeper, at
+                    # ``usage.prompt_tokens_details.cached_tokens``; the
+                    # OpenAI SDK's ``CompletionUsage`` has no flat
+                    # ``cached_tokens`` field (#3267).
+                    details = getattr(u, "prompt_tokens_details", None)
                     usage = ChatUsage(
                         input_tokens=u.prompt_tokens,
                         output_tokens=u.completion_tokens,
                         time=(datetime.now() - start_datetime).total_seconds(),
                         cache_input_tokens=getattr(
-                            u,
+                            details,
                             "cached_tokens",
                             0,
-                        ),
+                        )
+                        if details
+                        else 0,
                     )
 
                 if not chunk.choices:
@@ -386,11 +393,19 @@ class MoonshotChatModel(ChatModelBase):
         usage = None
         if response.usage:
             u = response.usage
+            details = getattr(u, "prompt_tokens_details", None)
             usage = ChatUsage(
                 input_tokens=u.prompt_tokens,
                 output_tokens=u.completion_tokens,
                 time=(datetime.now() - start_datetime).total_seconds(),
-                cache_input_tokens=getattr(u, "cached_tokens", 0),
+                # Nested, as on the wire — see the streaming branch above.
+                cache_input_tokens=getattr(
+                    details,
+                    "cached_tokens",
+                    0,
+                )
+                if details
+                else 0,
             )
 
         resp_kwargs: dict[str, Any] = {
