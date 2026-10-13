@@ -490,6 +490,38 @@ class TestAnthropicThinkingMode(IsolatedAsyncioTestCase):
         self.assertEqual(kwargs["thinking"]["budget_tokens"], 8192)
         self.assertGreater(kwargs["max_tokens"], 8192)
 
+    async def test_per_call_max_tokens_sizes_budget(self) -> None:
+        """Per-call max_tokens must drive budget_tokens, not parameters only.
+
+        With thinking enabled and no parameters-level max_tokens /
+        thinking_budget, a call with max_tokens=1000 must send
+        budget_tokens derived from 1000 (half by default) so the request
+        keeps max_tokens > budget_tokens. Sizing from the 8192 default
+        instead would emit budget_tokens=4096 with max_tokens=1000.
+        """
+        self.model.parameters.thinking_enable = True
+
+        await self.model([], max_tokens=1000)
+
+        kwargs = self.mock_create.call_args.kwargs
+        self.assertEqual(kwargs["max_tokens"], 1000)
+        self.assertEqual(
+            kwargs["thinking"],
+            {"type": "enabled", "budget_tokens": 500},
+        )
+        self.assertGreater(kwargs["max_tokens"], kwargs["thinking"]["budget_tokens"])
+
+    async def test_per_call_max_tokens_expands_when_budget_larger(self) -> None:
+        """A per-call max_tokens below thinking_budget must still expand."""
+        self.model.parameters.thinking_mode = "enabled"
+        self.model.parameters.thinking_budget = 8192
+
+        await self.model([], max_tokens=1000)
+
+        kwargs = self.mock_create.call_args.kwargs
+        self.assertEqual(kwargs["thinking"]["budget_tokens"], 8192)
+        self.assertGreater(kwargs["max_tokens"], 8192)
+
     def test_resolved_mode_drives_tool_choice_downgrade(self) -> None:
         """Only budget mode forbids forced tool use, so only it downgrades.
 

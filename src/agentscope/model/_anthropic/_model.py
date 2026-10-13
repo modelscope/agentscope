@@ -246,15 +246,22 @@ class AnthropicChatModel(ChatModelBase):
         """
 
         # Anthropic requires max_tokens; fall back to a safe default when
-        # the user hasn't configured one explicitly.
-        max_tokens = self.parameters.max_tokens or 8192
+        # the user hasn't configured one explicitly. Resolve the effective
+        # cap *after* merging ``generate_kwargs`` so a per-call override
+        # sizes ``thinking.budget_tokens`` (and any auto-expansion) against
+        # the value that will actually be sent — otherwise a smaller
+        # per-call ``max_tokens`` can leave ``budget_tokens`` larger and
+        # the API rejects the request (HTTP 400).
+        default_max_tokens = self.parameters.max_tokens or 8192
 
         kwargs: dict[str, Any] = {
             "model": model_name,
-            "max_tokens": max_tokens,
+            "max_tokens": default_max_tokens,
             "stream": self.stream,
             **generate_kwargs,
         }
+        max_tokens = kwargs.get("max_tokens") or default_max_tokens
+        kwargs["max_tokens"] = max_tokens
 
         if "thinking" not in kwargs:
             thinking, expanded_max_tokens = self._build_thinking_config(
