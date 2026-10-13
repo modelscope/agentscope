@@ -341,6 +341,49 @@ class OpenAILivePayloadTest(unittest.TestCase):
                 ),
             ],
         )
+        self.assertDictEqual(
+            cards[0].parameter_schema,
+            {
+                "type": "object",
+                "properties": {
+                    "voice": {
+                        "default": "marin",
+                        "description": "The voice used for generated audio.",
+                        "title": "Voice",
+                        "type": "string",
+                    },
+                    "store": {
+                        "default": False,
+                        "description": (
+                            "Whether to request provider-side storage for "
+                            "the Live session."
+                        ),
+                        "title": "Store Session",
+                        "type": "boolean",
+                    },
+                    "startup_timeout_s": {
+                        "default": 15.0,
+                        "description": (
+                            "Maximum seconds to wait for the Live session "
+                            "to start."
+                        ),
+                        "exclusiveMinimum": 0,
+                        "title": "Startup Timeout",
+                        "type": "number",
+                    },
+                    "close_timeout_s": {
+                        "default": 15.0,
+                        "description": (
+                            "Maximum seconds to wait for graceful session "
+                            "closure."
+                        ),
+                        "exclusiveMinimum": 0,
+                        "title": "Close Timeout",
+                        "type": "number",
+                    },
+                },
+            },
+        )
 
     def test_session_start_payload(self) -> None:
         """Startup delegates backend tasks to the application."""

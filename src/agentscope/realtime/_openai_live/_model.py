@@ -34,14 +34,44 @@ class OpenAILiveModel(RealtimeModelBase):
     class Parameters(RealtimeModelBase.Parameters):
         """GPT-Live voice and connection settings."""
 
-        voice: str = Field(default="marin", title="Voice")
-        store: bool = Field(default=False, title="Store Session")
-        startup_timeout_s: float = Field(default=15.0, gt=0)
-        close_timeout_s: float = Field(default=15.0, gt=0)
+        voice: str = Field(
+            default="marin",
+            title="Voice",
+            description="The voice used for generated audio.",
+        )
+        store: bool = Field(
+            default=False,
+            title="Store Session",
+            description=(
+                "Whether to request provider-side storage for the Live "
+                "session."
+            ),
+        )
+        startup_timeout_s: float = Field(
+            default=15.0,
+            gt=0,
+            title="Startup Timeout",
+            description=(
+                "Maximum seconds to wait for the Live session to start."
+            ),
+        )
+        close_timeout_s: float = Field(
+            default=15.0,
+            gt=0,
+            title="Close Timeout",
+            description=(
+                "Maximum seconds to wait for graceful session closure."
+            ),
+        )
 
     type = "openai_live"
+    """Adapter identifier stored in realtime model configurations."""
+
     interaction_mode = InteractionMode.FULL_DUPLEX
+    """GPT-Live uses one continuous, full-duplex conversation timeline."""
+
     supports_text_input = False
+    """Typed input is not exposed by the current GPT-Live adapter."""
 
     @property
     def input_transcription_enabled(self) -> bool:
@@ -55,7 +85,25 @@ class OpenAILiveModel(RealtimeModelBase):
         parameters: "OpenAILiveModel.Parameters | None" = None,
         model_card: RealtimeModelCard | None = None,
     ) -> None:
-        """Initialize the GPT-Live adapter."""
+        """Initialize the GPT-Live adapter.
+
+        Args:
+            model (`str`):
+                GPT-Live model identifier, for example ``"gpt-live-1"``.
+            credential (`OpenAICredential`):
+                OpenAI credential used to authenticate the WebSocket.
+            parameters (`OpenAILiveModel.Parameters | None`, optional):
+                Voice, storage, and connection timeout settings. Defaults
+                are used when omitted.
+            model_card (`RealtimeModelCard | None`, optional):
+                Model capabilities and audio formats. When omitted, the
+                bundled card matching ``model`` is used.
+
+        Raises:
+            ValueError:
+                If ``model_card`` is omitted and no bundled card matches
+                ``model``.
+        """
         super().__init__(model, credential, parameters, model_card)
         self.parameters: OpenAILiveModel.Parameters
         self._ws: Any = None
@@ -86,7 +134,26 @@ class OpenAILiveModel(RealtimeModelBase):
         tools: list[dict] | None = None,
         **kwargs: Any,
     ) -> None:
-        """Open the primary WebSocket and wait for ``session.started``."""
+        """Open the primary WebSocket and wait for ``session.started``.
+
+        Args:
+            instructions (`str`):
+                System instructions sent in the immutable session startup
+                configuration.
+            tools (`list[dict] | None`, optional):
+                Ignored because GPT-Live delegates tool work to the client
+                session's Chat Agent.
+            **kwargs (`Any`):
+                Optional connection metadata. ``safety_identifier`` is sent
+                as the ``OpenAI-Safety-Identifier`` header when present.
+
+        Raises:
+            asyncio.TimeoutError:
+                If the provider does not acknowledge startup before
+                ``startup_timeout_s``.
+            ModelDisconnectedError:
+                If the connection closes before startup completes.
+        """
         import websockets
 
         await self.close()
@@ -160,7 +227,18 @@ class OpenAILiveModel(RealtimeModelBase):
             yield event
 
     async def push_audio(self, pcm: bytes) -> None:
-        """Append complete PCM16 samples to the Live input stream."""
+        """Append complete PCM16 samples to the Live input stream.
+
+        Args:
+            pcm (`bytes`):
+                Little-endian PCM16 audio at :attr:`input_sample_rate`.
+
+        Raises:
+            ValueError:
+                If ``pcm`` ends with an incomplete 16-bit sample.
+            ModelDisconnectedError:
+                If the Live session has not started or is disconnected.
+        """
         if len(pcm) % 2:
             raise ValueError("PCM16 audio must contain complete samples.")
         if not self._session_id:
@@ -216,7 +294,23 @@ class OpenAILiveModel(RealtimeModelBase):
         delegation_id: str,
         content: str,
     ) -> None:
-        """Append a verified client-delegation result for speech."""
+        """Append a verified client-delegation result for speech.
+
+        Long results are split into ordered commentary commands before they
+        are returned to the Live session.
+
+        Args:
+            delegation_id (`str`):
+                Identifier from the corresponding delegation-created event.
+            content (`str`):
+                Verified task result for GPT-Live to communicate.
+
+        Raises:
+            ValueError:
+                If either argument is empty.
+            ModelDisconnectedError:
+                If the Live WebSocket is not connected.
+        """
         if not delegation_id:
             raise ValueError("A GPT-Live delegation id is required.")
         if not content.strip():

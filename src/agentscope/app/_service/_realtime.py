@@ -48,6 +48,40 @@ class RealtimeService:
         custom_agent_cls: type[Agent] | None = None,
         channel_clients: ChannelClients | None = None,
     ) -> None:
+        """Initialize the application-wide realtime Agent assembler.
+
+        This service owns no running connection. A :class:`WebRTCSession`
+        calls :meth:`create_agent` for each negotiated voice session.
+
+        Args:
+            storage (`StorageBase`):
+                Persistent session and agent storage.
+            workspace_manager (`WorkspaceManagerBase`):
+                Resolves the workspace bound to each session.
+            scheduler_manager (`SchedulerManager`):
+                Provides schedule tools to assembled toolkits.
+            background_task_manager (`BackgroundTaskManager`):
+                Provides background-task tools and runtime state.
+            message_bus (`MessageBus`):
+                Shared bus used by session and team tools.
+            resource_access_service (`ResourceAccessService`):
+                Resolves caller-visible agents, credentials, and knowledge.
+            knowledge_base_manager (`KnowledgeBaseManagerBase | None`,
+            optional):
+                Resolves knowledge handles for delegated Chat Agents.
+            extra_agent_middlewares (`AgentMiddlewareFactory | None`,
+            optional):
+                Builds application-provided middlewares for delegation.
+            extra_agent_tools (`AgentToolFactory | None`, optional):
+                Builds application-provided tools for the session toolkit.
+            custom_subagent_templates (`dict[str, SubAgentTemplate] | None`,
+            optional):
+                Sub-agent templates exposed through Agent creation tools.
+            custom_agent_cls (`type[Agent] | None`, optional):
+                Agent implementation used for delegated Chat tasks.
+            channel_clients (`ChannelClients | None`, optional):
+                Resolves tools and identity for channel-bound sessions.
+        """
         self._storage = storage
         self._workspace_manager = workspace_manager
         self._scheduler_manager = scheduler_manager
@@ -81,7 +115,33 @@ class RealtimeService:
         session_id: str,
         model: RealtimeModelBase,
     ) -> RealtimeAgent:
-        """Load the locked session and assemble its realtime runtime."""
+        """Load a locked session and assemble its realtime runtime.
+
+        The caller must hold the distributed session lock before invoking
+        this method so the loaded state cannot race another Chat or voice
+        run. The returned Agent is not connected until its async context is
+        entered.
+
+        Args:
+            user_id (`str`):
+                Owner of the session being opened.
+            agent_id (`str`):
+                Agent configuration used by the session.
+            session_id (`str`):
+                Persisted session whose state the runtime will share.
+            model (`RealtimeModelBase`):
+                Provider adapter already resolved from the session config.
+
+        Returns:
+            `RealtimeAgent`:
+                An assembled but disconnected realtime Agent.
+
+        Raises:
+            RuntimeError:
+                If the session no longer exists.
+            ValueError:
+                If a client-delegating model has no Chat model configured.
+        """
         agent_record = await self._access.resolve_agent(user_id, agent_id)
         session = await self._storage.get_session(
             user_id,

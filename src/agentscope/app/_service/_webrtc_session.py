@@ -48,6 +48,33 @@ class WebRTCSession:
         session_id: str,
         on_closed: Callable[["WebRTCSession"], None],
     ) -> None:
+        """Initialize one negotiated browser voice-session owner.
+
+        The instance owns the peer connection, audio transport, Agent
+        lifecycle, session lock, event publication, and state persistence.
+        Calling :meth:`start` begins those activities in a background task.
+
+        Args:
+            peer_connection (`RTCPeerConnection`):
+                Negotiated WebRTC connection to close with the session.
+            transport (`WebRTCAudioTransport`):
+                Audio and control-frame bridge for the peer connection.
+            agent_factory (`Callable[[], Awaitable[RealtimeAgent]]`):
+                Builds the Agent after the session lock is acquired.
+            storage (`StorageBase`):
+                Persists messages and the final Agent state.
+            message_bus (`MessageBus`):
+                Provides the session lock and publishes replayable events.
+            user_id (`str`):
+                Owner of the persisted session.
+            agent_id (`str`):
+                Agent associated with the persisted session.
+            session_id (`str`):
+                Session used for locking, events, and persistence.
+            on_closed (`Callable[[WebRTCSession], None]`):
+                Callback that removes this runner from the connection
+                registry after all resources close.
+        """
         self.peer_connection = peer_connection
         self.transport = transport
         self._agent_factory = agent_factory
@@ -128,7 +155,14 @@ class WebRTCSession:
         return True
 
     async def _run(self) -> None:
-        """Hold the session lock while forwarding events to the SSE log."""
+        """Own the locked realtime runtime until its transport ends.
+
+        After acquiring the distributed session lock, this task creates and
+        connects the Agent, forwards non-PCM events to the replayable SSE
+        stream, persists event-bound checkpoints, and saves the latest state
+        before releasing the lock. It always closes the transport and peer
+        connection and invokes ``on_closed`` during cleanup.
+        """
         try:
             async with self.message_bus.acquire_lock(
                 MessageBusKeys.session_lock(self.session_id),
