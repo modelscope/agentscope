@@ -6,9 +6,11 @@ import hashlib
 import json
 import os
 import tempfile
+from datetime import datetime
 from typing import Any
 
 from unittest.async_case import IsolatedAsyncioTestCase
+from unittest.mock import patch
 
 from utils import MockModel, AnyString
 
@@ -18,7 +20,11 @@ from agentscope.model import (
     ModelCard,
     StructuredResponse,
 )
-from agentscope.agent import Agent, ContextConfig, InjectionConfig
+from agentscope.agent import (
+    Agent,
+    ContextConfig,
+    InjectionConfig,
+)
 
 from agentscope.state import AgentState
 from agentscope.message import (
@@ -2146,6 +2152,79 @@ class ContextCompressionTest(IsolatedAsyncioTestCase):
                         await toolkit.get_tool("CompressContext"),
                         tool,
                     )
+
+    async def test_context_compression_resolves_current_time_placeholder(
+        self,
+    ) -> None:
+        """The compression prompt reaches the model with the injection time."""
+        model = RecordingStructuredMockModel(
+            context_size=100,
+            fail_structured_output_times=1,
+            force_compression_overflow=True,
+        )
+        agent = Agent(
+            name="Friday",
+            system_prompt="".join(["0" for _ in range(20 * 4)]),
+            model=model,
+            context_config=ContextConfig(
+                trigger_ratio=0.7,
+                reserve_ratio=0.4,
+                compression_prompt="Now is {current_time}. Keep {braces}.",
+            ),
+            injection_config=InjectionConfig(
+                timezone="Asia/Shanghai",
+                time_format="%Y-%m-%d %H:%M",
+            ),
+            state=AgentState(
+                session_id="123",
+                context=[
+                    UserMsg(
+                        "User",
+                        "".join(["1" for _ in range(30 * 4)]),
+                        id="1",
+                    ),
+                    AssistantMsg(
+                        "Friday",
+                        "".join(["2" for _ in range(10 * 4)]),
+                        id="2",
+                    ),
+                    UserMsg(
+                        "User",
+                        "".join(["3" for _ in range(10 * 4)]),
+                        id="3",
+                    ),
+                ],
+            ),
+            toolkit=Toolkit(),
+        )
+
+        model.set_structured_response(
+            StructuredResponse(
+                content={
+                    "task_overview": "1",
+                    "current_state": "2",
+                    "important_discoveries": "3",
+                    "next_steps": "4",
+                    "context_to_preserve": "5",
+                },
+            ),
+        )
+
+        # The first call fails under overflow, so the retry path runs too
+        with patch("agentscope.agent._agent.datetime") as mock_datetime:
+            mock_datetime.now.return_value = datetime(2026, 7, 1, 12, 0)
+            await agent.compress_context()
+
+        self.assertListEqual(
+            [
+                msgs[-1].get_text_content()
+                for msgs in model.recorded_structured_messages
+            ],
+            [
+                "Now is 2026-07-01 12:00 (Asia/Shanghai). Keep {braces}.",
+                "Now is 2026-07-01 12:00 (Asia/Shanghai). Keep {braces}.",
+            ],
+        )
 
     async def test_max_image_num_without_offloader(self) -> None:
         """The oldest images exceeding the limit are dropped and replaced by

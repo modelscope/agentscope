@@ -80,7 +80,9 @@ from .._utils._common import _generate_id, _normalize_local_path
 from ..mcp import MCPClient
 from ..message import (
     Base64Source,
+    ContentBlock,
     DataBlock,
+    HintBlock,
     Msg,
     TextBlock,
     ToolResultBlock,
@@ -665,7 +667,7 @@ class WorkspaceBase:
         *,
         agent_id: str | None = None,
         session_id: str | None = None,
-    ) -> None:
+    ) -> MCPClient:
         """Register a new MCP server for one agent/session and persist.
 
         Implementations record the config in :attr:`_mcp_specs`, start
@@ -681,6 +683,12 @@ class WorkspaceBase:
                 them positionally could silently hit another session.
             session_id (`str | None`, optional):
                 The owning session. ``None`` means the legacy ``""``.
+
+        Returns:
+            `MCPClient`:
+                The live client stored and used by the workspace, which may
+                differ from ``mcp_client`` for sandboxed implementations.
+                It can be evicted later, use :meth:`list_mcps` then.
 
         Raises:
             `ValueError`:
@@ -792,9 +800,9 @@ class WorkspaceBase:
     async def _close_mcp_instance(instance: MCPClient) -> None:
         """Close one live handle, downgrading failures to warnings.
 
-        Stateless clients hold no connection, so they are skipped.
+        Unconnected clients (e.g. local stateless ones) are skipped.
         """
-        if not (instance.is_stateful and instance.is_connected):
+        if not instance.is_connected:
             return
         try:
             await instance.close()
@@ -1011,9 +1019,10 @@ class WorkspaceBase:
         Appends every message in ``msgs`` to
         ``${workdir}/sessions/<session_id>/context.jsonl`` (one
         message per JSONL line). Inline base64
-        :class:`DataBlock` payloads are extracted into ``data/`` and
-        rewritten as ``file://`` URL blocks before serialisation so
-        the JSONL line size stays bounded.
+        :class:`DataBlock` payloads, including those in tool results and
+        hints, are extracted into ``data/`` and rewritten as portable
+        ``workspace://`` URL sources before serialisation so the JSONL
+        line size stays bounded.
 
         Args:
             session_id (`str`):
@@ -1032,19 +1041,38 @@ class WorkspaceBase:
         base = backend.join_path(self._sessions_dir, session_id)
         path = backend.join_path(base, "context.jsonl")
 
+        async def offload_block(block: ContentBlock) -> ContentBlock:
+            """Offload inline media from a copied content block.
+
+            Args:
+                block (`ContentBlock`):
+                    The copied block to inspect.
+
+            Returns:
+                `ContentBlock`:
+                    The block with inline media replaced by workspace URLs.
+            """
+            if isinstance(block, DataBlock) and isinstance(
+                block.source,
+                Base64Source,
+            ):
+                return await self.offload_data_block(block)
+            if isinstance(block, ToolResultBlock) and isinstance(
+                block.output,
+                list,
+            ):
+                block.output = [
+                    await offload_block(item) for item in block.output
+                ]
+            elif isinstance(block, HintBlock) and isinstance(block.hint, list):
+                block.hint = [await offload_block(item) for item in block.hint]
+            return block
+
         copied = deepcopy(msgs)
         lines: list[str] = []
         for msg in copied:
             if not isinstance(msg.content, str):
-                content: list = []
-                for block in msg.content:
-                    if isinstance(block, DataBlock) and isinstance(
-                        block.source,
-                        Base64Source,
-                    ):
-                        block = await self.offload_data_block(block)
-                    content.append(block)
-                msg.content = content
+                msg.content = [await offload_block(b) for b in msg.content]
             lines.append(msg.model_dump_json())
 
         payload = "\n".join(lines) + "\n"
