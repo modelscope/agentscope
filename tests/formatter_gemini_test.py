@@ -4,6 +4,7 @@ GeminiMultiAgentFormatter, following the reference test style with exact
 ground-truth comparisons.
 """
 from unittest import IsolatedAsyncioTestCase
+from unittest.mock import Mock, patch
 
 from agentscope.formatter import (
     GeminiChatFormatter,
@@ -19,6 +20,7 @@ from agentscope.message import (
     ToolResultBlock,
     ToolResultState,
     Base64Source,
+    URLSource,
     ThinkingBlock,
     HintBlock,
 )
@@ -386,6 +388,41 @@ class TestGeminiFormatter(IsolatedAsyncioTestCase):
         )
 
         self.assertListEqual(res, [])
+
+    @patch("agentscope.formatter._gemini_formatter.httpx.get")
+    async def test_chat_formatter_remote_image(
+        self,
+        mock_get: Mock,
+    ) -> None:
+        """Remote media is downloaded through the asynchronous client."""
+        response = Mock(content=b"image data")
+        mock_get.return_value = response
+
+        res = await GeminiChatFormatter().format(
+            [
+                UserMsg(
+                    name="user",
+                    content=[
+                        DataBlock(
+                            source=URLSource(
+                                url="https://example.com/image.png",
+                                media_type="image/png",
+                            ),
+                        ),
+                    ],
+                ),
+            ],
+        )
+
+        self.assertEqual(
+            res[0]["parts"][0]["inline_data"]["data"],
+            "aW1hZ2UgZGF0YQ==",
+        )
+        mock_get.assert_called_once_with(
+            "https://example.com/image.png",
+            timeout=30,
+        )
+        response.raise_for_status.assert_called_once_with()
 
     async def test_empty_text_does_not_hide_valid_text(self) -> None:
         """Only empty text parts are removed from a mixed message."""

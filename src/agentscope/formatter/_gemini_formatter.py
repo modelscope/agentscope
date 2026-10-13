@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """Google Gemini API formatter in agentscope."""
+import asyncio
 import base64
 import fnmatch
 from abc import ABC
 from typing import Any
 
-import requests
+import httpx
 from pydantic import Field
 
 from ._formatter_base import FormatterBase
@@ -95,7 +96,7 @@ class _GeminiFormatterBase(FormatterBase, ABC):
                 }
             else:
                 # Remote URL - download and convert to base64
-                response = requests.get(url, timeout=30)
+                response = httpx.get(url, timeout=30)
                 response.raise_for_status()
                 data = base64.b64encode(response.content).decode("utf-8")
                 return {
@@ -180,7 +181,8 @@ class GeminiChatFormatter(_GeminiFormatterBase):
                                 if sub.text:
                                     hint_parts.append({"text": sub.text})
                             elif isinstance(sub, DataBlock):
-                                formatted_sub = self._format_gemini_data_block(
+                                formatted_sub = await asyncio.to_thread(
+                                    self._format_gemini_data_block,
                                     sub,
                                 )
                                 if formatted_sub:
@@ -198,7 +200,10 @@ class GeminiChatFormatter(_GeminiFormatterBase):
                         )
 
                 elif isinstance(block, DataBlock):
-                    formatted = self._format_gemini_data_block(block)
+                    formatted = await asyncio.to_thread(
+                        self._format_gemini_data_block,
+                        block,
+                    )
                     if formatted:
                         parts.append(formatted)
 
@@ -253,7 +258,8 @@ class GeminiChatFormatter(_GeminiFormatterBase):
                             if isinstance(item, TextBlock):
                                 promo_parts.append({"text": item.text})
                             elif isinstance(item, DataBlock):
-                                fmt_item = self._format_gemini_data_block(
+                                fmt_item = await asyncio.to_thread(
+                                    self._format_gemini_data_block,
                                     item,
                                 )
                                 if fmt_item is not None:
@@ -398,7 +404,10 @@ class GeminiMultiAgentFormatter(_GeminiFormatterBase):
                         )
                         accumulated_text = []
 
-                    formatted = self._format_gemini_data_block(block)
+                    formatted = await asyncio.to_thread(
+                        self._format_gemini_data_block,
+                        block,
+                    )
                     if formatted:
                         conversation_parts.append(formatted)
 

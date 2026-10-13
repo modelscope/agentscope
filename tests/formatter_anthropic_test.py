@@ -4,6 +4,7 @@ AnthropicMultiAgentFormatter, following the reference test style with exact
 ground-truth comparisons.
 """
 from unittest import IsolatedAsyncioTestCase
+from unittest.mock import Mock, patch
 
 from agentscope.formatter import (
     AnthropicChatFormatter,
@@ -19,6 +20,7 @@ from agentscope.message import (
     ToolResultBlock,
     ToolResultState,
     Base64Source,
+    URLSource,
     ThinkingBlock,
     HintBlock,
 )
@@ -336,6 +338,41 @@ class TestAnthropicFormatter(IsolatedAsyncioTestCase):
             ],
             res,
         )
+
+    @patch("agentscope.formatter._anthropic_formatter.httpx.get")
+    async def test_chat_formatter_remote_image(
+        self,
+        mock_get: Mock,
+    ) -> None:
+        """Remote images are downloaded through the asynchronous client."""
+        response = Mock(content=b"image data")
+        mock_get.return_value = response
+
+        res = await AnthropicChatFormatter().format(
+            [
+                UserMsg(
+                    name="user",
+                    content=[
+                        DataBlock(
+                            source=URLSource(
+                                url="https://example.com/image.png",
+                                media_type="image/png",
+                            ),
+                        ),
+                    ],
+                ),
+            ],
+        )
+
+        self.assertEqual(
+            res[0]["content"][0]["source"]["data"],
+            "aW1hZ2UgZGF0YQ==",
+        )
+        mock_get.assert_called_once_with(
+            "https://example.com/image.png",
+            timeout=30,
+        )
+        response.raise_for_status.assert_called_once_with()
 
     async def test_chat_formatter_base64_pdf(self) -> None:
         """Base64-encoded PDF is formatted as an Anthropic document block."""
