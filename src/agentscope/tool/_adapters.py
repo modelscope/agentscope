@@ -241,8 +241,8 @@ class MCPTool(ToolBase):
 
         # Extract is_read_only from MCP tool annotations
         self.is_read_only = False
-        if tool.annotations and hasattr(tool.annotations, "readOnlyHint"):
-            self.is_read_only = tool.annotations.readOnlyHint or False
+        if tool.annotations:
+            self.is_read_only = tool.annotations.read_only_hint or False
 
         # Store MCP tool and connection info
         self._tool = tool
