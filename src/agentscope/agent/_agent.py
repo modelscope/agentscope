@@ -666,12 +666,20 @@ class Agent:
                 ),
             )
 
+        # Same time text as the runtime injection; keeps other braces intact
+        timezone = self.injection_config.timezone
+        now = datetime.now(_resolve_timezone(timezone))
+        compression_prompt = cfg.compression_prompt.replace(
+            "{current_time}",
+            f"{now.strftime(self.injection_config.time_format)} ({timezone})",
+        )
+
         messages = (
             msgs_system
             + msgs_to_compress
             + instruction_msgs
             + [
-                UserMsg(name="user", content=cfg.compression_prompt),
+                UserMsg(name="user", content=compression_prompt),
             ]
         )
 
@@ -726,7 +734,7 @@ class Agent:
                         + [
                             UserMsg(
                                 name="user",
-                                content=cfg.compression_prompt,
+                                content=compression_prompt,
                             ),
                         ]
                     )
@@ -2283,11 +2291,7 @@ class Agent:
         tasks are cancelled explicitly (to avoid orphan tasks), any events
         already queued by the workers (including interruption chunks emitted
         by ``toolkit.call_tool`` when it catches ``CancelledError``) are
-        flushed to the caller, and the generator returns normally. The
-        caller is expected to detect the interruption via the flushed
-        ``ToolResultEndEvent(state=INTERRUPTED)`` events, mirroring the
-        event-based propagation used by
-        :meth:`_execute_sequential_tool_calls`.
+        flushed to the caller before re-raising ``CancelledError``.
 
         Args:
             tool_calls (`list[ToolCallBlock]`):
@@ -2303,6 +2307,9 @@ class Agent:
                 The events generated during the execution of the tool calls.
 
         Raises:
+            `asyncio.CancelledError`:
+                Re-raised after cancelling workers and draining queued events
+                when the caller task is cancelled.
             `ExceptionGroup`:
                 Raised after all tool calls finish when one or more of them
                 raised an exception. Each individual exception is included in
@@ -2369,13 +2376,9 @@ class Agent:
                 if event is sentinel:
                     continue
                 yield event
-            # Consume the cancel so this generator returns normally. The
-            # caller relies on the flushed ``ToolResultEndEvent(state=
-            # INTERRUPTED)`` events, not on the exception, to detect the
-            # interruption — mirroring the event-based propagation used by
-            # :meth:`_execute_sequential_tool_calls`.
-            asyncio.current_task().uncancel()
-            return
+            # Calls cancelled before reaching the toolkit emit no interrupted
+            # result, so propagate to let the reply loop close them
+            raise
 
         # All tasks are done at this point; collect and re-raise exceptions.
         results = await gather_task
@@ -3649,7 +3652,7 @@ class Agent:
             )
 
         elif required and not satisfied:
-            # Maybe the model needs futher reasoning-acting to
+            # Maybe the model needs further reasoning-acting to
             # generate the structured output
             tool_choice = None
             suffix = (
