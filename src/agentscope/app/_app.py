@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """AgentScope app factory."""
+import json
+import os
+import secrets
+from weakref import WeakValueDictionary
 from typing import Type, TYPE_CHECKING, Any
+
+from pydantic import TypeAdapter
 
 from ._lifespan import lifespan
 from .access import DenyAllResourceAccessPolicy, ResourceAccessPolicyBase
@@ -10,29 +16,37 @@ from .rag.knowledge_base_manager import KnowledgeBaseManagerBase
 from .workspace_manager import WorkspaceManagerBase
 from ._router import (
     agent_router,
+    channel_router,
     chat_router,
     credential_router,
+    health_router,
     hub_router,
     knowledge_base_router,
+    embedding_model_router,
     mcp_router,
     model_router,
+    realtime_router,
     tts_model_router,
     schedule_router,
     session_router,
     skill_router,
+    sop_router,
     workspace_router,
 )
-from ._types import AgentMiddlewareFactory, AgentToolFactory, SubAgentTemplate
+from ._types import (
+    AgentMiddlewareFactory,
+    AgentToolFactory,
+    RealtimeIceServer,
+    SubAgentTemplate,
+)
+from .channel import ChannelBase, ChannelTypeRegistry
 from .message_bus import MessageBus
 from .storage import StorageBase
 from ..agent import Agent
 from ..credential import CredentialFactory, CredentialBase
-from ..rag import (
-    ApproxTokenChunker,
-    ChunkerBase,
-    ParserBase,
-    TextParser,
-)
+from ..rag import ApproxTokenChunker, ChunkerBase, ParserBase, TextParser
+
+from .._logging import logger
 from .._version import __version__
 
 
@@ -73,18 +87,43 @@ def _index_hubs(hubs: list | None, kind: str) -> dict:
     return indexed
 
 
+def _load_realtime_ice_servers(
+    configured: list[dict[str, Any]] | None,
+) -> list[dict[str, Any]]:
+    """Load and validate browser-compatible ICE server dictionaries."""
+    servers: Any = configured
+    if servers is None:
+        raw = os.getenv("AGENTSCOPE_REALTIME_ICE_SERVERS")
+        if not raw:
+            return []
+        try:
+            servers = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise ValueError(
+                "AGENTSCOPE_REALTIME_ICE_SERVERS must be valid JSON.",
+            ) from exc
+
+    validated = TypeAdapter(list[RealtimeIceServer]).validate_python(servers)
+    return [
+        server.model_dump(mode="json", by_alias=True, exclude_none=True)
+        for server in validated
+    ]
+
+
 def create_app(
     storage: StorageBase,
     message_bus: MessageBus,
     workspace_manager: WorkspaceManagerBase,
     knowledge_base_manager: KnowledgeBaseManagerBase | None = None,
     knowledge_parsers: list[ParserBase] | dict[str, ParserBase] | None = None,
-    knowledge_chunker: ChunkerBase | None = None,
+    knowledge_chunkers: list[Type[ChunkerBase]] | None = None,
     blob_store: BlobStoreBase | None = None,
     enable_index_worker: bool = True,
     mcp_hubs: list[MCPHubBase] | None = None,
     skill_hubs: list[SkillHubBase] | None = None,
     *,
+    enable_channel_worker: bool = True,
+    enable_scheduler: bool = True,
     extra_credentials: list[Type[CredentialBase]] | None = None,
     extra_middlewares: list[FastAPIMiddleware] | None = None,
     extra_agent_middlewares: AgentMiddlewareFactory | None = None,
@@ -92,8 +131,12 @@ def create_app(
     custom_subagent_templates: list[SubAgentTemplate] | None = None,
     custom_agent_cls: Type[Agent] | None = None,
     resource_access_policy: ResourceAccessPolicyBase | None = None,
+    channels: list[Type[ChannelBase]] | None = None,
+    download_secret: str | None = None,
+    realtime_ice_servers: list[dict[str, Any]] | None = None,
     title: str = "AgentScope",
     version: str = __version__,
+    **kwargs: Any,
 ) -> FastAPI:
     """Create and configure a FastAPI application.
 
@@ -157,9 +200,11 @@ def create_app(
             (one parser bound to multiple types, type aliases, ...).
             Defaults to ``[TextParser()]`` when
             ``knowledge_base_manager`` is set.
-        knowledge_chunker (`ChunkerBase | None`, optional):
-            The chunker shared across every knowledge base.  Defaults
-            to :class:`~agentscope.rag.ApproxTokenChunker()` when
+        knowledge_chunkers (`list[Type[ChunkerBase]] | None`, optional):
+            The chunker classes users can choose from when creating a
+            knowledge base.  The chunker type and parameters are pinned
+            on the knowledge base record and reconstructed by the index
+            worker.  Defaults to ``[ApproxTokenChunker]`` when
             ``knowledge_base_manager`` is set.
         blob_store (`BlobStoreBase | None`, optional):
             Backend storing uploaded document bytes between the
@@ -182,6 +227,22 @@ def create_app(
             The MCP hubs that provide MCPs.
         skill_hubs (`list[SkillHubBase] | None`, optional):
             The SkillHubs that provide skills.
+        enable_channel_worker (`bool`, defaults to ``True``):
+            Whether this process holds the channels' long connections.
+            ``True`` (embedded deployment) suits a desktop build or a
+            single API process. Set ``False`` when running dedicated
+            channel workers: a platform gives one bot's events to one
+            connection, so every replica connecting would either waste
+            connections or duplicate messages. The channel API, the
+            client factory and webhook delivery stay available either
+            way — only the connections move.
+        enable_scheduler (`bool`, defaults to ``True``):
+            Whether this process owns the schedule timers. APScheduler's
+            jobstore is in-memory, so every process holding them fires
+            every cron tick and a schedule runs once per replica — set
+            ``False`` on all but one. The schedule API and the agent's
+            schedule tools stay available either way; those processes
+            persist the record and notify the owner over the bus.
         extra_credentials (`list[Type[CredentialBase]] | None`, optional):
             Additional :class:`~agentscope.credential.CredentialBase`
             subclasses to register before the app starts.  Equivalent to
@@ -190,14 +251,21 @@ def create_app(
         extra_middlewares (`list[Middleware] | None`, optional):
             Additional ASGI middlewares to add to the application.
         extra_agent_middlewares (`AgentMiddlewareFactory | None`, optional):
-            An async factory ``(user_id, agent_id, session_id) -> awaitable
-            of list[MiddlewareBase]`` that produces extra
+            An async factory ``(user_id, agent_id, session_id, workspace) ->
+            awaitable of list[MiddlewareBase]`` that produces extra
             :class:`~agentscope.middleware.MiddlewareBase` instances to
             attach to the agent on each invocation.  Called once per agent
             assembly (i.e. per chat turn / scheduled trigger), so it can
             return user/session-specific middleware (auth, audit logging,
-            tenant isolation, etc.).  The returned middlewares are appended
-            to the framework-supplied ones (e.g. ``ToolOffloadMiddleware``).
+            tenant isolation, etc.).  ``workspace`` is the session's
+            resolved :class:`~agentscope.workspace.WorkspaceBase`, exposing
+            ``workdir`` and ``get_backend()`` for filesystem-backed
+            middleware such as
+            :class:`~agentscope.middleware.AgenticMemoryMiddleware`.
+            Factories written against the older three-argument signature
+            keep working — the fourth argument is only passed to factories
+            that accept it.  The returned middlewares are appended to the
+            framework-supplied ones (e.g. ``ToolOffloadMiddleware``).
         extra_agent_tools (`AgentToolFactory | None`, optional):
             An async factory ``(user_id, agent_id, session_id) -> awaitable
             of list[ToolBase]`` that produces extra
@@ -225,6 +293,28 @@ def create_app(
             user. When ``None`` (default), a
             :class:`DenyAllResourceAccessPolicy` is installed which
             preserves the historical owner-isolated behavior.
+        channels (`list[Type[ChannelBase]] | None`, optional):
+            Channel adapter classes this service allows (e.g.
+            ``[DingTalkChannel, FeishuChannel, DiscordChannel]``).  Each class
+            self-describes its ``channel_type``, credentials and config,
+            so the service registers it without a separate table; pass a
+            custom :class:`~agentscope.app.channel.ChannelBase` subclass
+            to add a platform.  When ``None`` (default), no channel types
+            are registered and the channel feature stays off until the
+            caller opts in by passing at least one adapter class.
+        download_secret (`str | None`, optional):
+            Signs the short-lived tokens that let a browser download a
+            workspace file by navigation. Defaults to a value generated
+            per process, which is fine for a single instance but **must
+            be set explicitly behind a load balancer** — otherwise a
+            token minted by one replica is rejected by the next, and
+            downloads fail at random.
+        realtime_ice_servers (`list[dict[str, Any]] | None`, optional):
+            STUN and TURN servers exposed to browser WebRTC clients. When
+            omitted, the JSON array in
+            ``AGENTSCOPE_REALTIME_ICE_SERVERS`` is used. The default is an
+            empty list, which permits host candidates without silently
+            sending network metadata to a public STUN service.
         title (`str`, defaults to ``"AgentScope"``):
             OpenAPI title shown in the docs UI.
         version (`str`, defaults to the package version):
@@ -245,6 +335,7 @@ def create_app(
     # Attach shared state that lifespan and dependencies read from app.state
     app.state.storage = storage
     app.state.message_bus = message_bus
+    workspace_manager.bind_storage(storage)
     app.state.workspace_manager = workspace_manager
     app.state.knowledge_base_manager = knowledge_base_manager
     app.state.extra_agent_middlewares = extra_agent_middlewares
@@ -253,20 +344,63 @@ def create_app(
     app.state.resource_access_policy = (
         resource_access_policy or DenyAllResourceAccessPolicy()
     )
+    # Channel types this service allows. A channel class self-describes
+    # its credentials / config, so the registry is built straight from
+    # the list — it has no lifecycle, so it lives on app.state directly
+    # rather than being created in the lifespan. Empty by default: the
+    # channel feature is off until the caller passes at least one class.
+    app.state.channel_type_registry = ChannelTypeRegistry(channels or [])
     app.state.mcp_hubs = _index_hubs(mcp_hubs, "MCP")
     app.state.skill_hubs = _index_hubs(skill_hubs, "skill")
+    app.state.download_secret = download_secret or secrets.token_urlsafe(32)
+    app.state.realtime_ice_servers = _load_realtime_ice_servers(
+        realtime_ice_servers,
+    )
+    app.state.realtime_connections = {}
+    app.state.realtime_offer_locks = WeakValueDictionary()
 
     # Parser / chunker / blob-store defaults only make sense when the
     # KB feature is actually enabled.  When ``knowledge_base_manager`` is
     # ``None`` every KB endpoint is disabled, so leaving these as ``None``
     # avoids unused imports being eagerly constructed at app startup.
+    unknown_kwargs = set(kwargs) - {"knowledge_chunker"}
+    if unknown_kwargs:
+        logger.warning(
+            "Ignoring unknown create_app() arguments: %s",
+            sorted(unknown_kwargs),
+        )
+
     if knowledge_base_manager is not None:
         app.state.knowledge_parsers = (
             knowledge_parsers
             if knowledge_parsers is not None
             else [TextParser()]
         )
-        app.state.knowledge_chunker = knowledge_chunker or ApproxTokenChunker()
+        chunker_classes = list(
+            knowledge_chunkers
+            if knowledge_chunkers is not None
+            else [ApproxTokenChunker],
+        )
+        # Backward compatibility: the deprecated ``knowledge_chunker``
+        # instance is only used for its class.
+        if "knowledge_chunker" in kwargs:
+            logger.warning(
+                "The `knowledge_chunker` argument of create_app() is "
+                "deprecated, use `knowledge_chunkers` instead.",
+            )
+            legacy_cls = type(kwargs["knowledge_chunker"])
+            if legacy_cls not in chunker_classes:
+                chunker_classes.append(legacy_cls)
+        seen_chunker_types: dict[str, Type[ChunkerBase]] = {}
+        for cls in chunker_classes:
+            if cls.chunker_type in seen_chunker_types:
+                raise ValueError(
+                    f"Duplicate chunker_type {cls.chunker_type!r}: "
+                    f"{seen_chunker_types[cls.chunker_type].__name__} and "
+                    f"{cls.__name__}.",
+                )
+            seen_chunker_types[cls.chunker_type] = cls
+        app.state.knowledge_chunkers = chunker_classes
         app.state.blob_store = (
             blob_store
             if blob_store is not None
@@ -274,11 +408,13 @@ def create_app(
         )
     else:
         app.state.knowledge_parsers = knowledge_parsers
-        app.state.knowledge_chunker = knowledge_chunker
+        app.state.knowledge_chunkers = knowledge_chunkers
         app.state.blob_store = blob_store
     app.state.enable_index_worker = (
         enable_index_worker and knowledge_base_manager is not None
     )
+    app.state.enable_channel_worker = enable_channel_worker
+    app.state.enable_scheduler = enable_scheduler
 
     # Validate custom sub-agent templates for duplicate types and store in
     #  app.state
@@ -300,15 +436,20 @@ def create_app(
         agent_router,
         chat_router,
         credential_router,
+        health_router,
         hub_router,
         knowledge_base_router,
         mcp_router,
         schedule_router,
         session_router,
         skill_router,
+        sop_router,
         workspace_router,
         model_router,
+        realtime_router,
         tts_model_router,
+        embedding_model_router,
+        channel_router,
     ):
         app.include_router(router)
 

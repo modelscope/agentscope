@@ -4,7 +4,7 @@ import asyncio
 from multiprocessing import Process
 from unittest.async_case import IsolatedAsyncioTestCase
 
-from mcp.server import MCPServer as FastMCP
+from mcp.server import MCPServer
 from mcp.types import EmbeddedResource, TextResourceContents
 
 from agentscope.mcp import MCPClient, HttpMCPConfig
@@ -41,12 +41,12 @@ async def tool_2() -> list:
 
 def setup_server() -> None:
     """Set up the streamable HTTP MCP server."""
-    sse_server = FastMCP("StreamableHTTP")
-    sse_server.tool(description="A test tool function.")(tool_1)
-    sse_server.tool(
+    server = MCPServer("StreamableHTTP")
+    server.tool(description="A test tool function.")(tool_1)
+    server.tool(
         description="A test tool function with embedded resource.",
     )(tool_2)
-    sse_server.run(transport="streamable-http", port=8002)
+    server.run(transport="streamable-http", port=8002)
 
 
 class StreamableHttpMCPClientTest(IsolatedAsyncioTestCase):

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Shared type aliases for the agentscope app layer."""
 from collections.abc import Awaitable, Callable
-from typing import TYPE_CHECKING, Protocol
+from typing import Literal, TYPE_CHECKING, Protocol
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from ..agent import ContextConfig, ReActConfig
 from ..event import AgentEvent
@@ -11,18 +11,49 @@ from ..middleware import MiddlewareBase
 from ..permission import PermissionContext
 from ..state import TaskContext
 from ..tool import ToolBase
+from ..workspace import WorkspaceBase
 
 if TYPE_CHECKING:
     from ._service._session_projection import SessionProjection
     from .storage import AgentRecord, SessionRecord
 
 
-AgentMiddlewareFactory = Callable[
-    [str, str, str],
-    Awaitable[list[MiddlewareBase]],
-]
-# Async factory signature: ``(user_id, agent_id, session_id)`` →
-# awaitable of :class:`~agentscope.middleware.MiddlewareBase` instances.
+class RealtimeIceServer(BaseModel):
+    """Browser-compatible WebRTC ICE server configuration."""
+
+    model_config = ConfigDict(extra="forbid", populate_by_name=True)
+
+    urls: str | list[str]
+    username: str | None = None
+    credential: str | None = None
+    credential_type: Literal["password", "oauth"] | None = Field(
+        default=None,
+        alias="credentialType",
+    )
+
+    @field_validator("urls")
+    @classmethod
+    def _validate_urls(cls, value: str | list[str]) -> str | list[str]:
+        """Require at least one non-empty ICE server URL."""
+        if isinstance(value, str):
+            if value:
+                return value
+        elif value and all(url for url in value):
+            return value
+        raise ValueError("urls must contain at least one non-empty URL")
+
+
+AgentMiddlewareFactory = (
+    Callable[[str, str, str], Awaitable[list[MiddlewareBase]]]
+    | Callable[
+        [str, str, str, WorkspaceBase],
+        Awaitable[list[MiddlewareBase]],
+    ]
+)
+# Async factory: ``(user_id, agent_id, session_id, workspace)`` → awaitable
+# of :class:`~agentscope.middleware.MiddlewareBase` instances. The legacy
+# three-argument form stays supported — ``ChatService`` probes the signature
+# and only passes ``workspace`` to factories that accept it.
 
 AgentToolFactory = Callable[
     [str, str, str],

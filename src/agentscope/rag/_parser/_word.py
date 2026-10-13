@@ -76,24 +76,34 @@ def _extract_table_data(table: DocxTable) -> list[list[str]]:
     within cells.
 
     Horizontal merges (``w:gridSpan``) are expanded with empty strings so
-    that every row has the same number of columns.  Vertically merged
+    that every row has the same number of columns. Omitted leading and
+    trailing cells (``w:gridBefore`` / ``w:gridAfter``) are also padded to
+    preserve their grid positions. Vertically merged
     continuation cells (``w:vMerge`` without ``val="restart"``) are kept
     as-is — their XML content is typically empty, which is the desired
     behaviour for downstream renderers.
     """
     from docx.oxml.ns import qn
 
+    text_tag = qn("w:t")
+    break_tags = {qn("w:br"), qn("w:cr")}
     table_data: list[list[str]] = []
     for tr in table._element.findall(qn("w:tr")):
         row_data: list[str] = []
+        grid_before = tr.find(f"{qn('w:trPr')}/{qn('w:gridBefore')}")
+        if grid_before is not None:
+            row_data.extend([""] * int(grid_before.get(qn("w:val"), "0")))
         for tc in tr.findall(qn("w:tc")):
             paragraphs: list[str] = []
-            for p_elem in tc.findall(qn("w:p")):
-                texts: list[str] = []
-                for t_elem in p_elem.findall(".//" + qn("w:t")):
-                    if t_elem.text:
-                        texts.append(t_elem.text)
-                para_text = "".join(texts)
+            # Include paragraphs of tables nested in this cell.
+            for p_elem in tc.xpath("./w:p | ./w:tbl//w:tc/w:p"):
+                text_parts: list[str] = []
+                for element in p_elem.iter():
+                    if element.tag == text_tag and element.text:
+                        text_parts.append(element.text)
+                    elif element.tag in break_tags:
+                        text_parts.append("\n")
+                para_text = "".join(text_parts)
                 if para_text:
                     paragraphs.append(para_text)
             row_data.append("\n".join(paragraphs))
@@ -107,6 +117,9 @@ def _extract_table_data(table: DocxTable) -> list[list[str]]:
                     )
                     row_data.extend([""] * (span - 1))
 
+        grid_after = tr.find(f"{qn('w:trPr')}/{qn('w:gridAfter')}")
+        if grid_after is not None:
+            row_data.extend([""] * int(grid_after.get(qn("w:val"), "0")))
         table_data.append(row_data)
     return table_data
 
@@ -211,8 +224,10 @@ class WordParser(ParserBase):
             table_format (`Literal["markdown", "json"]`, defaults to
                 ``"markdown"``):
                 How to render tables.  ``"markdown"`` uses pipe-table
-                syntax; ``"json"`` emits a JSON array prefixed with a
-                ``<system-info>`` marker.
+                syntax, escaping pipes and rendering cell line breaks
+                as ``<br>``; ``"json"`` emits a JSON array prefixed with
+                a ``<system-info>`` marker and preserves extracted cell
+                strings without Markdown rendering.
 
         Raises:
             `ValueError`: If ``table_format`` is not one of
@@ -266,14 +281,22 @@ class WordParser(ParserBase):
             ) from e
 
         if isinstance(file, str):
-            doc = DocxDocument(file)
-        else:
+            with open(file, "rb") as fp:
+                file = fp.read()
+
+        try:
             doc = DocxDocument(io.BytesIO(file))
+        except Exception as e:  # pylint: disable=broad-except
+            raise ValueError(
+                f"Failed to parse {filename!r} as DOCX: {e}",
+            ) from e
 
         sections: list[Section] = []
         text_buffer: list[str] = []
 
         def flush_text() -> None:
+            while text_buffer and text_buffer[-1] == "":
+                text_buffer.pop()
             if not text_buffer:
                 return
             sections.append(
@@ -292,6 +315,11 @@ class WordParser(ParserBase):
                 text = _extract_text_from_paragraph(para)
                 if text:
                     text_buffer.append(text)
+                elif text_buffer and not para._element.findall(
+                    ".//" + qn("w:r"),
+                ):
+                    # No runs at all, i.e. a blank line in Word
+                    text_buffer.append("")
 
                 if self.include_image:
                     has_drawing = bool(
@@ -322,20 +350,50 @@ class WordParser(ParserBase):
                     if self.table_format == "markdown"
                     else _table_to_json(table_data)
                 )
-                if not rendered:
-                    continue
 
-                if self.separate_table:
-                    flush_text()
-                    sections.append(
-                        Section(
-                            content=TextBlock(text=rendered),
-                            source=filename,
-                            metadata={},
-                        ),
-                    )
-                else:
-                    text_buffer.append(rendered)
+                if rendered:
+                    if self.separate_table:
+                        flush_text()
+                        sections.append(
+                            Section(
+                                content=TextBlock(text=rendered),
+                                source=filename,
+                                metadata={},
+                            ),
+                        )
+                    else:
+                        text_buffer.append(rendered)
+
+                # Images pasted into table cells live under the table's
+                # ``w:p`` elements, not under body-level paragraphs; without
+                # this pass they are silently dropped.
+                if self.include_image:
+                    image_blocks: list[DataBlock] = []
+                    for p_elem in element.findall(".//" + qn("w:p")):
+                        # The outer paragraph scan already covers images in
+                        # nested text-box paragraphs.
+                        if p_elem.xpath("ancestor::w:p"):
+                            continue
+                        image_blocks.extend(
+                            _extract_image_blocks(
+                                Paragraph(p_elem, doc),
+                                filename,
+                            ),
+                        )
+                    if image_blocks:
+                        flush_text()
+                        for block in image_blocks:
+                            sections.append(
+                                Section(
+                                    content=block,
+                                    source=filename,
+                                    metadata={
+                                        "media_type": (
+                                            block.source.media_type
+                                        ),
+                                    },
+                                ),
+                            )
 
         flush_text()
         return sections

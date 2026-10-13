@@ -1,5 +1,14 @@
 import type { ContentBlock, TextBlock } from '@agentscope-ai/agentscope/message';
-import { Paperclip, Send, Loader2, Square, type LucideIcon, XIcon, FileText } from 'lucide-react';
+import {
+	AudioLines,
+	Paperclip,
+	Loader2,
+	Square,
+	type LucideIcon,
+	XIcon,
+	FileText,
+	ArrowUp,
+} from 'lucide-react';
 import mime from 'mime';
 import React, {
 	useState,
@@ -26,6 +35,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import type { ReplyPhase } from '@/hooks/useMessages';
 import { useTranslation } from '@/i18n/useI18n.ts';
+import type { RealtimeConnectionState } from '@/lib/browserWebRTCTransport';
 import { cn } from '@/lib/utils';
 
 /**
@@ -69,13 +79,31 @@ interface TextInputProps {
 	fileProcessor: (file: File) => Promise<ContentBlock | null>;
 	/**
 	 * The current reply lifecycle phase from ``useMessages``. Drives the
-	 * send / stop button in one shot:
+	 * primary action button when realtime voice is inactive:
 	 *   - ``idle`` — Send (enabled when there is content to send)
 	 *   - ``streaming`` — Stop (click to interrupt)
 	 *   - ``interrupting`` — Stop (disabled while the interrupt is in flight)
 	 */
 	phase?: ReplyPhase;
 	onInterrupt?: () => void;
+	/** Current browser realtime voice connection state. */
+	voiceState?: RealtimeConnectionState;
+	/** Starts or stops the browser realtime voice connection. */
+	onVoiceToggle?: () => void;
+	/** Prevents voice start when no realtime model is configured. */
+	voiceDisabled?: boolean;
+	/**
+	 * Content rendered directly above the input pill, inside the outer
+	 * wrapper that {@link className} styles (e.g. the working directory
+	 * and git status).
+	 *
+	 * The pill keeps all four of its corners, so the two only read as one
+	 * surface if the caller gives that wrapper a background and a radius
+	 * concentric with the pill's — outer radius = 28px + the wrapper's
+	 * padding. Anything less and the pill's top corners cut into the
+	 * header's edges.
+	 */
+	headerSlot?: React.ReactNode;
 }
 
 export interface TextInputRef {
@@ -119,6 +147,10 @@ export const TextInput = forwardRef<TextInputRef, TextInputProps>(
 			fileProcessor,
 			phase = 'idle',
 			onInterrupt,
+			voiceState = 'idle',
+			onVoiceToggle,
+			voiceDisabled = false,
+			headerSlot,
 		},
 		ref,
 	) => {
@@ -197,7 +229,9 @@ export const TextInput = forwardRef<TextInputRef, TextInputProps>(
 		};
 
 		const handleSend = () => {
-			if (!value.trim() || disabled || hasProcessing) return;
+			// ``phase`` is guarded here rather than only on the button, since Enter
+			// calls this directly and would otherwise send during a running reply.
+			if (phase !== 'idle' || !value.trim() || disabled || hasProcessing) return;
 
 			const blocks: ContentBlock[] = [];
 
@@ -226,20 +260,40 @@ export const TextInput = forwardRef<TextInputRef, TextInputProps>(
 		};
 
 		/**
-		 * Send / stop button configuration derived from the current reply
-		 * phase. One struct = one branch of rendering, so the JSX stays flat.
+		 * Primary action configuration derived from realtime voice, reply,
+		 * and text input state. One struct keeps the JSX branch-free.
 		 */
-		const sendButton: {
+		const actionButton: {
 			icon: LucideIcon;
 			tooltip: string;
 			disabled: boolean;
+			variant: 'default' | 'ghost';
 			onClick: (() => void) | undefined;
 		} = (() => {
+			if (voiceState === 'connecting') {
+				return {
+					icon: Loader2,
+					tooltip: t('realtime.stop'),
+					disabled: false,
+					variant: 'default',
+					onClick: onVoiceToggle,
+				};
+			}
+			if (voiceState === 'active') {
+				return {
+					icon: Square,
+					tooltip: t('realtime.stop'),
+					disabled: false,
+					variant: 'default',
+					onClick: onVoiceToggle,
+				};
+			}
 			if (phase === 'streaming') {
 				return {
 					icon: Square,
 					tooltip: t('textInput.stop'),
 					disabled: false,
+					variant: 'default',
 					onClick: onInterrupt,
 				};
 			}
@@ -248,14 +302,25 @@ export const TextInput = forwardRef<TextInputRef, TextInputProps>(
 					icon: Square,
 					tooltip: t('textInput.stopping'),
 					disabled: true,
+					variant: 'default',
 					onClick: onInterrupt,
 				};
 			}
+			if (value.trim()) {
+				return {
+					icon: ArrowUp,
+					tooltip: t('textInput.send'),
+					disabled: disabled || hasProcessing,
+					variant: 'default',
+					onClick: handleSend,
+				};
+			}
 			return {
-				icon: Send,
-				tooltip: t('textInput.send'),
-				disabled: disabled || !value.trim() || hasProcessing,
-				onClick: handleSend,
+				icon: AudioLines,
+				tooltip: voiceDisabled ? t('realtime.selectFirst') : t('realtime.start'),
+				disabled: voiceDisabled,
+				variant: 'ghost',
+				onClick: onVoiceToggle,
 			};
 		})();
 
@@ -304,6 +369,7 @@ export const TextInput = forwardRef<TextInputRef, TextInputProps>(
 
 		return (
 			<div className={cn('flex flex-col', className)}>
+				{headerSlot}
 				<div
 					id="tour-chat-input"
 					className="flex w-full flex-col rounded-[28px] border bg-background px-2"
@@ -478,20 +544,30 @@ export const TextInput = forwardRef<TextInputRef, TextInputProps>(
 								</TooltipContent>
 							</Tooltip>
 
-							{/* Send / Stop button — driven by ``sendButton`` config */}
+							{/* Voice / Send / Stop — driven by ``actionButton`` config */}
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<Button
 										type="button"
-										onClick={sendButton.onClick}
-										disabled={sendButton.disabled}
+										variant={actionButton.variant}
+										onClick={actionButton.onClick}
+										disabled={actionButton.disabled}
 										size="icon-lg"
-										className="shrink-0 rounded-full"
+										className={cn(
+											'relative shrink-0 rounded-full transition-colors',
+											voiceState === 'active' &&
+												'before:absolute before:inset-[-4px] before:rounded-full before:border before:border-primary/30 before:animate-pulse',
+										)}
 									>
-										<sendButton.icon className="h-4 w-4" />
+										<actionButton.icon
+											className={cn(
+												'h-4 w-4',
+												voiceState === 'connecting' && 'animate-spin',
+											)}
+										/>
 									</Button>
 								</TooltipTrigger>
-								<TooltipContent>{sendButton.tooltip}</TooltipContent>
+								<TooltipContent>{actionButton.tooltip}</TooltipContent>
 							</Tooltip>
 
 							{/* Hidden file input */}

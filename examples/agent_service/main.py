@@ -1,24 +1,32 @@
 # -*- coding: utf-8 -*-
 """The example script to start the agent service."""
 import os
+import sys
 
 import uvicorn
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 
 from agentscope.app import create_app, SubAgentTemplate
+from agentscope.app.channel import (
+    DingTalkChannel,
+    DiscordChannel,
+    FeishuChannel,
+)
 from agentscope.app.hub import ClawSkillHub, GitHubMCPHub
 from agentscope.app.message_bus import InMemoryMessageBus
 from agentscope.app.rag.knowledge_base_manager import CollectionPerKbManager
 from agentscope.app.storage import RedisStorage
 from agentscope.app.workspace_manager import LocalWorkspaceManager
 from agentscope.mcp import MCPClient, StdioMCPConfig, HttpMCPConfig
+from agentscope.middleware import AgenticMemoryMiddleware, MiddlewareBase
 from agentscope.permission import PermissionContext, PermissionMode
-from agentscope.rag import QdrantStore
+from agentscope.rag import ApproxTokenChunker, QdrantStore
+from agentscope.workspace import WorkspaceBase
 
 default_mcps = [
     MCPClient(
-        name="browser-use",
+        name="playwright",
         mcp_config=StdioMCPConfig(
             command="npx",
             args=["@playwright/mcp@latest"],
@@ -45,6 +53,24 @@ storage = RedisStorage(
 )
 
 vector_store = QdrantStore(location=":memory:")
+
+
+async def longterm_memory_factory(
+    user_id: str,
+    agent_id: str,
+    session_id: str,
+    workspace: WorkspaceBase,
+) -> list[MiddlewareBase]:
+    """Attach Markdown-file long-term memory, stored under the session's
+    workspace so it is reachable through whichever backend is bound."""
+    del user_id, agent_id, session_id
+    return [
+        AgenticMemoryMiddleware(
+            workdir=workspace.workdir,
+            backend=workspace.get_backend(),
+        ),
+    ]
+
 
 app = create_app(
     storage=storage,
@@ -73,6 +99,9 @@ app = create_app(
         storage=storage,
         vector_store=vector_store,
     ),
+    # Chunker classes users can pick from when creating a knowledge base;
+    # the chosen type and parameters are pinned on the knowledge base.
+    knowledge_chunkers=[ApproxTokenChunker],
     # Resource hubs the UI browses under /hub. Neither needs credentials
     # of its own — an individual MCP card declares whatever key it wants
     # from the user in its ``inputs_schema``. Passing a ClawHub token
@@ -117,6 +146,9 @@ so anything you want them to see MUST be sent through `TeamSay`.""",
             ),
         ),
     ],
+    # Long-term memory. The default PER_AGENT workspace isolation makes
+    # the memory survive across sessions of the same agent.
+    extra_agent_middlewares=longterm_memory_factory,
     extra_middlewares=[
         Middleware(
             CORSMiddleware,
@@ -124,6 +156,11 @@ so anything you want them to see MUST be sent through `TeamSay`.""",
             allow_methods=["*"],
             allow_headers=["*"],
         ),
+    ],
+    channels=[
+        DingTalkChannel,
+        DiscordChannel,
+        FeishuChannel,
     ],
 )
 
@@ -134,5 +171,7 @@ if __name__ == "__main__":
         "main:app",
         host="0.0.0.0",
         port=8000,
-        reload=True,
+        # Hot reload forces a SelectorEventLoop on Windows, which cannot
+        # spawn the subprocesses that the builtin tools rely on
+        reload=sys.platform != "win32",
     )

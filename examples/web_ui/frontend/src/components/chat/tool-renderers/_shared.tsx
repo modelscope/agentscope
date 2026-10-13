@@ -79,12 +79,13 @@ export function ToolCallRow({
 	// header's own leaf spans — not on a wrapper (a wrapper only makes descendant
 	// text transparent). We target the direct span children of this flex row
 	// instead of wrapping ``header``, which also keeps their ``gap-x-2`` spacing.
+	const isRunning = !pair.result || pair.result.state === 'running';
 	const row = (
 		<div
 			className={cn(
 				'group flex flex-row gap-x-2 items-center w-full',
 				expandable && 'cursor-pointer',
-				!pair.result || pair.result.state === 'running' ? 'shimmer' : '',
+				isRunning && 'shimmer',
 			)}
 		>
 			{header}
@@ -199,10 +200,18 @@ export function FramedFileBody({ filePath, children }: { filePath?: string; chil
  * Compact ``+N -M`` badge used in tool call headers for Edit / Write to show
  * how many lines were inserted and deleted.
  */
-export function DiffStats({ insertions, deletions }: { insertions: number; deletions: number }) {
+export function DiffStats({
+	insertions,
+	deletions,
+	className,
+}: {
+	insertions: number;
+	deletions: number;
+	className?: string;
+}) {
 	if (insertions === 0 && deletions === 0) return null;
 	return (
-		<div className="flex items-center gap-0.5">
+		<div className={cn('flex items-center gap-0.5', className)}>
 			<div className="flex items-center text-emerald-600 dark:text-emerald-400">
 				<Plus className="size-2.5 stroke-2" />
 				{formatNumber(insertions)}

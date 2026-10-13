@@ -21,7 +21,11 @@ import asyncio
 from typing import Any
 from unittest.async_case import IsolatedAsyncioTestCase
 
-from agentscope.agent import Agent
+from pydantic import BaseModel
+from utils import MockModel
+
+from agentscope.agent import Agent, ReActConfig
+from agentscope.formatter import OpenAIChatFormatter
 from agentscope.app._manager import (
     CancelDispatcher,
     ChatRunRegistry,
@@ -39,6 +43,97 @@ from agentscope.tool import Toolkit
 
 class ServiceAgentInterruptTest(IsolatedAsyncioTestCase):
     """Service-layer interrupt plumbing tests."""
+
+    async def _assert_chat_model_base_interruption(
+        self,
+        structured_schema: type[BaseModel] | None = None,
+        raise_cancelled_error: bool = False,
+    ) -> None:
+        """A cancelled model call must terminate the reply as interrupted."""
+
+        class InterruptibleModel(MockModel):
+            """ChatModelBase implementation that blocks on its first call."""
+
+            def __init__(self) -> None:
+                super().__init__(stream=False)
+                self.call_started = asyncio.Event()
+                self.call_count = 0
+
+            async def _call_api(
+                self,
+                *_args: Any,
+                **_kwargs: Any,
+            ) -> ChatResponse:
+                self.call_count += 1
+                if self.call_count > 1:
+                    raise AssertionError(
+                        "Interrupted reply made another model call",
+                    )
+                self.call_started.set()
+                await asyncio.Event().wait()
+                raise AssertionError("Unreachable")
+
+        model = InterruptibleModel()
+        agent = Agent(
+            name="InterruptibleAgent",
+            system_prompt="You are a test agent.",
+            model=model,
+            toolkit=Toolkit(),
+            react_config=ReActConfig(
+                interruption_raise_cancelled_error=raise_cancelled_error,
+            ),
+        )
+        registry = ChatRunRegistry()
+        end_events: list[ReplyEndEvent] = []
+
+        async def _chat_run() -> None:
+            async for event in agent.reply_stream(
+                UserMsg(name="user", content="Hello"),
+                structured_schema=structured_schema,
+            ):
+                if isinstance(event, ReplyEndEvent):
+                    end_events.append(event)
+
+        task = registry.spawn(
+            _chat_run(),
+            session_id="chat-model-base-interruption",
+        )
+        await asyncio.wait_for(model.call_started.wait(), timeout=1)
+        task.cancel()
+        try:
+            await asyncio.wait_for(task, timeout=1)
+        except asyncio.CancelledError:
+            if not raise_cancelled_error:
+                raise
+
+        self.assertEqual(model.call_count, 1)
+        self.assertEqual(len(end_events), 1)
+        self.assertEqual(end_events[0].finished_reason, "interrupted")
+        self.assertEqual(task.cancelled(), raise_cancelled_error)
+
+    async def test_chat_model_base_interruption(self) -> None:
+        """ChatModelBase cancellation is reported as interrupted."""
+        await self._assert_chat_model_base_interruption()
+
+    async def test_chat_model_base_interruption_propagates_when_configured(
+        self,
+    ) -> None:
+        """Configured cancellation propagates after terminal events."""
+        await self._assert_chat_model_base_interruption(
+            raise_cancelled_error=True,
+        )
+
+    async def test_chat_model_base_interruption_with_structured_schema(
+        self,
+    ) -> None:
+        """Structured output must not retry an interrupted model call."""
+
+        class StructuredOutput(BaseModel):
+            """Minimal structured output schema."""
+
+            answer: str
+
+        await self._assert_chat_model_base_interruption(StructuredOutput)
 
     async def test_full_interrupt_flow(self) -> None:
         """Complete flow: user message → agent runs → interrupt published
@@ -60,6 +155,9 @@ class ServiceAgentInterruptTest(IsolatedAsyncioTestCase):
                 self.stream = True
                 self.max_retries = 0
                 self.context_size = 1000
+                # The agent reads formatter.supported_input_media_types
+                # on every incoming message, like a real model exposes.
+                self.formatter = OpenAIChatFormatter()
 
             async def __call__(
                 self,

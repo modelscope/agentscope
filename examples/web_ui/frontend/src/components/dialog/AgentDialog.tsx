@@ -1,5 +1,5 @@
 import { CircleAlert, Loader2, PlusCircle } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { ContextConfig, InviteConfig, ReActConfig } from '@/api';
@@ -27,10 +27,10 @@ import { formatApiErrorForAlert } from '@/lib/api-error';
 
 interface Props {
 	onCreated?: () => void;
-	triggerId?: string;
+	children: ReactNode;
 }
 
-export function AgentDialog({ onCreated, triggerId }: Props) {
+export function AgentDialog({ onCreated, children }: Props) {
 	const { create } = useAgents();
 	const { t } = useTranslation();
 	const { schema } = useAgentSchema();
@@ -67,9 +67,11 @@ export function AgentDialog({ onCreated, triggerId }: Props) {
 				{
 					name,
 					system_prompt: values.identity.system_prompt as string | undefined,
-					context_config: values.context_config as unknown as ContextConfig,
-					react_config: values.react_config as unknown as ReActConfig,
-					invite_config: values.invite_config as unknown as InviteConfig,
+					chat_config: {
+						context_config: values.context_config as unknown as ContextConfig,
+						react_config: values.react_config as unknown as ReActConfig,
+						invite_config: values.invite_config as unknown as InviteConfig,
+					},
 				},
 				{ silent: true },
 			);
@@ -86,12 +88,7 @@ export function AgentDialog({ onCreated, triggerId }: Props) {
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild>
-				<Button id={triggerId}>
-					<PlusCircle />
-					<span>{t('dialog-agent-create.trigger')}</span>
-				</Button>
-			</DialogTrigger>
+			<DialogTrigger asChild>{children}</DialogTrigger>
 			<DialogContent className="!w-[500px] !max-w-[500px]">
 				<DialogHeader>
 					<DialogTitle>{t('dialog-agent-create.title')}</DialogTitle>

@@ -3,11 +3,12 @@
 """Toolkit test case."""
 import base64
 import json
-from typing import Any, AsyncGenerator, Generator
+from typing import Any, AsyncGenerator, Awaitable, Generator, Literal
 from unittest import TestCase
 from unittest.async_case import IsolatedAsyncioTestCase
 
 
+from pydantic import BaseModel, Field
 from utils import AnyString
 
 from agentscope.mcp import HttpMCPConfig, MCPClient
@@ -27,8 +28,13 @@ from agentscope.tool import (
     FunctionTool,
 )
 from agentscope.permission import (
+    PermissionContext,
     PermissionDecision,
     PermissionBehavior,
+)
+from agentscope.exception import (
+    ToolNotFoundError,
+    ToolGroupInactiveError,
 )
 
 
@@ -487,6 +493,87 @@ class ToolkitTest(IsolatedAsyncioTestCase):
 
 class RegisterFunctionTest(IsolatedAsyncioTestCase):
     """Test registering different functions in the toolkit."""
+
+    async def test_sync_function_returning_awaitable(self) -> None:
+        """Await the coroutine returned by a sync function."""
+
+        async def finish(value: str) -> ToolChunk:
+            """Create the deferred tool result."""
+            return ToolChunk(content=[TextBlock(text=value)])
+
+        def deferred(value: str) -> Awaitable[ToolChunk]:
+            """Return a coroutine without executing it."""
+            return finish(value)
+
+        toolkit = Toolkit(tools=[FunctionTool(deferred)])
+        results = [
+            item
+            async for item in toolkit.call_tool(
+                ToolCallBlock(
+                    id="awaitable",
+                    name="deferred",
+                    input='{"value": "completed"}',
+                ),
+                AgentState(),
+            )
+        ]
+        self.assertDictEqual(
+            results[-1].model_dump(),
+            {
+                "content": [
+                    {
+                        "type": "text",
+                        "created_at": AnyString(),
+                        "finished_at": None,
+                        "id": AnyString(),
+                        "text": "completed",
+                    },
+                ],
+                "state": "success",
+                "metadata": {},
+                "id": "awaitable",
+            },
+        )
+
+    async def test_async_callable_tool(self) -> None:
+        """Await an async callable object."""
+
+        class Deferred:
+            """A callable tool that resolves asynchronously."""
+
+            async def __call__(self, value: str) -> ToolChunk:
+                """Create a tool result asynchronously.
+
+                Args:
+                    value (`str`):
+                        The text to include in the result.
+
+                Returns:
+                    `ToolChunk`:
+                        The completed tool result.
+                """
+                return ToolChunk(content=[TextBlock(text=value)])
+
+        tool = FunctionTool(Deferred(), name="deferred")
+        result = await tool.call(value="completed")
+        self.assertDictEqual(
+            result.model_dump(),
+            {
+                "content": [
+                    {
+                        "type": "text",
+                        "created_at": AnyString(),
+                        "finished_at": None,
+                        "id": AnyString(),
+                        "text": "completed",
+                    },
+                ],
+                "state": "running",
+                "is_last": True,
+                "metadata": {},
+                "id": AnyString(),
+            },
+        )
 
     async def test_sync_non_streaming_function(self) -> None:
         """Test registering a synchronous non-streaming function."""
@@ -1130,6 +1217,224 @@ class RegisterFunctionTest(IsolatedAsyncioTestCase):
             f"started{expected_dict_text}",
         )
 
+    async def test_state_injected_function(self) -> None:
+        """Infer business parameters and inject state at invocation."""
+
+        def echo(value: str, _agent_state: AgentState) -> str:
+            """Return a value with the current session.
+
+            Args:
+                value: The value to return.
+                _agent_state: The agent state injected by the toolkit.
+            """
+            return f"{value}:{_agent_state.session_id}"
+
+        tool = FunctionTool(echo, is_state_injected=True)
+        self.assertDictEqual(
+            tool.input_schema,
+            {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "type": "string",
+                        "description": "The value to return.",
+                    },
+                },
+                "required": ["value"],
+            },
+        )
+
+        state = AgentState(session_id="test-session")
+        toolkit = Toolkit(tools=[tool])
+        response = None
+        async for result in toolkit.call_tool(
+            ToolCallBlock(
+                id="test_state_injection",
+                name="echo",
+                input=json.dumps({"value": "hello"}),
+            ),
+            state,
+        ):
+            if isinstance(result, ToolResponse):
+                response = result
+
+        self.assertDictEqual(
+            response.model_dump(),
+            {
+                "content": [
+                    {
+                        "type": "text",
+                        "created_at": AnyString(),
+                        "finished_at": None,
+                        "id": AnyString(),
+                        "text": "hello:test-session",
+                    },
+                ],
+                "state": "success",
+                "metadata": {},
+                "id": "test_state_injection",
+            },
+        )
+
+    async def test_custom_input_schema(self) -> None:
+        """Test overriding the auto-extracted schema with a custom one."""
+
+        def set_mode(mode: str) -> str:
+            """Set the working mode.
+
+            Args:
+                mode: The mode to use
+            """
+            return f"Mode set to {mode}"
+
+        toolkit = Toolkit(
+            tools=[
+                FunctionTool(
+                    set_mode,
+                    input_schema={
+                        "type": "object",
+                        "properties": {
+                            "mode": {
+                                "type": "string",
+                                "description": "The mode to use",
+                                "enum": ["fast", "slow"],
+                            },
+                        },
+                        "required": ["mode"],
+                    },
+                ),
+            ],
+        )
+
+        schemas = await toolkit.get_tool_schemas()
+        self.assertListEqual(
+            schemas,
+            [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "set_mode",
+                        "description": "Set the working mode.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "mode": {
+                                    "type": "string",
+                                    "description": "The mode to use",
+                                    "enum": ["fast", "slow"],
+                                },
+                            },
+                            "required": ["mode"],
+                        },
+                    },
+                },
+            ],
+        )
+
+    async def test_base_model_input_schema(self) -> None:
+        """Test passing a pydantic BaseModel class as the input schema."""
+
+        class SetModeInput(BaseModel):
+            """The input model of the set_mode tool."""
+
+            mode: Literal["fast", "slow"] = Field(
+                description="The mode to use",
+            )
+            level: int = Field(
+                default=5,
+                ge=1,
+                le=10,
+                description="The level to use",
+            )
+
+        def set_mode(mode: str, level: int = 5) -> str:
+            """Set the working mode."""
+            return f"Mode set to {mode} at level {level}"
+
+        toolkit = Toolkit(
+            tools=[
+                FunctionTool(
+                    set_mode,
+                    input_schema=SetModeInput,
+                ),
+            ],
+        )
+
+        schemas = await toolkit.get_tool_schemas()
+        self.assertListEqual(
+            schemas,
+            [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "set_mode",
+                        "description": "Set the working mode.",
+                        "parameters": {
+                            "type": "object",
+                            "description": (
+                                "The input model of the set_mode tool."
+                            ),
+                            "properties": {
+                                "mode": {
+                                    "type": "string",
+                                    "description": "The mode to use",
+                                    "enum": ["fast", "slow"],
+                                },
+                                "level": {
+                                    "type": "integer",
+                                    "description": "The level to use",
+                                    "default": 5,
+                                    "minimum": 1,
+                                    "maximum": 10,
+                                },
+                            },
+                            "required": ["mode"],
+                        },
+                    },
+                },
+            ],
+        )
+
+    async def test_permission(self) -> None:
+        """Test the permission decision of the function tool."""
+
+        def set_mode(mode: str) -> str:
+            """Set the working mode.
+
+            Args:
+                mode: The mode to use
+            """
+            return f"Mode set to {mode}"
+
+        # Ask the user by default
+        self.assertEqual(
+            await FunctionTool(set_mode).check_permissions(
+                {"mode": "fast"},
+                PermissionContext(),
+            ),
+            PermissionDecision(
+                behavior=PermissionBehavior.ASK,
+                message="Custom function tools must be explicitly allowed "
+                "by the user.",
+            ),
+        )
+
+        # The given decision takes effect
+        decision = PermissionDecision(
+            behavior=PermissionBehavior.ALLOW,
+            message="set_mode is always allowed.",
+        )
+        self.assertEqual(
+            await FunctionTool(
+                set_mode,
+                permission=decision,
+            ).check_permissions(
+                {"mode": "fast"},
+                PermissionContext(),
+            ),
+            decision,
+        )
+
 
 class ToolGroupTest(IsolatedAsyncioTestCase):
     """The tool group test case."""
@@ -1387,6 +1692,40 @@ The tool instructions are a collection of suggestions, rules and notifications a
         )
 
         self.assertEqual(await toolkit.get_tool_schemas(), [])
+
+    async def test_check_tool_available_distinguishes_inactive_group(
+        self,
+    ) -> None:
+        """A tool in an inactive group raises ToolGroupInactiveError with
+        the activation hint (matching call_tool), while an unregistered
+        name still raises ToolNotFoundError."""
+        toolkit = Toolkit(
+            tool_groups=[
+                ToolGroup(
+                    name="group_1",
+                    description="Group 1",
+                    tools=[Tool1()],
+                ),
+            ],
+        )
+
+        # Inactive group -> the agent-facing check names the group and
+        # the meta tool, instead of claiming the tool doesn't exist.
+        with self.assertRaises(ToolGroupInactiveError) as ctx:
+            await toolkit.check_tool_available("tool_1", [])
+        self.assertIn("group_1", str(ctx.exception))
+        self.assertIn(
+            toolkit.builtin_meta_tool.tool.name,
+            str(ctx.exception),
+        )
+
+        # Activated group -> resolves normally.
+        tool = await toolkit.check_tool_available("tool_1", ["group_1"])
+        self.assertEqual(tool.name, "tool_1")
+
+        # Unregistered name -> still not found.
+        with self.assertRaises(ToolNotFoundError):
+            await toolkit.check_tool_available("no_such_tool", [])
 
 
 class RemoveTitleFieldTest(TestCase):
