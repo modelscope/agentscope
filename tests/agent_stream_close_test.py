@@ -8,14 +8,22 @@ from utils import MockModel
 
 from agentscope.agent import Agent, InjectionConfig
 from agentscope.event import (
+    ConfirmResult,
+    ExternalExecutionResultEvent,
     ReplyEndEvent,
+    RequireExternalExecutionEvent,
+    RequireUserConfirmEvent,
     ToolResultEndEvent,
     ToolResultStartEvent,
+    UserConfirmResultEvent,
 )
 from agentscope.message import (
+    Msg,
     TextBlock,
     ToolCallBlock,
+    ToolCallState,
     ToolResultBlock,
+    ToolResultState,
     UserMsg,
 )
 from agentscope.middleware import MiddlewareBase
@@ -45,6 +53,7 @@ class _BlockedTool(ToolBase):
         self.cancelled = 0
         self.side_effects = 0
         self.interrupt = False
+        self.require_confirmation = False
 
     async def check_permissions(
         self,
@@ -53,8 +62,11 @@ class _BlockedTool(ToolBase):
     ) -> PermissionDecision:
         """Allow offline test execution."""
         return PermissionDecision(
-            behavior=PermissionBehavior.ALLOW,
+            behavior=PermissionBehavior.ASK
+            if self.require_confirmation
+            else PermissionBehavior.ALLOW,
             message="offline test",
+            bypass_immune=self.require_confirmation,
         )
 
     async def __call__(self) -> AsyncGenerator[ToolChunk, None]:
@@ -218,3 +230,214 @@ class AgentStreamCloseTest(IsolatedAsyncioTestCase):
     async def test_close_at_interrupted_reply_end(self) -> None:
         """Closing in the reply finalizer skips the fallback message."""
         await self._check_end_boundary(True, ReplyEndEvent)
+
+    async def test_close_parked_stream_after_confirmation_resumes(
+        self,
+    ) -> None:
+        """An old parked stream cannot interrupt a newer execution."""
+        tool = _BlockedTool()
+        tool.require_confirmation = True
+        agent = _make_agent(tool)
+        parked = agent.reply_stream(
+            UserMsg("user", "run"),
+            yield_final_msg=True,
+        )
+        resumed = None
+        try:
+            confirmations = []
+            while True:
+                event = await anext(parked)
+                if isinstance(event, RequireUserConfirmEvent):
+                    confirmations.extend(
+                        ConfirmResult(confirmed=True, tool_call=call)
+                        for call in event.tool_calls
+                    )
+                if isinstance(event, Msg):
+                    break
+            resumed = agent.reply_stream(
+                UserConfirmResultEvent(
+                    reply_id=agent.state.reply_id,
+                    confirm_results=confirmations,
+                ),
+            )
+            while not isinstance(await anext(resumed), ToolResultStartEvent):
+                pass
+            await asyncio.wait_for(tool.started.wait(), timeout=2)
+            state = agent.state.model_dump()
+            await parked.aclose()
+            self.assertEqual(agent.state.model_dump(), state)
+            self.assertEqual(tool.cancelled, 0)
+            self.assertTrue(all(not worker.done() for worker in tool.workers))
+            tool.release.set()
+            async for _ in resumed:
+                pass
+            results = [
+                block
+                for block in agent.state.context[-1].content
+                if isinstance(block, ToolResultBlock)
+            ]
+            self.assertEqual(len(results), 2)
+            self.assertTrue(
+                all(
+                    result.state == ToolResultState.SUCCESS
+                    for result in results
+                ),
+            )
+            self.assertEqual(tool.side_effects, 2)
+        finally:
+            tool.release.set()
+            if resumed is not None:
+                await resumed.aclose()
+            await parked.aclose()
+
+    async def test_close_waiting_stream_preserves_hitl(self) -> None:
+        """Closing at a prompt or parked message keeps HITL resumable."""
+        for external in (False, True):
+            for at_message in (False, True):
+                with self.subTest(external=external, at_message=at_message):
+                    tool = _BlockedTool()
+                    tool.is_external_tool = external
+                    tool.require_confirmation = not external
+                    tool.release.set()
+                    agent = _make_agent(tool)
+                    stream = agent.reply_stream(
+                        UserMsg("user", "run"),
+                        yield_final_msg=True,
+                    )
+                    prompt_type = (
+                        RequireExternalExecutionEvent
+                        if external
+                        else RequireUserConfirmEvent
+                    )
+                    try:
+                        while True:
+                            event = await anext(stream)
+                            if isinstance(
+                                event,
+                                Msg if at_message else prompt_type,
+                            ):
+                                break
+                        state = agent.state.model_dump()
+                        await stream.aclose()
+                        self.assertEqual(agent.state.model_dump(), state)
+                        calls = agent.state.get_awaiting_tool_calls(agent.name)
+                        self.assertEqual(len(calls), 2)
+                        expected = (
+                            ToolCallState.SUBMITTED
+                            if external
+                            else ToolCallState.ASKING
+                        )
+                        self.assertTrue(
+                            all(call.state == expected for call in calls),
+                        )
+                        if external:
+                            inputs = ExternalExecutionResultEvent(
+                                reply_id=agent.state.reply_id,
+                                execution_results=[
+                                    ToolResultBlock(
+                                        id=call.id,
+                                        name=call.name,
+                                        output="external result",
+                                        state=ToolResultState.SUCCESS,
+                                    )
+                                    for call in calls
+                                ],
+                            )
+                        else:
+                            inputs = UserConfirmResultEvent(
+                                reply_id=agent.state.reply_id,
+                                confirm_results=[
+                                    ConfirmResult(
+                                        confirmed=True,
+                                        tool_call=call,
+                                    )
+                                    for call in calls
+                                ],
+                            )
+                        events = [
+                            event async for event in agent.reply_stream(inputs)
+                        ]
+                        self.assertTrue(
+                            any(
+                                isinstance(event, ReplyEndEvent)
+                                for event in events
+                            ),
+                        )
+                        results = [
+                            block
+                            for block in agent.state.context[-1].content
+                            if isinstance(block, ToolResultBlock)
+                        ]
+                        self.assertEqual(len(results), 2)
+                        self.assertTrue(
+                            all(
+                                result.state == ToolResultState.SUCCESS
+                                for result in results
+                            ),
+                        )
+                    finally:
+                        await stream.aclose()
+
+    async def test_close_at_external_result_end_preserves_success(
+        self,
+    ) -> None:
+        """An external result is committed before its end event is visible."""
+        tool = _BlockedTool()
+        tool.is_external_tool = True
+        agent = _make_agent(tool)
+        async for _ in agent.reply_stream(UserMsg("user", "run")):
+            pass
+        calls = agent.state.get_awaiting_tool_calls(agent.name)
+        result = ToolResultBlock(
+            id=calls[0].id,
+            name=calls[0].name,
+            output="external result",
+            state=ToolResultState.SUCCESS,
+            metadata={"source": "test executor"},
+        )
+        stream = agent.reply_stream(
+            ExternalExecutionResultEvent(
+                reply_id=agent.state.reply_id,
+                execution_results=[result],
+            ),
+        )
+        try:
+            while not isinstance(await anext(stream), ToolResultEndEvent):
+                pass
+            await stream.aclose()
+            results = [
+                block
+                for block in agent.state.context[-1].content
+                if isinstance(block, ToolResultBlock)
+            ]
+            self.assertEqual(results, [result])
+            self.assertEqual(calls[0].state, ToolCallState.FINISHED)
+            self.assertEqual(calls[1].state, ToolCallState.SUBMITTED)
+            async for _ in agent.reply_stream(
+                ExternalExecutionResultEvent(
+                    reply_id=agent.state.reply_id,
+                    execution_results=[
+                        ToolResultBlock(
+                            id=calls[1].id,
+                            name=calls[1].name,
+                            output="second result",
+                            state=ToolResultState.SUCCESS,
+                        ),
+                    ],
+                ),
+            ):
+                pass
+            results = [
+                block
+                for block in agent.state.context[-1].content
+                if isinstance(block, ToolResultBlock)
+            ]
+            self.assertEqual(len(results), 2)
+            self.assertTrue(
+                all(
+                    result.state == ToolResultState.SUCCESS
+                    for result in results
+                ),
+            )
+        finally:
+            await stream.aclose()

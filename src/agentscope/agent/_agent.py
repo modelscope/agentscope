@@ -1282,11 +1282,9 @@ class Agent:
                     self.state.cur_iter += 1
 
         except GeneratorExit:
-            # Closing a stream has no consumer for interruption events.
-            # Finish context cleanup without yielding during aclose().
+            # Worker cleanup belongs to the active execution generator.
+            # Parked calls may already be owned by a resumed reply stream.
             end_event = None
-            async for _ in self._close_unfinished_tool_calls():
-                pass
             raise
 
         except asyncio.CancelledError:
@@ -2035,19 +2033,19 @@ class Agent:
                 ):
                     yield evt
 
-                yield ToolResultEndEvent(
-                    reply_id=self.state.reply_id,
-                    tool_call_id=tool_result.id,
-                    state=tool_result.state,
-                    metadata=tool_result.metadata,
-                )
-
                 self._save_to_context([tool_result])
 
                 # Update the state according to the execution result state
                 self._update_tool_call_state(
                     tool_result.id,
                     ToolCallState.FINISHED,
+                )
+
+                yield ToolResultEndEvent(
+                    reply_id=self.state.reply_id,
+                    tool_call_id=tool_result.id,
+                    state=tool_result.state,
+                    metadata=tool_result.metadata,
                 )
 
         else:
