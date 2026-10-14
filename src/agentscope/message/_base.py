@@ -48,9 +48,11 @@ def _assert_system_content_blocks(
 
 
 def _to_blocks(content: str | list) -> list:
-    """Convert a plain string to a single-element TextBlock list."""
+    """Convert a plain string or a lone block into a block list."""
     if isinstance(content, str):
         return [TextBlock(text=content)]
+    if isinstance(content, ContentBlock):
+        return [content]
     return content
 
 
