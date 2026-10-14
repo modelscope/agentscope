@@ -120,6 +120,7 @@ class ConsoleRenderer:
         self.console = console or Console(highlight=False)
 
         self._msg: Msg | None = None
+        self._active_msgs: dict[str, Msg] = {}
         self._mid_stream = False
 
     @property
@@ -194,12 +195,22 @@ class ConsoleRenderer:
         reply_id = getattr(event, "reply_id", None)
         if reply_id is None:
             return
+        msg = self._active_msgs.get(reply_id)
+        if msg is None:
+            if self._msg is not None and self._msg.id == reply_id:
+                msg = self._msg
+            else:
+                msg = AssistantMsg(name="agent", content=[], id=reply_id)
         if isinstance(event, ReplyStartEvent):
-            self._msg = AssistantMsg(name=event.name, content=[], id=reply_id)
-        elif self._msg is None or self._msg.id != reply_id:
-            # A continuation (e.g. after HITL) without a ReplyStartEvent
-            self._msg = AssistantMsg(name="agent", content=[], id=reply_id)
-        self._msg.append_event(event)
+            msg.name = event.name
+        self._msg = msg
+        msg.append_event(event)
+        # Keep paused replies across member events, without retaining every
+        # completed reply for the lifetime of the interactive console.
+        if msg.finished_at is None:
+            self._active_msgs[reply_id] = msg
+        else:
+            self._active_msgs.pop(reply_id, None)
 
     def _show(self, level: int) -> bool:
         """Whether the current verbosity covers the given level."""
