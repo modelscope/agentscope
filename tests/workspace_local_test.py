@@ -8,6 +8,7 @@ import hashlib
 import tempfile
 from types import SimpleNamespace
 from typing import Any
+from unittest import skipUnless
 from unittest.async_case import IsolatedAsyncioTestCase
 from unittest.mock import AsyncMock, patch
 from dataclasses import asdict
@@ -39,6 +40,7 @@ from agentscope.message import (
     UserMsg,
     AssistantMsg,
     DataBlock,
+    HintBlock,
     Base64Source,
     URLSource,
     TextBlock,
@@ -46,6 +48,9 @@ from agentscope.message import (
     ToolResultState,
     ToolCallBlock,
 )
+
+# Probe the temp filesystem rather than assuming case rules from the OS.
+_CASE_INSENSITIVE_FS = os.path.exists(tempfile.gettempdir().swapcase())
 
 
 class _LongResultTool(ToolBase):
@@ -344,6 +349,62 @@ class TestLocalWorkspaceOffload(IsolatedAsyncioTestCase):
             loaded_msg.model_dump_json(),
             expected_msg.model_dump_json(),
         )
+
+    async def test_offload_context_nested_media(self) -> None:
+        """Offload nested media without changing the caller's message."""
+        data = base64.b64encode(b"nested media").decode()
+        media = DataBlock(
+            id="media",
+            source=Base64Source(data=data, media_type="image/png"),
+            created_at="2026-01-01T00:00:00",
+        )
+        msg = AssistantMsg(
+            name="assistant",
+            content=[
+                ToolResultBlock(
+                    id="tool-call",
+                    name="get_media",
+                    output=[media],
+                    state=ToolResultState.SUCCESS,
+                    created_at="2026-01-01T00:00:00",
+                ),
+                HintBlock(
+                    id="hint",
+                    hint=[media],
+                    created_at="2026-01-01T00:00:00",
+                ),
+            ],
+            id="message",
+            created_at="2026-01-01T00:00:00",
+        )
+        original = msg.model_dump(mode="json")
+
+        path = await self.workspace.offload_context("nested-media", [msg])
+        saved = Msg.model_validate_json(
+            await self.workspace.get_backend().read_file(path),
+        )
+
+        url = (
+            "workspace:///data/"
+            f"{hashlib.sha256(data.encode()).hexdigest()}.png"
+        )
+        expected = msg.model_dump(mode="json")
+        for index, field in ((0, "output"), (1, "hint")):
+            expected["content"][index][field][0] = {
+                "type": "data",
+                "id": "media",
+                "source": {
+                    "type": "url",
+                    "url": url,
+                    "media_type": "image/png",
+                },
+                "name": None,
+                "created_at": AnyString(),
+                "finished_at": None,
+            }
+
+        self.assertEqual(saved.model_dump(mode="json"), expected)
+        self.assertEqual(msg.model_dump(mode="json"), original)
 
     async def test_offload_data_block_deduplication(self) -> None:
         """Test that duplicate DataBlocks are deduplicated.
@@ -1901,6 +1962,43 @@ class TestLocalWorkspaceSkillPartitions(IsolatedAsyncioTestCase):
         self.assertTrue(
             os.path.isdir(os.path.join(self.skills_dir, "A", "a-skill")),
         )
+
+    @skipUnless(_CASE_INSENSITIVE_FS, "requires case-insensitive FS")
+    async def test_add_skill_case_only_directory_collision(self) -> None:
+        """Case-only names get distinct paths without renaming the skills."""
+        ws = await self._workspace()
+        await ws.add_skill(self._make_skill("source-a", "Example"))
+        await ws.add_skill(self._make_skill("source-b", "example"))
+
+        self.assertDictEqual(
+            {
+                s.name: (os.path.basename(s.dir), s.markdown)
+                for s in await ws.list_skills()
+            },
+            {"Example": ("Example", "body"), "example": ("example_1", "body")},
+        )
+
+    @skipUnless(_CASE_INSENSITIVE_FS, "requires case-insensitive FS")
+    async def test_seed_skill_case_only_directory_collision(self) -> None:
+        """Seed population keeps both skills on insensitive filesystems."""
+        ws = await self._workspace(
+            skill_paths=[
+                self._make_skill("source-a", "Example"),
+                self._make_skill("source-b", "example"),
+            ],
+        )
+
+        for agent_id in ("A", "B"):
+            self.assertDictEqual(
+                {
+                    s.name: (os.path.basename(s.dir), s.markdown)
+                    for s in await ws.list_skills(agent_id=agent_id)
+                },
+                {
+                    "Example": ("Example", "body"),
+                    "example": ("example_1", "body"),
+                },
+            )
 
     async def test_seeds_equip_each_agent_with_its_own_copy(self) -> None:
         """``skill_paths`` reach every agent, but as separate copies."""

@@ -23,7 +23,10 @@ which avoids duplicating the sandbox bring-up logic here.
 import os
 import unittest
 from typing import Any
+
+from types import SimpleNamespace
 from unittest.async_case import IsolatedAsyncioTestCase
+from unittest.mock import AsyncMock
 
 from agentscope.tool import ExecResult
 from agentscope.workspace import OpenSandboxWorkspace
@@ -238,3 +241,21 @@ class TestOpenSandboxWriteEntry(IsolatedAsyncioTestCase):
         self.assertEqual(entry.path, path)
         self.assertEqual(entry.data, b"payload")
         self.assertEqual(entry.mode, 644)
+
+class TestOpenSandboxBackendExitCode(IsolatedAsyncioTestCase):
+    """Exit-code mapping, without a live sandbox."""
+
+    async def test_unset_exit_code_is_not_success(self) -> None:
+        """An execution the SDK leaves without an exit code reports -1."""
+        execution = SimpleNamespace(exit_code=None, stdout=b"", stderr=b"")
+        sandbox = SimpleNamespace(
+            commands=SimpleNamespace(run=AsyncMock(return_value=execution)),
+        )
+        backend = OpenSandboxBackend(sandbox, workdir="/workspace")
+
+        result = await backend.exec_shell(["python", "-c", "pass"])
+
+        self.assertEqual(
+            result,
+            ExecResult(exit_code=-1, stdout=b"", stderr=b""),
+        )
