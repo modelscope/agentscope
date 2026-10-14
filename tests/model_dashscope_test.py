@@ -281,6 +281,48 @@ class TestDashScopeNonStream(IsolatedAsyncioTestCase):
         )
 
 
+class TestDashScopeThinkingEnable(IsolatedAsyncioTestCase):
+    """``thinking_enable`` is tri-state: unset omits the flag, explicit
+    ``True``/``False`` still send ``enable_thinking``."""
+
+    async def _extra_body(
+        self,
+        parameters: "DashScopeChatModel.Parameters",
+    ) -> dict:
+        model = DashScopeChatModel(
+            credential=DashScopeCredential(api_key="test"),
+            model="qwen3-max",
+            stream=False,
+            parameters=parameters,
+        )
+        mock_client = MagicMock()
+        mock_client.chat.completions.create = AsyncMock(
+            return_value=_mock_completion(text="Hello!"),
+        )
+        model.client = mock_client
+        await model([])
+        return mock_client.chat.completions.create.await_args.kwargs[
+            "extra_body"
+        ]
+
+    async def test_unset_does_not_send_enable_thinking(self) -> None:
+        """A caller that never configured thinking must not force it off."""
+        extra_body = await self._extra_body(DashScopeChatModel.Parameters())
+        self.assertNotIn("enable_thinking", extra_body)
+
+    async def test_explicit_false_still_disables_thinking(self) -> None:
+        extra_body = await self._extra_body(
+            DashScopeChatModel.Parameters(thinking_enable=False),
+        )
+        self.assertIs(extra_body["enable_thinking"], False)
+
+    async def test_explicit_true_enables_thinking(self) -> None:
+        extra_body = await self._extra_body(
+            DashScopeChatModel.Parameters(thinking_enable=True),
+        )
+        self.assertIs(extra_body["enable_thinking"], True)
+
+
 # ---------------------------------------------------------------------------
 # Streaming tests
 # ---------------------------------------------------------------------------
