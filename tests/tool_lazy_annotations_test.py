@@ -256,6 +256,31 @@ class LazyAnnotationsTest(TestCase):
             },
         )
 
+    def test_partial_keeps_valid_annotation_override(self) -> None:
+        """An invalid annotation does not discard valid overrides."""
+        tool_func = partial(catalog_search, "catalog-a")
+        tool_func.__annotations__ = {
+            "query": str,
+            "limit": "TotallyUnresolvable",
+        }
+
+        self.assertDictEqual(
+            _extract_input_schema(tool_func),
+            {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string"},
+                    "limit": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "description": "Maximum results",
+                        "default": 5,
+                    },
+                },
+                "required": ["query"],
+            },
+        )
+
     def test_unresolvable_partial_annotation_keeps_function_hint(
         self,
     ) -> None:
@@ -297,6 +322,14 @@ class LazyAnnotationsTest(TestCase):
                 "required": ["query"],
             },
         )
+
+    def test_partial_uses_underlying_function_name(self) -> None:
+        """A partial inherits its default tool name."""
+        tool = FunctionTool(
+            partial(documented_search, "catalog-a"),
+        )
+
+        self.assertEqual(tool.name, "documented_search")
 
     def test_partial_uses_underlying_function_docstring(self) -> None:
         """A partial inherits tool and parameter documentation."""

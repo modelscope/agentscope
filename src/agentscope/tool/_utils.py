@@ -9,6 +9,20 @@ from docstring_parser import parse
 from pydantic import Field, create_model, ConfigDict
 
 
+def _get_callable_name(tool_func: Callable) -> str:
+    """Get the effective name of a callable."""
+    named_func = tool_func
+
+    while isinstance(named_func, partial):
+        explicit_name = vars(named_func).get("__name__")
+        if explicit_name is not None:
+            return explicit_name
+
+        named_func = named_func.func
+
+    return named_func.__name__
+
+
 def _get_callable_docstring(tool_func: Callable) -> str:
     """Get the effective docstring of a callable.
 
@@ -25,6 +39,51 @@ def _get_callable_docstring(tool_func: Callable) -> str:
         documented_func = documented_func.func
 
     return documented_func.__doc__ or ""
+
+
+def _resolve_annotation(
+    annotation: Any,
+    globalns: dict[str, Any] | None,
+) -> Any:
+    """Resolve one annotation with the provided global namespace."""
+
+    def _annotation_holder() -> None:
+        pass
+
+    _annotation_holder.__annotations__ = {
+        "value": annotation,
+    }
+    return typing.get_type_hints(
+        _annotation_holder,
+        globalns=globalns,
+        include_extras=True,
+    )["value"]
+
+
+def _resolve_partial_type_hints(
+    partial_func: partial,
+    globalns: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Resolve each annotation on a partial independently."""
+    raw_annotations = getattr(
+        partial_func,
+        "__annotations__",
+        {},
+    )
+    if not isinstance(raw_annotations, dict):
+        return {}
+
+    type_hints = {}
+    for name, annotation in raw_annotations.items():
+        try:
+            type_hints[name] = _resolve_annotation(
+                annotation,
+                globalns,
+            )
+        except Exception:
+            continue
+
+    return type_hints
 
 
 def _resolve_type_hints(tool_func: Callable) -> dict[str, Any]:
@@ -51,16 +110,12 @@ def _resolve_type_hints(tool_func: Callable) -> dict[str, Any]:
     globalns = getattr(annotated_func, "__globals__", None)
 
     for partial_func in reversed(partial_funcs):
-        try:
-            partial_hints = typing.get_type_hints(
+        type_hints.update(
+            _resolve_partial_type_hints(
                 partial_func,
-                globalns=globalns,
-                include_extras=True,
-            )
-        except Exception:
-            partial_hints = {}
-
-        type_hints.update(partial_hints)
+                globalns,
+            ),
+        )
 
     return type_hints
 

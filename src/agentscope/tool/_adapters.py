@@ -22,6 +22,7 @@ from ._utils import (
     _extract_func_description,
     _extract_input_schema,
     _get_callable_docstring,
+    _get_callable_name,
     _remove_title_field,
 )
 from .._logging import logger
@@ -94,7 +95,7 @@ class FunctionTool(ToolBase):
                 user will be asked to confirm the tool call.
         """
         super().__init__(middlewares=middlewares)
-        self.name = name or func.__name__
+        self.name = name or _get_callable_name(func)
         self.description = description or _extract_func_description(
             _get_callable_docstring(func),
         )
