@@ -9,6 +9,62 @@ from docstring_parser import parse
 from pydantic import Field, create_model, ConfigDict
 
 
+def _get_callable_docstring(tool_func: Callable) -> str:
+    """Get the effective docstring of a callable.
+
+    An explicitly assigned partial docstring takes precedence. Otherwise,
+    unwrap partial objects to avoid using ``functools.partial``'s generic
+    documentation.
+    """
+    documented_func = tool_func
+
+    while isinstance(documented_func, partial):
+        if "__doc__" in vars(documented_func):
+            return documented_func.__doc__ or ""
+
+        documented_func = documented_func.func
+
+    return documented_func.__doc__ or ""
+
+
+def _resolve_type_hints(tool_func: Callable) -> dict[str, Any]:
+    """Resolve and merge annotations from a callable and its partials.
+
+    Annotations are merged from the underlying callable to the outermost
+    partial, allowing each partial to override selected annotations.
+    """
+    partial_funcs = []
+    annotated_func = tool_func
+
+    while isinstance(annotated_func, partial):
+        partial_funcs.append(annotated_func)
+        annotated_func = annotated_func.func
+
+    try:
+        type_hints = typing.get_type_hints(
+            annotated_func,
+            include_extras=True,
+        )
+    except Exception:
+        type_hints = {}
+
+    globalns = getattr(annotated_func, "__globals__", None)
+
+    for partial_func in reversed(partial_funcs):
+        try:
+            partial_hints = typing.get_type_hints(
+                partial_func,
+                globalns=globalns,
+                include_extras=True,
+            )
+        except Exception:
+            partial_hints = {}
+
+        type_hints.update(partial_hints)
+
+    return type_hints
+
+
 def _remove_title_field(schema: dict) -> dict:
     """Remove the title field from the JSON schema to avoid
     misleading the LLM."""
@@ -96,32 +152,13 @@ def _extract_input_schema(
         `dict`:
             The extracted input JSON schema.
     """
-    docstring = parse(tool_func.__doc__ or "")
+    docstring = parse(_get_callable_docstring(tool_func))
     params_docstring = {_.arg_name: _.description for _ in docstring.params}
 
     # Under PEP 563 (`from __future__ import annotations`) the annotations
     # in the signature are raw strings, which pydantic cannot resolve
     # outside the function's own module. Resolve them here instead.
-    try:
-        type_hints = typing.get_type_hints(tool_func, include_extras=True)
-    except TypeError:
-        if isinstance(tool_func, partial):
-            annotated_func = tool_func
-            while isinstance(annotated_func, partial):
-                annotated_func = annotated_func.func
-            try:
-                type_hints = typing.get_type_hints(
-                    annotated_func,
-                    include_extras=True,
-                )
-            except Exception:
-                type_hints = {}
-        else:
-            type_hints = {}
-    except Exception:
-        # e.g. annotations referencing TYPE_CHECKING-only names; fall back
-        # to the raw annotations
-        type_hints = {}
+    type_hints = _resolve_type_hints(tool_func)
 
     # Create a dynamic model with the function signature
     fields = {}

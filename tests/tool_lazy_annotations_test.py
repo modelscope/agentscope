@@ -56,12 +56,18 @@ def catalog_search(
     query: Annotated[SearchQuery, Field(description="The search query")],
     limit: Annotated[int, Field(gt=0, description="Maximum results")] = 5,
 ) -> str:
-    """Search a catalog.
+    """Search a catalog."""
+    return f"{catalog}:{query.text}:{limit}"
+
+
+def documented_search(catalog: str, query: str) -> str:
+    """Search the selected catalog.
 
     Args:
-        query: The structured query to run.
+        catalog: The catalog identifier.
+        query: The query to run.
     """
-    return f"{catalog}:{query.text}:{limit}"
+    return f"{catalog}:{query}"
 
 
 def primitive_parameter_with_unresolvable_return(value: int) -> str:
@@ -231,7 +237,7 @@ class LazyAnnotationsTest(TestCase):
     ) -> None:
         """Explicit annotations on a partial override its function hints."""
         tool_func = partial(catalog_search, "catalog-a")
-        tool_func.__annotations__ = {"query": str, "limit": int}
+        tool_func.__annotations__ = {"query": str}
 
         self.assertDictEqual(
             _extract_input_schema(tool_func),
@@ -239,7 +245,110 @@ class LazyAnnotationsTest(TestCase):
                 "type": "object",
                 "properties": {
                     "query": {"type": "string"},
-                    "limit": {"type": "integer", "default": 5},
+                    "limit": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "description": "Maximum results",
+                        "default": 5,
+                    },
+                },
+                "required": ["query"],
+            },
+        )
+
+    def test_unresolvable_partial_annotation_keeps_function_hint(
+        self,
+    ) -> None:
+        """An invalid partial annotation does not replace valid hints."""
+        tool_func = partial(catalog_search, "catalog-a")
+        tool_func.__annotations__ = {
+            "query": "TotallyUnresolvable",
+        }
+
+        self.assertDictEqual(
+            _extract_input_schema(tool_func),
+            {
+                "type": "object",
+                "$defs": {
+                    "SearchQuery": {
+                        "type": "object",
+                        "description": "A structured catalog-search query.",
+                        "properties": {
+                            "text": {
+                                "type": "string",
+                                "description": "The query text",
+                            },
+                        },
+                        "required": ["text"],
+                    },
+                },
+                "properties": {
+                    "query": {
+                        "$ref": "#/$defs/SearchQuery",
+                        "description": "The search query",
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "description": "Maximum results",
+                        "default": 5,
+                    },
+                },
+                "required": ["query"],
+            },
+        )
+
+    def test_partial_uses_underlying_function_docstring(self) -> None:
+        """A partial inherits tool and parameter documentation."""
+        tool = FunctionTool(
+            partial(documented_search, "catalog-a"),
+            name="documented_search",
+        )
+
+        self.assertEqual(
+            tool.description,
+            "Search the selected catalog.",
+        )
+        self.assertDictEqual(
+            tool.input_schema,
+            {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "The query to run.",
+                    },
+                },
+                "required": ["query"],
+            },
+        )
+
+    def test_partial_prefers_its_explicit_docstring(self) -> None:
+        """An explicitly assigned partial docstring takes precedence."""
+        tool_func = partial(documented_search, "catalog-a")
+        tool_func.__doc__ = """Search a custom catalog.
+
+        Args:
+            query: The custom query to run.
+        """
+        tool = FunctionTool(
+            tool_func,
+            name="documented_search",
+        )
+
+        self.assertEqual(
+            tool.description,
+            "Search a custom catalog.",
+        )
+        self.assertDictEqual(
+            tool.input_schema,
+            {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "The custom query to run.",
+                    },
                 },
                 "required": ["query"],
             },
