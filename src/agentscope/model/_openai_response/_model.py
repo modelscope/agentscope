@@ -48,7 +48,14 @@ def _openai_response_error(
     request_id: str | None,
     partial_output: bool = False,
 ) -> ContentBlockedError | None:
-    """Normalize an explicit Responses API safety error object."""
+    """Build an error from a recognized Responses API safety code.
+
+    Return ``None`` for a missing or unrecognized ``error.code``; do not
+    classify error text. The returned error has UNKNOWN phase because the
+    code alone does not establish whether input or output was blocked.
+    Copy the caller's ``request_id`` and ``partial_output`` flag unchanged;
+    the latter indicates output emitted before this signal.
+    """
     code = _enum_name(getattr(error, "code", None))
     if code not in _RESPONSE_BLOCK_ERROR_CODES:
         return None
@@ -69,7 +76,18 @@ def _openai_response_block_error(
     partial_output: bool = False,
     include_refusal: bool = False,
 ) -> ContentBlockedError | None:
-    """Normalize explicit block signals on a Responses API response."""
+    """Build an error from explicit signals on a full Responses object.
+
+    Inspect the content-filter incomplete reason, then the safety error
+    object, then refusal content parts when ``include_refusal=True``.
+    Content filters and safety codes do not depend on that option. Ordinary
+    response text is never scanned for refusal phrases.
+
+    Return ``None`` if no supported signal is present. Otherwise use the
+    response ID and copy ``partial_output``, which the caller sets if output
+    was emitted before this signal. This helper does not consume a stream
+    or raise the returned error.
+    """
     request_id = getattr(response, "id", None)
     details = getattr(response, "incomplete_details", None)
     reason = _enum_name(getattr(details, "reason", None))

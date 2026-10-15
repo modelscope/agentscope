@@ -54,7 +54,28 @@ def _normalize_openai_compatible_content_error(
     blocked_codes: set[str],
     phase: ContentBlockedPhase,
 ) -> ContentBlockedError | None:
-    """Normalize a structured OpenAI-compatible content-block error."""
+    """Build an error from an explicitly recognized provider code.
+
+    Args:
+        error (`Exception`):
+            The SDK exception. Fields are read from nested ``body.error``,
+            then ``body``, then exception attributes, in that order.
+        provider (`str`):
+            Provider identifier to include in the normalized error.
+        blocked_codes (`set[str]`):
+            Recognized codes, already case-folded for comparison.
+        phase (`ContentBlockedPhase`):
+            The phase assigned by the adapter, or UNKNOWN if ambiguous.
+
+    Returns:
+        `ContentBlockedError | None`:
+            A new error retaining the original code's casing and available
+            request ID, or ``None`` for absent or unrecognized codes. Error
+            text and HTTP status alone never determine a match.
+
+    This helper returns rather than raises the error. The calling model
+    layer is responsible for chaining it to the original SDK exception.
+    """
     code = _get_error_field(error, "code")
     if code is None:
         return None
@@ -90,7 +111,29 @@ def _openai_compatible_response_block_error(
     partial_output: bool = False,
     include_refusal: bool = False,
 ) -> ContentBlockedError | None:
-    """Normalize explicit OpenAI-compatible response block signals."""
+    """Build an output-block error from one Chat Completions choice.
+
+    Args:
+        choice (`Any`):
+            An SDK response or stream choice exposing ``finish_reason`` and
+            optionally ``message`` or ``delta`` attributes.
+        provider (`str`):
+            Provider identifier for the normalized error.
+        request_id (`str | None`):
+            The identifier obtained by the caller from the response.
+        partial_output (`bool`, defaults to `False`):
+            Whether output preceded this signal. Copied to the error;
+            this helper does not track stream consumption itself.
+        include_refusal (`bool`, defaults to `False`):
+            Also recognize a non-empty explicit refusal string in ``delta``
+            or, if absent, ``message``. Content-filter finish reasons are
+            recognized regardless of this option.
+
+    Returns:
+        `ContentBlockedError | None`:
+            An OUTPUT-phase error, or ``None`` when no supported signal is
+            found. Ordinary response text is never scanned for refusals.
+    """
     finish_reason = _enum_name(getattr(choice, "finish_reason", None))
     if finish_reason == "CONTENT_FILTER":
         return ContentBlockedError(

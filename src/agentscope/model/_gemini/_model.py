@@ -48,7 +48,18 @@ def _gemini_content_block_error(
     *,
     partial_output: bool = False,
 ) -> ContentBlockedError | None:
-    """Normalize explicit Gemini prompt and candidate block signals."""
+    """Build an error from explicit Gemini prompt or candidate signals.
+
+    Inspect recognized ``prompt_feedback.block_reason`` values first
+    (INPUT phase), then the first candidate's ``finish_reason`` (OUTPUT
+    phase). Return ``None`` for other reasons or absent signals; neither
+    generated text nor safety ratings alone determine a match.
+
+    Accept a complete response or a streamed chunk. Copy ``response_id``
+    when present and the caller's ``partial_output`` flag, which indicates
+    output emitted before this signal. No stream tracking or retry occurs
+    inside this helper.
+    """
     request_id = getattr(response, "response_id", None)
     prompt_feedback = getattr(response, "prompt_feedback", None)
     block_reason = _enum_name(

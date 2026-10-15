@@ -3412,7 +3412,15 @@ class Agent:
         stream: AsyncGenerator[ChatResponse, None],
         model: ChatModelBase,
     ) -> AsyncGenerator[ChatResponse, None]:
-        """Log content blocks raised while a model stream is consumed."""
+        """Observe a returned model stream without replaying model calls.
+
+        Yield chunks unchanged. Log and re-raise content-block errors that
+        escape any recovery middleware during consumption. At this point
+        the agent's model-selection loop has returned, so this wrapper does
+        not retry or switch fallback models, even before the first chunk.
+        Always close the delegated stream when iteration exits, including
+        on error or explicit closure of this wrapper.
+        """
         try:
             async for chunk in stream:
                 yield chunk

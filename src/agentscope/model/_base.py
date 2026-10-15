@@ -121,13 +121,21 @@ class ChatModelBase:
         :class:`~agentscope.exception.ContentBlockedError`. Returning the
         original exception preserves the default behavior.
 
+        The hook is used for ordinary calls, stream-consumption failures,
+        and structured-output calls. Return an exception rather than raising
+        it here: the caller classifies retries or structured-output fallback
+        and chains a replacement exception when raising it. Stream failures
+        are normalized without retrying inside the model stream wrapper.
+        This hook does not invoke agent recovery middleware.
+
         Args:
             error (`Exception`):
                 The exception raised by the provider SDK.
 
         Returns:
             `Exception`:
-                The normalized exception.
+                A normalized exception, or the original object unchanged
+                when the provider signal is not recognized.
         """
         return error
 

@@ -85,7 +85,27 @@ class ContentBlockFallbackStrategy(ABC):
         self,
         context: ContentBlockFallbackContext,
     ) -> ContentBlockFallbackDecision | None:
-        """Return replacement messages, or ``None`` to stop recovery."""
+        """Propose replacement input without calling the model or tools.
+
+        Args:
+            context (`ContentBlockFallbackContext`):
+                The blocked call and one-based recovery attempt. The
+                middleware deep-copies only the messages; a strategy may
+                mutate that copy but must preserve valid tool call/result
+                pairing and treat the other shared objects as read-only.
+
+        Returns:
+            `ContentBlockFallbackDecision | None`:
+                Replacement messages, or ``None`` to make the middleware
+                re-raise the current content-block error. Leave quarantine
+                IDs empty for transient edits. Proposed IDs accumulate
+                across attempts and request the built-in placeholder on
+                future calls only after recovery succeeds; they do not
+                persist arbitrary replacement text.
+
+        Exceptions raised by the strategy propagate to the caller. The
+        middleware, not the strategy, owns the retry budget and state commit.
+        """
 
 
 class ReverseMaskStrategy(ContentBlockFallbackStrategy):
@@ -107,7 +127,24 @@ class ReverseMaskStrategy(ContentBlockFallbackStrategy):
         self,
         context: ContentBlockFallbackContext,
     ) -> ContentBlockFallbackDecision | None:
-        """Mask the newest assistant message with eligible content."""
+        """Mask the newest assistant message with eligible content.
+
+        Args:
+            context (`ContentBlockFallbackContext`):
+                The blocked input, including masks from earlier attempts.
+                Its messages are modified in place. Direct callers must
+                supply their own copy to protect stored conversation history.
+
+        Returns:
+            `ContentBlockFallbackDecision | None`:
+                The same message list with all eligible text and tool-result
+                outputs in one assistant message replaced, plus that
+                message's newly masked block IDs. Return ``None`` if no
+                candidate remains. Empty or already masked content and all
+                user/system messages are skipped; other blocks are preserved.
+
+        This method neither calls the model nor commits isolation records.
+        """
         for message in reversed(context.messages):
             if message.role != "assistant":
                 continue
@@ -150,6 +187,12 @@ class ContentBlockFallbackMiddleware(MiddlewareBase):
             max_fallback_attempts (`int`, defaults to `3`):
                 The maximum number of replacement calls per middleware chain.
                 A separately configured fallback model starts a new chain.
+                The initial call is not counted. Zero disables replacement
+                calls but still applies previously committed isolation.
+
+        Raises:
+            `ValueError`:
+                If ``max_fallback_attempts`` is negative.
         """
         if max_fallback_attempts < 0:
             raise ValueError("max_fallback_attempts must be non-negative.")
@@ -158,6 +201,11 @@ class ContentBlockFallbackMiddleware(MiddlewareBase):
 
     async def clear_quarantine(self, agent: "Agent") -> None:
         """Clear this middleware's isolation records for an idle agent.
+
+        Remove this middleware's state namespace without changing original
+        messages or other middleware state. Missing records are a no-op.
+        This does not cancel in-flight recovery, which could commit new IDs,
+        so call it only when the agent is idle. No disk write is performed.
 
         Args:
             agent (`Agent`):
@@ -172,7 +220,18 @@ class ContentBlockFallbackMiddleware(MiddlewareBase):
         agent: "Agent",
         messages: list[Msg],
     ) -> list[Msg]:
-        """Apply committed masks to a copy of the current model input."""
+        """Apply committed masks without modifying history or retry budgets.
+
+        Match both message and block IDs, replacing only assistant text and
+        tool-result outputs. Missing IDs are ignored; new blocks remain
+        visible. Records are read from the agent's middleware state.
+
+        Returns:
+            `list[Msg]`:
+                The original list if there are no isolation records;
+                otherwise a deep copy with matching blocks masked, even if
+                none of the recorded IDs occur in the current input.
+        """
         state = agent.state.middle_context.get(
             await self.get_middleware_key(),
             {},
@@ -206,7 +265,23 @@ class ContentBlockFallbackMiddleware(MiddlewareBase):
         completed_attempts: int,
         pending_quarantine: dict[str, list[str]],
     ) -> tuple[list[Msg], int]:
-        """Ask the strategy for the next replacement message list."""
+        """Prepare the next replacement without executing a model call.
+
+        Deep-copy ``messages`` before invoking the strategy. Merge accepted
+        quarantine proposals into ``pending_quarantine`` in place, leaving
+        persistent agent state unchanged. ``completed_attempts`` counts
+        replacement calls already attempted, excluding the initial call.
+
+        Returns:
+            `tuple[list[Msg], int]`:
+                Replacement messages and the next attempt number, which the
+                caller uses as its updated counter when issuing the call.
+
+        Raises:
+            `ContentBlockedError`:
+                The supplied ``error`` if the budget is exhausted or the
+                strategy returns ``None``. Strategy exceptions also propagate.
+        """
         attempt = completed_attempts + 1
         details = (
             f"agent={agent.name}, model={current_model.model}, "
@@ -257,7 +332,14 @@ class ContentBlockFallbackMiddleware(MiddlewareBase):
         completed_attempts: int,
         pending_quarantine: dict[str, list[str]],
     ) -> None:
-        """Commit successful isolation and report recovery without payloads."""
+        """Commit successful isolation and report recovery without payloads.
+
+        The caller must establish successful completion before invoking this
+        method. Merge ``pending_quarantine`` into the agent's middleware
+        state without changing history or clearing the pending mapping.
+        Normal AgentState persistence saves the IDs; no disk write occurs
+        here. Log success only when replacement calls were attempted.
+        """
         if pending_quarantine:
             state = agent.state.middle_context.setdefault(
                 await self.get_middleware_key(),
@@ -289,7 +371,28 @@ class ContentBlockFallbackMiddleware(MiddlewareBase):
         completed_attempts: int,
         pending_quarantine: dict[str, list[str]],
     ) -> AsyncGenerator[ChatResponse, None]:
-        """Recover a stream only when no chunk has been emitted."""
+        """Consume and recover a stream only before any chunk is emitted.
+
+        Continue the same retry budget and ``pending_quarantine`` mapping
+        used to obtain ``stream``. Any yielded chunk, including one carrying
+        only usage, or an error with ``partial_output=True`` prevents replay.
+        Close each consumed inner stream in ``finally``.
+
+        Commit pending IDs only after normal stream exhaustion and cleanup
+        without an interrupted result, or after a replacement non-stream
+        result marked COMPLETED. Errors, interruption, cancellation, and
+        early closure before completion do not commit pending IDs.
+
+        Yields:
+            `ChatResponse`:
+                Original or replacement stream chunks, or a single response
+                if a replacement call returns a non-stream result.
+
+        Raises:
+            `ContentBlockedError`:
+                If replay is unsafe, the budget is exhausted, or the strategy
+                stops. Other model, strategy, and cleanup errors propagate.
+        """
         current_stream = stream
         current_messages = messages
         attempts = completed_attempts
@@ -379,7 +482,36 @@ class ContentBlockFallbackMiddleware(MiddlewareBase):
             Awaitable[ChatResponse | AsyncGenerator[ChatResponse, None]],
         ],
     ) -> ChatResponse | AsyncGenerator[ChatResponse, None]:
-        """Recover blocked calls using protocol-valid replacement messages."""
+        """Apply saved isolation and recover a blocked model call.
+
+        Args:
+            agent (`Agent`):
+                The agent owning the conversation and isolation records.
+            input_kwargs (`dict`):
+                Call arguments containing ``messages``, ``current_model``,
+                ``tools``, and ``tool_choice``.
+            next_handler (`Callable`):
+                The next model-call handler. Each invocation overrides only
+                ``messages``; other arguments remain bound to the chain.
+
+        Returns:
+            `ChatResponse | AsyncGenerator[ChatResponse, None]`:
+                A non-stream result or a wrapped stream. Stream recovery and
+                errors occur during iteration, not when the stream is returned.
+
+        Raises:
+            `ContentBlockedError`:
+                If replacement attempts are exhausted or the strategy stops.
+                Other handler and strategy exceptions propagate unchanged.
+
+        Previously committed masks apply before the initial call without
+        consuming the per-chain replacement budget. New IDs remain local
+        until a COMPLETED non-stream result or successful stream completion.
+        Failed or interrupted recovery leaves earlier records intact. The
+        middleware updates AgentState only; it neither writes to storage nor
+        restarts the agent loop or completed tools. Separately configured
+        fallback models have independent chains and replacement budgets.
+        """
         messages = await self._apply_quarantine(
             agent,
             input_kwargs["messages"],
