@@ -1075,6 +1075,11 @@ class WorkspaceBase:
                 msg.content = [await offload_block(b) for b in msg.content]
             lines.append(msg.model_dump_json())
 
+        if not lines:
+            # Nothing to append: writing the empty join would still add a
+            # standalone blank line that is not a JSONL record.
+            return path
+
         payload = "\n".join(lines) + "\n"
 
         existing = b""
