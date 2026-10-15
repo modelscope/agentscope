@@ -137,18 +137,24 @@ class ConsoleRendererTest(TestCase):
         self.render_all(
             [
                 ReplyStartEvent(
-                    session_id="s", reply_id=REPLY_ID, name="Friday"
+                    session_id="s",
+                    reply_id=REPLY_ID,
+                    name="Friday",
                 ),
                 *self.text_events("first part"),
                 ReplyStartEvent(
-                    session_id="s", reply_id="other", name="Other"
+                    session_id="s",
+                    reply_id="other",
+                    name="Other",
                 ),
                 ReplyEndEvent(session_id="s", reply_id="other"),
                 ReplyStartEvent(
-                    session_id="s", reply_id=REPLY_ID, name="Friday"
+                    session_id="s",
+                    reply_id=REPLY_ID,
+                    name="Friday",
                 ),
                 *self.text_events("second part", block_id="t2"),
-            ]
+            ],
         )
         self.assertEqual(
             self.renderer.last_msg.get_text_content(),
@@ -160,22 +166,63 @@ class ConsoleRendererTest(TestCase):
         self.render_all(
             [
                 ReplyStartEvent(
-                    session_id="s", reply_id=REPLY_ID, name="Friday"
+                    session_id="s",
+                    reply_id=REPLY_ID,
+                    name="Friday",
                 ),
                 ReplyEndEvent(session_id="s", reply_id=REPLY_ID),
-            ]
+            ],
         )
         previous = ref(self.renderer.last_msg)
         self.assertIsNotNone(previous())
         self.render_all(
             [
                 ReplyStartEvent(
-                    session_id="s", reply_id="next", name="Friday"
+                    session_id="s",
+                    reply_id="next",
+                    name="Friday",
                 ),
                 ReplyEndEvent(session_id="s", reply_id="next"),
-            ]
+            ],
         )
         self.assertIsNone(previous())
+
+    def test_reset_releases_unfinished_replies(self) -> None:
+        """Discard abandoned replies and allow the renderer to be reused."""
+        self.renderer.verbosity = "quiet"
+        messages = []
+        for reply_id in (REPLY_ID, "member"):
+            self.renderer.render(
+                ReplyStartEvent(
+                    session_id="s",
+                    reply_id=reply_id,
+                    name="Friday",
+                ),
+            )
+            messages.append(ref(self.renderer.last_msg))
+
+        self.render_all(self.text_events("partial")[:-1])
+        self.renderer.reset()
+        self.renderer.reset()
+
+        self.assertIsNone(self.renderer.last_msg)
+        self.assertEqual([message() for message in messages], [None, None])
+        self.assertEqual(self.output(), "partial\n")
+        self.render_all(
+            [
+                ReplyStartEvent(
+                    session_id="s",
+                    reply_id=REPLY_ID,
+                    name="Friday",
+                ),
+                *self.text_events("recovered"),
+            ],
+        )
+        self.assertEqual(
+            self.renderer.last_msg.get_text_content(),
+            "recovered",
+        )
+        self.assertEqual(self.output(), "partial\nrecovered\n")
 
     def test_quiet_hides_everything_but_text(self) -> None:
         """Quiet verbosity only prints the streamed reply text."""

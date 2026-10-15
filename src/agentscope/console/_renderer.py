@@ -77,14 +77,18 @@ def _format_tool_input(raw: str) -> str:
 
 class ConsoleRenderer:
     """Render :class:`~agentscope.event.AgentEvent` streams as line-based
-    terminal output, so that consuming :meth:`Agent.reply_stream` in the
-    terminal becomes a one-liner:
+    terminal output. Consume :meth:`Agent.reply_stream` and reset the
+    renderer if the stream fails:
 
     .. code-block:: python
 
         renderer = ConsoleRenderer()
-        async for event in agent.reply_stream(msg):
-            renderer.render(event)
+        try:
+            async for event in agent.reply_stream(msg):
+                renderer.render(event)
+        except BaseException:
+            renderer.reset()
+            raise
 
     The renderer prints text/thinking deltas as they arrive, buffers the
     concurrently-streamed tool calls/results via
@@ -127,6 +131,17 @@ class ConsoleRenderer:
     def last_msg(self) -> Msg | None:
         """The reply message accumulated from the rendered events."""
         return self._msg
+
+    def reset(self) -> None:
+        """Release all accumulated messages and end any streamed line.
+
+        Call this when abandoning a stream or when it raises without a
+        ``ReplyEndEvent``. ``last_msg`` becomes ``None``. Do not reset on a
+        normal HITL pause: its pending replies are needed when resuming.
+        """
+        self._active_msgs.clear()
+        self._msg = None
+        self._break_line(quiet_ok=True)
 
     def render(self, event: AgentEvent) -> None:
         """Render the given agent event to the console.
