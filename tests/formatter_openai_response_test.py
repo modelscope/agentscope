@@ -11,6 +11,7 @@ Key differences from OpenAI Chat formatter:
   - ThinkingBlock: only echoed when it has a "reasoning_item_id" attribute.
 """
 from unittest import IsolatedAsyncioTestCase
+from unittest.mock import Mock, patch
 
 from agentscope.formatter import (
     OpenAIResponseFormatter,
@@ -367,6 +368,41 @@ class TestOpenAIResponseFormatter(IsolatedAsyncioTestCase):
             ],
             res,
         )
+
+    @patch("agentscope.formatter._openai_formatter.httpx.get")
+    async def test_chat_formatter_remote_pdf(
+        self,
+        mock_get: Mock,
+    ) -> None:
+        """Remote PDFs use the non-blocking shared download path."""
+        response = Mock(content=b"pdf data")
+        mock_get.return_value = response
+
+        res = await OpenAIResponseFormatter().format(
+            [
+                UserMsg(
+                    name="user",
+                    content=[
+                        DataBlock(
+                            source=URLSource(
+                                url="https://example.com/document.pdf",
+                                media_type="application/pdf",
+                            ),
+                        ),
+                    ],
+                ),
+            ],
+        )
+
+        self.assertEqual(
+            res[0]["content"][0]["file_data"],
+            "data:application/pdf;base64,cGRmIGRhdGE=",
+        )
+        mock_get.assert_called_once_with(
+            "https://example.com/document.pdf",
+            timeout=30,
+        )
+        response.raise_for_status.assert_called_once_with()
 
     async def test_chat_formatter_thinking_dropped_without_reasoning_item_id(
         self,

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """The Anthropic formatter module."""
+import asyncio
 import base64
 import fnmatch
 from abc import ABC
 from typing import Any
 
-import requests
+import httpx
 from pydantic import Field
 
 from ._formatter_base import FormatterBase
@@ -137,8 +138,9 @@ class _AnthropicFormatterBase(FormatterBase, ABC):
                                         {"type": "text", "text": sub.text},
                                     )
                             elif isinstance(sub, DataBlock):
-                                formatted_sub = (
-                                    self._format_anthropic_data_block(sub)
+                                formatted_sub = await asyncio.to_thread(
+                                    self._format_anthropic_data_block,
+                                    sub,
                                 )
                                 if formatted_sub:
                                     hint_parts.append(formatted_sub)
@@ -156,7 +158,10 @@ class _AnthropicFormatterBase(FormatterBase, ABC):
                         )
 
                 elif isinstance(block, DataBlock):
-                    formatted_block = self._format_anthropic_data_block(block)
+                    formatted_block = await asyncio.to_thread(
+                        self._format_anthropic_data_block,
+                        block,
+                    )
                     if formatted_block:
                         content_blocks.append(formatted_block)
 
@@ -212,7 +217,8 @@ class _AnthropicFormatterBase(FormatterBase, ABC):
                                         },
                                     )
                             elif isinstance(out_block, DataBlock):
-                                fmt_block = self._format_anthropic_data_block(
+                                fmt_block = await asyncio.to_thread(
+                                    self._format_anthropic_data_block,
                                     out_block,
                                 )
                                 if fmt_block:
@@ -340,7 +346,7 @@ class _AnthropicFormatterBase(FormatterBase, ABC):
                 with open(url.removeprefix("file://"), "rb") as f:
                     data = base64.b64encode(f.read()).decode("utf-8")
             else:
-                response = requests.get(url, timeout=30)
+                response = httpx.get(url, timeout=30)
                 response.raise_for_status()
                 data = base64.b64encode(response.content).decode("utf-8")
         else:
@@ -463,7 +469,10 @@ class AnthropicMultiAgentFormatter(_AnthropicFormatterBase):
                 if isinstance(block, TextBlock):
                     agent_text_parts.append(block.text)
                 elif isinstance(block, DataBlock):
-                    formatted_block = self._format_anthropic_data_block(block)
+                    formatted_block = await asyncio.to_thread(
+                        self._format_anthropic_data_block,
+                        block,
+                    )
                     if formatted_block:
                         if accumulated_text:
                             conversation_blocks.append(

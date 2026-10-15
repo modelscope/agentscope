@@ -3,6 +3,8 @@
 OpenAIMultiAgentFormatter, following the reference test style with exact
 ground-truth comparisons.
 """
+import asyncio
+import threading
 from unittest import IsolatedAsyncioTestCase
 from unittest.mock import Mock, patch
 
@@ -420,13 +422,14 @@ class TestOpenAIFormatter(IsolatedAsyncioTestCase):
             },
         )
 
-    @patch("agentscope.formatter._openai_formatter.requests.get")
+    @patch("agentscope.formatter._openai_formatter.httpx.get")
     async def test_chat_formatter_extensionless_url_audio(
         self,
         mock_get: Mock,
     ) -> None:
         """Declared media type controls extensionless URL audio format."""
-        mock_get.return_value.content = b"wav data"
+        response = Mock(content=b"wav data")
+        mock_get.return_value = response
         fmt = OpenAIChatFormatter()
 
         res = await fmt.format(
@@ -450,6 +453,58 @@ class TestOpenAIFormatter(IsolatedAsyncioTestCase):
             "https://example.com/download?token=abc",
             timeout=30,
         )
+        response.raise_for_status.assert_called_once_with()
+
+    @patch("agentscope.formatter._openai_formatter.httpx.get")
+    async def test_remote_download_does_not_block_event_loop(
+        self,
+        mock_get: Mock,
+    ) -> None:
+        """A formatter download yields while waiting for the response."""
+        download_started = threading.Event()
+        finish_download = threading.Event()
+        sibling_progressed = asyncio.Event()
+        response = Mock(content=b"wav data")
+
+        def get(*_args: object, **_kwargs: object) -> Mock:
+            download_started.set()
+            finish_download.wait(timeout=1)
+            return response
+
+        mock_get.side_effect = get
+        formatter = OpenAIChatFormatter()
+
+        format_task = asyncio.create_task(
+            formatter.format(
+                [
+                    UserMsg(
+                        name="user",
+                        content=[
+                            DataBlock(
+                                source=URLSource(
+                                    url="https://example.com/audio.wav",
+                                    media_type="audio/wav",
+                                ),
+                            ),
+                        ],
+                    ),
+                ],
+            ),
+        )
+        await asyncio.wait_for(
+            asyncio.to_thread(download_started.wait, 1),
+            timeout=1,
+        )
+
+        async def sibling() -> None:
+            sibling_progressed.set()
+
+        await asyncio.wait_for(sibling(), timeout=1)
+        self.assertTrue(sibling_progressed.is_set())
+        self.assertFalse(format_task.done())
+
+        finish_download.set()
+        await asyncio.wait_for(format_task, timeout=1)
 
     async def test_chat_formatter_thinking_dropped(self) -> None:
         """ThinkingBlock is silently dropped by OpenAI formatter."""

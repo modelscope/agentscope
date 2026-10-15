@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """The Ollama formatter module."""
+import asyncio
 import base64
 import fnmatch
 from abc import ABC
 from typing import Any
 
-import requests
+import httpx
 from pydantic import Field
 
 from ._formatter_base import FormatterBase
@@ -91,7 +92,7 @@ class _OllamaFormatterBase(FormatterBase, ABC):
                 return data
             else:
                 # Remote URL - download and convert to base64
-                response = requests.get(url, timeout=30)
+                response = httpx.get(url, timeout=30)
                 response.raise_for_status()
                 data = base64.b64encode(response.content).decode("utf-8")
                 return data
@@ -168,7 +169,8 @@ class OllamaChatFormatter(_OllamaFormatterBase):
                             if isinstance(sub, TextBlock):
                                 hint_text_parts.append(sub.text)
                             elif isinstance(sub, DataBlock):
-                                formatted_sub = self._format_ollama_data_block(
+                                formatted_sub = await asyncio.to_thread(
+                                    self._format_ollama_data_block,
                                     sub,
                                 )
                                 if formatted_sub:
@@ -183,7 +185,10 @@ class OllamaChatFormatter(_OllamaFormatterBase):
                             messages.append(hint_msg)
 
                 elif isinstance(block, DataBlock):
-                    formatted_image = self._format_ollama_data_block(block)
+                    formatted_image = await asyncio.to_thread(
+                        self._format_ollama_data_block,
+                        block,
+                    )
                     if formatted_image:
                         images.append(formatted_image)
 
@@ -242,10 +247,9 @@ class OllamaChatFormatter(_OllamaFormatterBase):
                         user_content_parts = []
                         for data_block in multimodal_data:
                             if isinstance(data_block, DataBlock):
-                                formatted_image = (
-                                    self._format_ollama_data_block(
-                                        data_block,
-                                    )
+                                formatted_image = await asyncio.to_thread(
+                                    self._format_ollama_data_block,
+                                    data_block,
                                 )
                                 if formatted_image:
                                     user_images.append(formatted_image)
@@ -420,7 +424,10 @@ class OllamaMultiAgentFormatter(_OllamaFormatterBase):
                 if isinstance(block, TextBlock):
                     msg_text_parts.append(block.text)
                 elif isinstance(block, DataBlock):
-                    formatted_image = self._format_ollama_data_block(block)
+                    formatted_image = await asyncio.to_thread(
+                        self._format_ollama_data_block,
+                        block,
+                    )
                     if formatted_image:
                         images.append(formatted_image)
                 elif isinstance(block, (HintBlock, ThinkingBlock)):
