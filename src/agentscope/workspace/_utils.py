@@ -98,7 +98,7 @@ DEFAULT_GLOB_HELPER_SCRIPT = "_glob_helper.py"
 
 # Bump when gateway code or dependencies require persisted sandboxes to
 # bootstrap again. Package-based deployment replaces the runtime archive.
-GATEWAY_RUNTIME_VERSION = "mcp2-progress-v4"
+GATEWAY_RUNTIME_VERSION = "mcp2-progress"
 
 #: Minimum Python packages the gateway script needs at runtime.
 #: Both Docker (image build) and E2B (sandbox bootstrap) install this
