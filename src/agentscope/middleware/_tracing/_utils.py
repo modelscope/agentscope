@@ -39,7 +39,11 @@ def _to_serializable(
     elif isinstance(obj, (Msg, BaseModel)):
         # Dump the model's fields, so the span carries readable JSON
         # rather than a Python repr string.
-        res = _to_serializable(obj.model_dump())
+        try:
+            res = _to_serializable(obj.model_dump())
+        except Exception:
+            # Tracing must not fail because model serialization fails.
+            res = repr(obj)
 
     elif is_dataclass(obj):
         res = repr(obj)
