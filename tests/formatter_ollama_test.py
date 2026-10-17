@@ -3,8 +3,8 @@
 OllamaMultiAgentFormatter, with exact ground-truth comparisons.
 """
 import base64
-import tempfile
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from unittest import IsolatedAsyncioTestCase
 
 from agentscope.formatter import OllamaChatFormatter, OllamaMultiAgentFormatter
@@ -300,30 +300,69 @@ class TestOllamaFormatter(IsolatedAsyncioTestCase):
             res,
         )
 
-    async def test_formatter_local_image_uri(self) -> None:
-        """Both formatters read percent-encoded local image paths."""
-        with tempfile.TemporaryDirectory() as directory:
-            for filename in (
-                "image.png",
-                "image with spaces.png",
-                "图片.png",
-                "image#1.png",
-                "image%20.png",
-                "image+1.png",
-            ):
+    async def test_formatters_read_percent_encoded_file_urls(self) -> None:
+        """Local file URLs are decoded before their paths are opened."""
+        with TemporaryDirectory() as directory:
+            image_path = Path(directory) / "image #1.png"
+            image_path.write_bytes(base64.b64decode(self.image_b64))
+            msgs = [
+                UserMsg(
+                    name="user",
+                    content=[
+                        TextBlock(text="What is this?"),
+                        DataBlock(
+                            source=URLSource(
+                                url=image_path.as_uri(),
+                                media_type="image/png",
+                            ),
+                        ),
+                    ],
+                ),
+            ]
+
+            chat_result = await OllamaChatFormatter().format(msgs)
+            multiagent_result = await OllamaMultiAgentFormatter().format(msgs)
+
+        self.assertListEqual(
+            [
+                {
+                    "role": "user",
+                    "content": "What is this?",
+                    "images": [self.image_b64],
+                },
+            ],
+            chat_result,
+        )
+        self.assertListEqual(
+            [
+                {
+                    "role": "user",
+                    "content": (
+                        "# Conversation History\n"
+                        "The content between <history></history> tags "
+                        "contains your conversation history\n"
+                        "<history>\nuser:\nWhat is this?\n</history>"
+                    ),
+                    "images": [self.image_b64],
+                },
+            ],
+            multiagent_result,
+        )
+
+    async def test_formatters_preserve_local_file_uri_characters(self) -> None:
+        """Decode Unicode and literal percent escapes once, preserving '+'."""
+        with TemporaryDirectory() as directory:
+            for filename in ("图片.png", "image%20.png", "image+1.png"):
                 path = Path(directory) / filename
                 path.write_bytes(base64.b64decode(self.image_b64))
+                # URI paths allow a literal '+'; form decoding would lose it.
+                url = path.as_uri().replace("%2B", "+")
+                source = URLSource(url=url, media_type="image/png")
+                self.assertEqual(str(source.url), url)
                 msgs = [
                     UserMsg(
                         name="user",
-                        content=[
-                            DataBlock(
-                                source=URLSource(
-                                    url=path.as_uri(),
-                                    media_type="image/png",
-                                ),
-                            ),
-                        ],
+                        content=[DataBlock(source=source)],
                     ),
                 ]
                 for formatter in (
@@ -335,6 +374,7 @@ class TestOllamaFormatter(IsolatedAsyncioTestCase):
                         formatter=type(formatter).__name__,
                     ):
                         result = await formatter.format(msgs)
+                        self.assertEqual(len(result), 1)
                         self.assertEqual(result[0]["images"], [self.image_b64])
 
     async def test_chat_formatter_base64_image_in_tool_result(
