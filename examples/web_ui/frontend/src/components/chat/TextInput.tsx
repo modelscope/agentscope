@@ -20,6 +20,7 @@ import React, {
 	forwardRef,
 } from 'react';
 
+import { hasInputContent } from './input-content';
 import { Button } from '../ui/button';
 import { Kbd } from '../ui/kbd';
 import {
@@ -231,7 +232,8 @@ export const TextInput = forwardRef<TextInputRef, TextInputProps>(
 		const handleSend = () => {
 			// ``phase`` is guarded here rather than only on the button, since Enter
 			// calls this directly and would otherwise send during a running reply.
-			if (phase !== 'idle' || !value.trim() || disabled || hasProcessing) return;
+			if (phase !== 'idle' || !hasInputContent(value, files) || disabled || hasProcessing)
+				return;
 
 			const blocks: ContentBlock[] = [];
 
@@ -306,7 +308,7 @@ export const TextInput = forwardRef<TextInputRef, TextInputProps>(
 					onClick: onInterrupt,
 				};
 			}
-			if (value.trim()) {
+			if (hasInputContent(value, files)) {
 				return {
 					icon: ArrowUp,
 					tooltip: t('textInput.send'),
