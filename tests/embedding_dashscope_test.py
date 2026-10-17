@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=protected-access,unused-argument
 """Unit tests for DashScopeEmbeddingModel."""
+import tempfile
 from dataclasses import asdict
 from threading import get_ident
 from typing import Any
@@ -14,8 +15,9 @@ from agentscope.embedding import (
     DashScopeEmbeddingModel,
     EmbeddingResponse,
     EmbeddingUsage,
+    FileEmbeddingCache,
 )
-from agentscope.message import DataBlock, Base64Source, URLSource
+from agentscope.message import Base64Source, DataBlock, URLSource
 
 A = AnyValue()
 
@@ -274,3 +276,49 @@ class DashScopeMultimodalCallTest(IsolatedAsyncioTestCase):
         bad = DataBlock(source=Base64Source(data="x", media_type="video/mp4"))
         with self.assertRaises(ValueError):
             DashScopeEmbeddingModel._format_data_block(bad)
+
+    @patch("dashscope.MultiModalEmbedding.call")
+    async def test_configured_dimension_reaches_qwen_api_and_cache_key(
+        self,
+        mock_api: Any,
+    ) -> None:
+        """Qwen dimensions must reach the API and separate cache entries."""
+        mock_api.return_value = _text_resp([[0.1, 0.2]])
+        with tempfile.TemporaryDirectory() as cache_dir:
+            cache = FileEmbeddingCache(cache_dir=cache_dir)
+            model_512 = DashScopeEmbeddingModel(
+                credential=_cred(),
+                model="qwen3-vl-embedding",
+                dimensions=512,
+                embedding_cache=cache,
+            )
+            model_1024 = DashScopeEmbeddingModel(
+                credential=_cred(),
+                model="qwen3-vl-embedding",
+                dimensions=1024,
+                embedding_cache=cache,
+            )
+
+            await model_512(["hello"])
+            await model_1024(["hello"])
+
+        self.assertEqual(mock_api.call_count, 2)
+        self.assertEqual(mock_api.call_args_list[0].kwargs["dimension"], 512)
+        self.assertEqual(mock_api.call_args_list[1].kwargs["dimension"], 1024)
+
+    @patch("dashscope.MultiModalEmbedding.call")
+    async def test_fixed_multimodal_dimension_is_not_sent(
+        self,
+        mock_api: Any,
+    ) -> None:
+        """Fixed-dimension models must omit the unsupported API argument."""
+        mock_api.return_value = _text_resp([[0.1, 0.2]])
+        model = DashScopeEmbeddingModel(
+            credential=_cred(),
+            model="multimodal-embedding-v1",
+            dimensions=1024,
+        )
+
+        await model(["hello"])
+
+        self.assertNotIn("dimension", mock_api.call_args.kwargs)

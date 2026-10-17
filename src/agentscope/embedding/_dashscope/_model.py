@@ -164,6 +164,10 @@ class DashScopeEmbeddingModel(EmbeddingModelBase[str | TextBlock | DataBlock]):
         # Resolve multimodal constraints.
         if self.supports_multimodal:
             self._limits = _MODEL_LIMITS.get(model, _DEFAULT_LIMITS)
+            self._supports_multimodal_dimensions = any(
+                card.name == model and card.supported_dimensions is not None
+                for card in self.list_models()
+            )
 
     @classmethod
     def _get_retryable_exceptions(cls) -> tuple[type[Exception], ...]:
@@ -433,6 +437,8 @@ class DashScopeEmbeddingModel(EmbeddingModelBase[str | TextBlock | DataBlock]):
             "api_key": self.api_key,
             **kwargs,
         }
+        if self._supports_multimodal_dimensions:
+            api_kwargs["dimension"] = self.dimensions
 
         # Exclude api_key from cache identifier to avoid persisting secrets
         # and to keep cache valid across key rotations.
