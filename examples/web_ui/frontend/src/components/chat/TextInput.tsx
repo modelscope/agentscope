@@ -181,6 +181,13 @@ export const TextInput = forwardRef<TextInputRef, TextInputProps>(
 		// Whether any file is still being processed (block send until all done)
 		const hasProcessing = files.some((f) => f.status === 'processing');
 
+		// A finished attachment is content on its own: the composer can send it
+		// without any text, and the file processor already built the DataBlock.
+		const hasReadyAttachment = files.some((f) => f.status === 'done' && f.block !== null);
+
+		// Something to send: either text or a processed attachment.
+		const hasContent = value.trim().length > 0 || hasReadyAttachment;
+
 		useImperativeHandle(ref, () => ({
 			focus: () => textareaRef.current?.focus(),
 		}));
@@ -236,7 +243,7 @@ export const TextInput = forwardRef<TextInputRef, TextInputProps>(
 			// calls this directly. A parked client tool may still accept an answer.
 			if (
 				(phase !== 'idle' && !(phase === 'streaming' && acceptsInput)) ||
-				!value.trim() ||
+				!hasContent ||
 				disabled ||
 				hasProcessing ||
 				(acceptsInput && files.length > 0)
@@ -316,13 +323,13 @@ export const TextInput = forwardRef<TextInputRef, TextInputProps>(
 					onClick: onInterrupt,
 				};
 			}
-			if (value.trim() || acceptsInput) {
+			if (hasContent || acceptsInput) {
 				return {
 					icon: ArrowUp,
 					tooltip: t('textInput.send'),
 					disabled:
 						disabled ||
-						!value.trim() ||
+						!hasContent ||
 						hasProcessing ||
 						(acceptsInput && files.length > 0),
 					variant: 'default',
