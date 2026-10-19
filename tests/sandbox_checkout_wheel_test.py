@@ -202,6 +202,22 @@ class TestCheckoutWheelBuild(unittest.TestCase):
                     support.checkout_wheel()
             self.assertEqual(run.call_count, 2)
 
+    def test_missing_workspace_type_fails_before_build(self) -> None:
+        """Report missing configuration before spending time building."""
+
+        class MissingWorkspace(support.CheckoutWheelTestCase):
+            """A live test that omitted its workspace class."""
+
+        with patch.object(support, "checkout_wheel") as build:
+            with self.assertRaises(TypeError) as raised:
+                MissingWorkspace.setUpClass()
+        self.assertEqual(
+            str(raised.exception),
+            "MissingWorkspace must set workspace_type "
+            "to the workspace class under test",
+        )
+        build.assert_not_called()
+
     def test_skipped_class_does_not_build(self) -> None:
         """Unavailable live environments never pay the build cost."""
 

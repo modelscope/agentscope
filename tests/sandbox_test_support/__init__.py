@@ -200,6 +200,11 @@ class CheckoutWheelTestCase(IsolatedAsyncioTestCase):
     def setUpClass(cls) -> None:
         """Skipped classes never build; all enabled classes share one wheel."""
         super().setUpClass()
+        if getattr(cls, "workspace_type", None) is None:
+            raise TypeError(
+                f"{cls.__name__} must set workspace_type "
+                f"to the workspace class under test",
+            )
         wheel = checkout_wheel()
         stack = ExitStack()
         cls.addClassCleanup(stack.close)
