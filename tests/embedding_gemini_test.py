@@ -2,9 +2,10 @@
 # pylint: disable=protected-access
 """Unit tests for GeminiEmbeddingModel."""
 from dataclasses import asdict
+from tempfile import TemporaryDirectory
 from typing import Any
 from unittest import IsolatedAsyncioTestCase
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 from utils import AnyValue
 
@@ -12,7 +13,9 @@ from agentscope.embedding import (
     GeminiEmbeddingModel,
     EmbeddingResponse,
     EmbeddingUsage,
+    FileEmbeddingCache,
 )
+from agentscope.credential import GeminiCredential
 from agentscope.message import DataBlock, Base64Source
 
 A = AnyValue()
@@ -85,6 +88,7 @@ class GeminiTextCallTest(IsolatedAsyncioTestCase):
         model = GeminiEmbeddingModel.__new__(GeminiEmbeddingModel)
         model.model = "gemini-embedding-001"
         model.dimensions = 2
+        model.parameters = GeminiEmbeddingModel.Parameters()
         model.context_size = 2048
         model.batch_size = 100
         model.max_retries = 3
@@ -127,6 +131,66 @@ class GeminiTextCallTest(IsolatedAsyncioTestCase):
         model = self._make_text_model()
         with self.assertRaises(ValueError):
             await GeminiEmbeddingModel._call_text(model, [_img()])
+
+    def _make_configured_model(
+        self,
+        task_type: str,
+        cache: FileEmbeddingCache | None = None,
+    ) -> GeminiEmbeddingModel:
+        """Use the public constructor with only the SDK client mocked."""
+        with patch("google.genai.Client") as client:
+            client.return_value.aio.models.embed_content = AsyncMock(
+                return_value=MagicMock(
+                    embeddings=[MagicMock(values=[0.1, 0.2])],
+                ),
+            )
+            return GeminiEmbeddingModel(
+                credential=GeminiCredential(api_key="offline-placeholder"),
+                model="gemini-embedding-001",
+                dimensions=2,
+                parameters=GeminiEmbeddingModel.Parameters(
+                    task_type=task_type,
+                ),
+                embedding_cache=cache,
+                max_retries=0,
+            )
+
+    async def test_configured_parameters_and_call_precedence(self) -> None:
+        """Configured text options reach the SDK; call options win."""
+        model = self._make_configured_model("RETRIEVAL_QUERY")
+        sdk = model.client.aio.models.embed_content
+        await model(["hello"])
+        config = sdk.call_args.kwargs["config"]
+        self.assertEqual(config.task_type, "RETRIEVAL_QUERY")
+        self.assertEqual(config.output_dimensionality, 2)
+
+        await model(["hello"], task_type="RETRIEVAL_DOCUMENT")
+        self.assertEqual(
+            sdk.call_args.kwargs["config"].task_type,
+            "RETRIEVAL_DOCUMENT",
+        )
+        self.assertEqual(model.parameters.task_type, "RETRIEVAL_QUERY")
+
+    async def test_file_cache_uses_effective_parameters(self) -> None:
+        """Distinct task configurations cannot reuse each other's vectors."""
+        with TemporaryDirectory() as directory:
+            cache = FileEmbeddingCache(cache_dir=directory)
+            query = self._make_configured_model("RETRIEVAL_QUERY", cache)
+            document = self._make_configured_model("RETRIEVAL_DOCUMENT", cache)
+            document.client.aio.models.embed_content.return_value = MagicMock(
+                embeddings=[MagicMock(values=[0.3, 0.4])],
+            )
+            self.assertEqual((await query(["hello"])).source, "api")
+            result = await document(["hello"])
+            self.assertEqual(result.source, "api")
+            self.assertEqual(result.embeddings, [[0.3, 0.4]])
+
+            result = await query(["hello"], task_type="RETRIEVAL_DOCUMENT")
+            self.assertEqual(result.source, "cache")
+            self.assertEqual(result.embeddings, [[0.3, 0.4]])
+            self.assertEqual((await query(["hello"])).source, "cache")
+            query.client.aio.models.embed_content.assert_awaited_once()
+            document.client.aio.models.embed_content.assert_awaited_once()
 
 
 class GeminiMultimodalCallTest(IsolatedAsyncioTestCase):
