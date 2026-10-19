@@ -127,6 +127,7 @@ class DashScopeChatModel(ChatModelBase):
         context_size: int = 131072,
         formatter: FormatterBase | None = None,
         client_kwargs: dict[str, Any] | None = None,
+        raise_on_content_filter: bool = False,
     ) -> None:
         """Initialize the DashScope chat model.
 
@@ -154,6 +155,11 @@ class DashScopeChatModel(ChatModelBase):
             client_kwargs (`dict[str, Any] | None`, defaults to `None`):
                 Extra keyword arguments forwarded to ``openai.AsyncClient``
                 (e.g. ``timeout``, ``default_headers``, ``http_client``).
+            raise_on_content_filter (`bool`, defaults to `False`):
+                Opt in to content-filter exceptions and SDK error
+                normalization, including structured-output calls. When
+                disabled, preserve legacy parsing and SDK exceptions.
+                This does not change the provider's filtering policy.
         """
         super().__init__(
             credential=credential,
@@ -163,6 +169,7 @@ class DashScopeChatModel(ChatModelBase):
             max_retries=max_retries,
             retry_delay=retry_delay,
             context_size=context_size,
+            raise_on_content_filter=raise_on_content_filter,
         )
         self.formatter = formatter or DashScopeChatFormatter()
         self.client_kwargs = client_kwargs or {}
@@ -196,6 +203,8 @@ class DashScopeChatModel(ChatModelBase):
 
     def _normalize_exception(self, error: Exception) -> Exception:
         """Normalize structured DashScope data-inspection errors."""
+        if not self.raise_on_content_filter:
+            return error
         normalized = _normalize_openai_compatible_content_error(
             error,
             provider="dashscope",
@@ -363,6 +372,7 @@ class DashScopeChatModel(ChatModelBase):
                 choice = chunk.choices[0]
                 blocked_error = _openai_compatible_response_block_error(
                     choice,
+                    include_content_filter=self.raise_on_content_filter,
                     provider="dashscope",
                     request_id=response_id,
                     partial_output=has_output,
@@ -480,6 +490,7 @@ class DashScopeChatModel(ChatModelBase):
             choice = response.choices[0]
             blocked_error = _openai_compatible_response_block_error(
                 choice,
+                include_content_filter=self.raise_on_content_filter,
                 provider="dashscope",
                 request_id=getattr(response, "id", None),
             )

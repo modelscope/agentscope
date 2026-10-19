@@ -129,6 +129,7 @@ class OpenAIChatModel(ChatModelBase):
         client_kwargs: dict[str, Any] | None = None,
         extra_body: dict[str, Any] | None = None,
         raise_on_refusal: bool = False,
+        raise_on_content_filter: bool = False,
     ) -> None:
         """Initialize the OpenAI chat model.
 
@@ -162,6 +163,11 @@ class OpenAIChatModel(ChatModelBase):
             raise_on_refusal (`bool`, defaults to `False`):
                 Whether an explicit OpenAI refusal should raise a
                 ``ContentBlockedError`` instead of remaining normal output.
+            raise_on_content_filter (`bool`, defaults to `False`):
+                Opt in to content-filter exceptions and SDK error
+                normalization, including structured-output calls. When
+                disabled, preserve legacy parsing and SDK exceptions.
+                This does not change the provider's filtering policy.
         """
         super().__init__(
             credential=credential,
@@ -171,6 +177,7 @@ class OpenAIChatModel(ChatModelBase):
             max_retries=max_retries,
             retry_delay=retry_delay,
             context_size=context_size,
+            raise_on_content_filter=raise_on_content_filter,
             raise_on_refusal=raise_on_refusal,
         )
         self.formatter = formatter or OpenAIChatFormatter()
@@ -207,6 +214,8 @@ class OpenAIChatModel(ChatModelBase):
 
     def _normalize_exception(self, error: Exception) -> Exception:
         """Normalize structured OpenAI content-filter errors."""
+        if not self.raise_on_content_filter:
+            return error
         normalized = _normalize_openai_compatible_content_error(
             error,
             provider="openai",
@@ -395,14 +404,11 @@ class OpenAIChatModel(ChatModelBase):
                 choice = chunk.choices[0]
                 blocked_error = _openai_compatible_response_block_error(
                     choice,
+                    include_content_filter=self.raise_on_content_filter,
                     provider="openai",
                     request_id=response_id,
                     partial_output=has_output,
-                    include_refusal=getattr(
-                        self,
-                        "raise_on_refusal",
-                        False,
-                    ),
+                    include_refusal=self.raise_on_refusal,
                 )
                 if blocked_error is not None:
                     raise blocked_error
@@ -524,13 +530,10 @@ class OpenAIChatModel(ChatModelBase):
             choice = response.choices[0]
             blocked_error = _openai_compatible_response_block_error(
                 choice,
+                include_content_filter=self.raise_on_content_filter,
                 provider="openai",
                 request_id=getattr(response, "id", None),
-                include_refusal=getattr(
-                    self,
-                    "raise_on_refusal",
-                    False,
-                ),
+                include_refusal=self.raise_on_refusal,
             )
             if blocked_error is not None:
                 raise blocked_error

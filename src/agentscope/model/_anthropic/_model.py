@@ -332,7 +332,7 @@ class AnthropicChatModel(ChatModelBase):
                 the extracted content blocks and usage.
         """
         if (
-            getattr(self, "raise_on_refusal", False)
+            self.raise_on_refusal
             and getattr(response, "stop_reason", None) == "refusal"
         ):
             stop_details = getattr(response, "stop_details", None)
@@ -587,7 +587,7 @@ class AnthropicChatModel(ChatModelBase):
 
                 elif event.type == "message_delta":
                     if (
-                        getattr(self, "raise_on_refusal", False)
+                        self.raise_on_refusal
                         and getattr(event.delta, "stop_reason", None)
                         == "refusal"
                     ):

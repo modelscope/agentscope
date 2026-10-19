@@ -58,6 +58,20 @@ class ContentBlockedError(DeveloperOrientedException):
         self.request_id = request_id
         self.partial_output = partial_output
 
+    @property
+    def requires_review(self) -> bool:
+        """Whether automatic replay must stop for a provider safety review.
+
+        These OpenAI policy stops are not ordinary context-filter failures.
+        Neither masking nor switching models is an automatic recovery path.
+        """
+        return self.provider == "openai" and (
+            self.original_code or ""
+        ).casefold() in {
+            "bio_policy",
+            "misalignment_policy_violation",
+        }
+
 
 class StructuredOutputError(DeveloperOrientedException):
     """Raised when the model fails to produce a valid structured output,

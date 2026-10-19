@@ -93,6 +93,7 @@ class VolcengineChatModel(ChatModelBase):
         context_size: int = 256000,
         formatter: FormatterBase | None = None,
         client_kwargs: dict[str, Any] | None = None,
+        raise_on_content_filter: bool = False,
     ) -> None:
         """Initialize the Volcengine Ark chat model.
 
@@ -121,6 +122,11 @@ class VolcengineChatModel(ChatModelBase):
             client_kwargs (`dict[str, Any] | None`, defaults to `None`):
                 Extra keyword arguments forwarded to ``openai.AsyncClient``
                 (e.g. ``timeout``, ``default_headers``, ``http_client``).
+            raise_on_content_filter (`bool`, defaults to `False`):
+                Opt in to content-filter exceptions and SDK error
+                normalization, including structured-output calls. When
+                disabled, preserve legacy parsing and SDK exceptions.
+                This does not change the provider's filtering policy.
         """
         super().__init__(
             credential=credential,
@@ -130,6 +136,7 @@ class VolcengineChatModel(ChatModelBase):
             max_retries=max_retries,
             retry_delay=retry_delay,
             context_size=context_size,
+            raise_on_content_filter=raise_on_content_filter,
         )
         self.formatter = formatter or VolcengineChatFormatter()
         self.client_kwargs = client_kwargs or {}
@@ -163,13 +170,35 @@ class VolcengineChatModel(ChatModelBase):
 
     def _normalize_exception(self, error: Exception) -> Exception:
         """Normalize explicit Volcengine content-filter errors."""
-        normalized = _normalize_openai_compatible_content_error(
-            error,
-            provider="volcengine",
-            blocked_codes={"content_filter"},
-            phase=ContentBlockedPhase.INPUT,
-        )
-        return normalized or error
+        if not self.raise_on_content_filter:
+            return error
+        for phase, codes in (
+            (
+                ContentBlockedPhase.INPUT,
+                {
+                    "sensitivecontentdetected",
+                    "sensitivecontentdetected.severeviolation",
+                    "sensitivecontentdetected.violence",
+                    "inputtextsensitivecontentdetected",
+                    "inputtextsensitivecontentdetected.policyviolation",
+                    "inputimagesensitivecontentdetected",
+                    "inputimagesensitivecontentdetected.policyviolation",
+                },
+            ),
+            (
+                ContentBlockedPhase.OUTPUT,
+                {"outputtextsensitivecontentdetected"},
+            ),
+        ):
+            normalized = _normalize_openai_compatible_content_error(
+                error,
+                provider="volcengine",
+                blocked_codes=codes,
+                phase=phase,
+            )
+            if normalized is not None:
+                return normalized
+        return error
 
     async def _call_api(
         self,
@@ -320,6 +349,7 @@ class VolcengineChatModel(ChatModelBase):
                 choice = chunk.choices[0]
                 blocked_error = _openai_compatible_response_block_error(
                     choice,
+                    include_content_filter=self.raise_on_content_filter,
                     provider="volcengine",
                     request_id=response_id,
                     partial_output=has_output,
@@ -393,6 +423,7 @@ class VolcengineChatModel(ChatModelBase):
             choice = response.choices[0]
             blocked_error = _openai_compatible_response_block_error(
                 choice,
+                include_content_filter=self.raise_on_content_filter,
                 provider="volcengine",
                 request_id=getattr(response, "id", None),
             )

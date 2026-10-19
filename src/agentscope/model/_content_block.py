@@ -53,6 +53,7 @@ def _normalize_openai_compatible_content_error(
     provider: str,
     blocked_codes: set[str],
     phase: ContentBlockedPhase,
+    code_field: str = "code",
 ) -> ContentBlockedError | None:
     """Build an error from an explicitly recognized provider code.
 
@@ -66,6 +67,9 @@ def _normalize_openai_compatible_content_error(
             Recognized codes, already case-folded for comparison.
         phase (`ContentBlockedPhase`):
             The phase assigned by the adapter, or UNKNOWN if ambiguous.
+        code_field (`str`, defaults to `"code"`):
+            The structured field identifying the error. Use ``"type"``
+            only for providers whose payload uses that field.
 
     Returns:
         `ContentBlockedError | None`:
@@ -76,7 +80,7 @@ def _normalize_openai_compatible_content_error(
     This helper returns rather than raises the error. The calling model
     layer is responsible for chaining it to the original SDK exception.
     """
-    code = _get_error_field(error, "code")
+    code = _get_error_field(error, code_field)
     if code is None:
         return None
     original_code = str(code)
@@ -110,6 +114,7 @@ def _openai_compatible_response_block_error(
     request_id: str | None,
     partial_output: bool = False,
     include_refusal: bool = False,
+    include_content_filter: bool = True,
 ) -> ContentBlockedError | None:
     """Build an output-block error from one Chat Completions choice.
 
@@ -127,7 +132,10 @@ def _openai_compatible_response_block_error(
         include_refusal (`bool`, defaults to `False`):
             Also recognize a non-empty explicit refusal string in ``delta``
             or, if absent, ``message``. Content-filter finish reasons are
-            recognized regardless of this option.
+            controlled separately by ``include_content_filter``.
+        include_content_filter (`bool`, defaults to `True`):
+            Whether to recognize a content-filter finish reason. Adapters
+            pass their explicit opt-in; refusal handling is independent.
 
     Returns:
         `ContentBlockedError | None`:
@@ -135,7 +143,7 @@ def _openai_compatible_response_block_error(
             found. Ordinary response text is never scanned for refusals.
     """
     finish_reason = _enum_name(getattr(choice, "finish_reason", None))
-    if finish_reason == "CONTENT_FILTER":
+    if include_content_filter and finish_reason == "CONTENT_FILTER":
         return ContentBlockedError(
             f"{provider} blocked the generated content.",
             phase=ContentBlockedPhase.OUTPUT,
@@ -152,7 +160,11 @@ def _openai_compatible_response_block_error(
         refusal = getattr(content, "refusal", None)
         if isinstance(refusal, str) and refusal:
             return ContentBlockedError(
-                refusal,
+                (
+                    f"{provider} refused the response."
+                    if getattr(choice, "delta", None) is not None
+                    else refusal
+                ),
                 phase=ContentBlockedPhase.OUTPUT,
                 provider=provider,
                 original_code="refusal",

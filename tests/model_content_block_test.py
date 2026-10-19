@@ -5,16 +5,27 @@ from datetime import datetime
 from types import SimpleNamespace
 from typing import Any
 from unittest.async_case import IsolatedAsyncioTestCase
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
+
+import httpx
+import openai
+from pydantic import BaseModel
 
 from agentscope.credential import (
     AnthropicCredential,
+    DashScopeCredential,
+    DeepSeekCredential,
+    GeminiCredential,
     MiniMaxCredential,
+    MoonshotCredential,
     OpenAICredential,
+    VolcengineCredential,
 )
 from agentscope.exception import ContentBlockedError, ContentBlockedPhase
+from agentscope.message import TextBlock, UserMsg
 from agentscope.model import (
     AnthropicChatModel,
+    ChatResponse,
     DashScopeChatModel,
     DeepSeekChatModel,
     GeminiChatModel,
@@ -22,6 +33,7 @@ from agentscope.model import (
     MoonshotChatModel,
     OpenAIChatModel,
     OpenAIResponseModel,
+    StructuredResponse,
     VolcengineChatModel,
 )
 
@@ -63,6 +75,432 @@ class _Stream:
             raise StopAsyncIteration from error
 
 
+def _model_with_filters(model_class: type) -> Any:
+    """Create a parser-only model with explicit filter opt-in."""
+    model = object.__new__(model_class)
+    model.raise_on_content_filter = True
+    model.raise_on_refusal = False
+    return model
+
+
+class ContentBlockCompatibilityTest(IsolatedAsyncioTestCase):
+    """Verify opt-in filtering and backward-compatible default behavior."""
+
+    def test_sdk_normalization_switch_and_provider_fields(self) -> None:
+        """Known provider payloads normalize only with explicit opt-in."""
+        cases: tuple[
+            tuple[type, str, dict[str, Any], ContentBlockedPhase],
+            ...,
+        ] = (
+            (
+                OpenAIChatModel,
+                "openai",
+                {"code": "content_filter"},
+                ContentBlockedPhase.INPUT,
+            ),
+            (
+                DashScopeChatModel,
+                "dashscope",
+                {"code": "DataInspectionFailed"},
+                ContentBlockedPhase.UNKNOWN,
+            ),
+            (
+                MoonshotChatModel,
+                "moonshot",
+                {"code": 400, "type": "content_filter"},
+                ContentBlockedPhase.UNKNOWN,
+            ),
+            (
+                VolcengineChatModel,
+                "volcengine",
+                {"code": "OutputTextSensitiveContentDetected"},
+                ContentBlockedPhase.OUTPUT,
+            ),
+            (
+                OpenAIResponseModel,
+                "openai",
+                {"code": "bio_policy"},
+                ContentBlockedPhase.UNKNOWN,
+            ),
+            (
+                OpenAIResponseModel,
+                "openai",
+                {"code": "misalignment_policy_violation"},
+                ContentBlockedPhase.UNKNOWN,
+            ),
+        )
+        for model_class, provider, fields, phase in cases:
+            for enabled in (False, True):
+                with self.subTest(model=model_class, enabled=enabled):
+                    model = _model_with_filters(model_class)
+                    model.raise_on_content_filter = enabled
+                    original = _ProviderError(
+                        {
+                            "message": "outer",
+                            "error": {**fields, "message": "inner"},
+                        },
+                        "request-id",
+                    )
+                    normalized = model._normalize_exception(original)
+                    if not enabled:
+                        self.assertIs(normalized, original)
+                        continue
+                    code = fields.get("type", fields["code"])
+                    self.assertEqual(
+                        {
+                            "message": normalized.message,
+                            "provider": normalized.provider,
+                            "phase": normalized.phase,
+                            "original_code": normalized.original_code,
+                            "request_id": normalized.request_id,
+                            "partial_output": normalized.partial_output,
+                        },
+                        {
+                            "message": "inner",
+                            "provider": provider,
+                            "phase": phase,
+                            "original_code": code,
+                            "request_id": "request-id",
+                            "partial_output": False,
+                        },
+                    )
+
+    async def test_stream_refusal_uses_stable_diagnostic(self) -> None:
+        """Do not present the first refusal fragment as a full explanation."""
+        for model_class, response, expected in (
+            (
+                OpenAIChatModel,
+                SimpleNamespace(
+                    id="refusal",
+                    usage=None,
+                    choices=[
+                        SimpleNamespace(
+                            finish_reason=None,
+                            delta=SimpleNamespace(refusal="I"),
+                        ),
+                    ],
+                ),
+                "openai refused the response.",
+            ),
+            (
+                OpenAIResponseModel,
+                SimpleNamespace(type="response.refusal.delta", delta="I"),
+                "OpenAI refused to generate the response.",
+            ),
+        ):
+            with self.subTest(model=model_class):
+                model = _model_with_filters(model_class)
+                model.raise_on_content_filter = False
+                model.raise_on_refusal = True
+                with self.assertRaises(ContentBlockedError) as caught:
+                    async for _ in model._parse_stream_response(
+                        datetime.now(),
+                        _Stream([response]),
+                    ):
+                        pass
+                self.assertEqual(
+                    (
+                        caught.exception.message,
+                        caught.exception.partial_output,
+                    ),
+                    (expected, False),
+                )
+
+    def test_content_filter_constructor_defaults_and_opt_in(self) -> None:
+        """All filter-aware adapters require an explicit opt-in."""
+        providers = (
+            (OpenAIChatModel, OpenAICredential, "openai.AsyncClient"),
+            (OpenAIResponseModel, OpenAICredential, "openai.AsyncClient"),
+            (DashScopeChatModel, DashScopeCredential, "openai.AsyncClient"),
+            (DeepSeekChatModel, DeepSeekCredential, "openai.AsyncClient"),
+            (MoonshotChatModel, MoonshotCredential, "openai.AsyncClient"),
+            (VolcengineChatModel, VolcengineCredential, "openai.AsyncClient"),
+            (GeminiChatModel, GeminiCredential, "google.genai.Client"),
+        )
+        for model_class, credential_class, client_path in providers:
+            for options in ({}, {"raise_on_content_filter": True}):
+                with self.subTest(model=model_class, options=options):
+                    with patch(client_path):
+                        model = model_class(
+                            credential=credential_class(api_key="test"),
+                            model="test-model",
+                            **options,
+                        )
+                    self.assertEqual(
+                        model.raise_on_content_filter,
+                        options.get("raise_on_content_filter", False),
+                    )
+
+    async def test_default_chat_filter_retains_same_chunk_content(
+        self,
+    ) -> None:
+        """Legacy parsing retains content accompanying a filter signal."""
+        fields = {
+            "content": "partial content",
+            "refusal": None,
+            "reasoning_content": None,
+            "reasoning": None,
+            "audio": None,
+            "tool_calls": None,
+        }
+        for model_class in (
+            OpenAIChatModel,
+            DashScopeChatModel,
+            DeepSeekChatModel,
+            MoonshotChatModel,
+            VolcengineChatModel,
+        ):
+            for streaming in (False, True):
+                for enabled in (False, True):
+                    with self.subTest(
+                        model=model_class,
+                        streaming=streaming,
+                        enabled=enabled,
+                    ):
+                        model = _model_with_filters(model_class)
+                        model.raise_on_content_filter = enabled
+                        choice = SimpleNamespace(
+                            finish_reason="content_filter",
+                            message=SimpleNamespace(**fields),
+                            delta=SimpleNamespace(**fields),
+                        )
+                        response = SimpleNamespace(
+                            id="filtered",
+                            choices=[choice],
+                            usage=None,
+                        )
+
+                        async def parse(
+                            model: Any = model,
+                            response: Any = response,
+                            streaming: bool = streaming,
+                        ) -> list:
+                            if streaming:
+                                stream = model._parse_stream_response(
+                                    datetime.now(),
+                                    _Stream([response]),
+                                )
+                                return [chunk async for chunk in stream]
+                            return [
+                                model._parse_completion_response(
+                                    datetime.now(),
+                                    response,
+                                ),
+                            ]
+
+                        if enabled:
+                            with self.assertRaises(
+                                ContentBlockedError,
+                            ) as caught:
+                                await parse()
+                            self.assertEqual(
+                                caught.exception.partial_output,
+                                False,
+                            )
+                        else:
+                            parsed = await parse()
+                            self.assertEqual(
+                                [b.text for r in parsed for b in r.content],
+                                ["partial content"],
+                            )
+
+    async def test_default_gemini_and_responses_filters_are_not_errors(
+        self,
+    ) -> None:
+        """Default mode preserves incomplete and safety-blocked responses."""
+        model = _model_with_filters(GeminiChatModel)
+        model.raise_on_content_filter = False
+        for reason in (
+            "SAFETY",
+            "BLOCKLIST",
+            "PROHIBITED_CONTENT",
+            "SPII",
+            "IMAGE_SAFETY",
+        ):
+            with self.subTest(reason=reason):
+                response = SimpleNamespace(
+                    response_id="gemini-filter",
+                    prompt_feedback=SimpleNamespace(block_reason=reason),
+                    candidates=[],
+                    usage_metadata=None,
+                )
+                parsed = model._parse_completion_response(
+                    datetime.now(),
+                    response,
+                )
+                self.assertEqual(parsed.content, [])
+                chunks = [
+                    c
+                    async for c in model._parse_stream_response(
+                        datetime.now(),
+                        _Stream([response]),
+                    )
+                ]
+                self.assertEqual(chunks, [])
+
+        model = _model_with_filters(OpenAIResponseModel)
+        model.raise_on_content_filter = False
+        response = SimpleNamespace(
+            id="filtered-response",
+            incomplete_details=SimpleNamespace(reason="content_filter"),
+            error=None,
+            output=[
+                SimpleNamespace(
+                    type="message",
+                    content=[
+                        SimpleNamespace(type="output_text", text="partial"),
+                    ],
+                ),
+            ],
+            usage=None,
+        )
+        parsed = model._parse_completion_response(datetime.now(), response)
+        self.assertEqual([b.text for b in parsed.content], ["partial"])
+        chunks = [
+            c
+            async for c in model._parse_stream_response(
+                datetime.now(),
+                _Stream(
+                    [
+                        SimpleNamespace(
+                            type="response.output_text.delta",
+                            delta="partial",
+                            item_id="message-1",
+                            content_index=0,
+                        ),
+                        SimpleNamespace(
+                            type="response.incomplete",
+                            response=response,
+                        ),
+                    ],
+                ),
+            )
+        ]
+        self.assertEqual(
+            [b.text for c in chunks for b in c.content],
+            ["partial"],
+        )
+
+    async def test_dashscope_structured_output_opt_in(self) -> None:
+        """Disabled normalization preserves legacy strategy fallback."""
+        messages = [UserMsg(name="user", content="Return an empty object.")]
+        for enabled in (False, True):
+            with self.subTest(enabled=enabled):
+                with patch("openai.AsyncClient"):
+                    model = DashScopeChatModel(
+                        credential=DashScopeCredential(api_key="test"),
+                        model="test",
+                        max_retries=0,
+                        raise_on_content_filter=enabled,
+                    )
+                original = openai.BadRequestError(
+                    "inspection failed",
+                    response=httpx.Response(
+                        400,
+                        request=httpx.Request("POST", "https://example.com"),
+                    ),
+                    body={"code": "DataInspectionFailed"},
+                )
+                expected = StructuredResponse(content={})
+                with patch.object(
+                    model,
+                    "_call_api_with_structured_output",
+                    new=AsyncMock(side_effect=[original, expected]),
+                ) as call:
+                    if enabled:
+                        with self.assertRaises(ContentBlockedError) as caught:
+                            await model.generate_structured_output(
+                                messages,
+                                BaseModel,
+                            )
+                        self.assertIs(caught.exception.__cause__, original)
+                        self.assertEqual(call.await_count, 1)
+                    else:
+                        result = await model.generate_structured_output(
+                            messages,
+                            BaseModel,
+                        )
+                        self.assertEqual(
+                            (result, call.await_count),
+                            (expected, 2),
+                        )
+
+    async def test_sdk_stream_error_tracks_visible_output(self) -> None:
+        """SDK errors track emitted chunks without middleware."""
+        for visible in (False, True):
+            for enabled in (False, True):
+                with self.subTest(visible=visible, enabled=enabled):
+                    with patch("openai.AsyncClient"):
+                        model = DashScopeChatModel(
+                            credential=DashScopeCredential(api_key="test"),
+                            model="test",
+                            raise_on_content_filter=enabled,
+                        )
+                    original = _ProviderError(
+                        {"code": "DataInspectionFailed", "message": "blocked"},
+                        "request-1",
+                    )
+
+                    async def stream(
+                        visible: bool = visible,
+                        error: Exception = original,
+                    ) -> Any:
+                        yield ChatResponse(
+                            content=[TextBlock(text="partial")]
+                            if visible
+                            else [],
+                            is_last=False,
+                        )
+                        raise error
+
+                    with patch.object(
+                        model,
+                        "_call_api",
+                        return_value=stream(),
+                    ):
+                        result = await model(messages=[])
+                        chunks = []
+                        with self.assertRaises(
+                            ContentBlockedError if enabled else _ProviderError,
+                        ) as caught:
+                            async for chunk in result:
+                                chunks.append(chunk)
+                    self.assertEqual(
+                        [b.text for c in chunks for b in c.content],
+                        ["partial"] if visible else [],
+                    )
+                    if enabled:
+                        self.assertEqual(
+                            (
+                                caught.exception.partial_output,
+                                caught.exception.__cause__,
+                            ),
+                            (visible, original),
+                        )
+                    else:
+                        self.assertIs(caught.exception, original)
+
+    def test_unverified_error_codes_remain_sdk_errors(self) -> None:
+        """Do not infer exception codes from compatible finish reasons."""
+        for model_class, body in (
+            (DeepSeekChatModel, {"code": "content_filter"}),
+            (OpenAIResponseModel, {"code": "content_filter"}),
+            (MoonshotChatModel, {"code": "content_filter"}),
+            (VolcengineChatModel, {"code": "content_filter"}),
+            (
+                VolcengineChatModel,
+                {"code": "InputTextSensitiveContentDetected.Unknown"},
+            ),
+        ):
+            with self.subTest(model=model_class, body=body):
+                model = _model_with_filters(model_class)
+                error = _ProviderError(
+                    {**body, "message": "blocked"},
+                    "request",
+                )
+                self.assertIs(model._normalize_exception(error), error)
+
+
 class ModelContentBlockTest(IsolatedAsyncioTestCase):
     """Test structured content-block signals from supported providers."""
 
@@ -94,7 +532,7 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
 
     async def test_dashscope_data_inspection_error(self) -> None:
         """DashScope inspection codes map to a normalized unknown phase."""
-        model = object.__new__(DashScopeChatModel)
+        model = _model_with_filters(DashScopeChatModel)
         original = _ProviderError(
             {
                 "code": "DataInspectionFailed",
@@ -127,7 +565,7 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
 
     async def test_openai_content_filter_error(self) -> None:
         """OpenAI input filter codes map to an input content block."""
-        model = object.__new__(OpenAIChatModel)
+        model = _model_with_filters(OpenAIChatModel)
         original = _ProviderError(
             {
                 "code": "content_filter",
@@ -146,7 +584,7 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
 
     async def test_openai_completion_finish_reason(self) -> None:
         """A non-stream content-filter finish reason is an output block."""
-        model = object.__new__(OpenAIChatModel)
+        model = _model_with_filters(OpenAIChatModel)
         response = SimpleNamespace(
             id="response-1",
             choices=[SimpleNamespace(finish_reason="content_filter")],
@@ -162,7 +600,7 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
 
     async def test_openai_chat_refusal(self) -> None:
         """A Chat Completions refusal is an output content block."""
-        model = object.__new__(OpenAIChatModel)
+        model = _model_with_filters(OpenAIChatModel)
         model.raise_on_refusal = True
         response = SimpleNamespace(
             id="response-refusal",
@@ -184,7 +622,7 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
 
     async def test_openai_chat_refusal_is_output_by_default(self) -> None:
         """A Chat Completions refusal remains visible by default."""
-        model = object.__new__(OpenAIChatModel)
+        model = _model_with_filters(OpenAIChatModel)
         response = SimpleNamespace(
             id="response-refusal",
             choices=[
@@ -210,7 +648,7 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
 
     async def test_openai_chat_stream_refusal_after_output(self) -> None:
         """A streamed Chat refusal records prior emitted output."""
-        model = object.__new__(OpenAIChatModel)
+        model = _model_with_filters(OpenAIChatModel)
         model.raise_on_refusal = True
         stream = _Stream(
             [
@@ -261,7 +699,7 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
         self,
     ) -> None:
         """Refusal fragments are returned as text with the default option."""
-        model = object.__new__(OpenAIChatModel)
+        model = _model_with_filters(OpenAIChatModel)
         stream = _Stream(
             [
                 SimpleNamespace(
@@ -293,7 +731,7 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
 
     async def test_dashscope_stream_finish_reason_after_output(self) -> None:
         """A streamed filter signal records previously emitted output."""
-        model = object.__new__(DashScopeChatModel)
+        model = _model_with_filters(DashScopeChatModel)
         text_delta = SimpleNamespace(
             reasoning_content=None,
             content="partial",
@@ -348,17 +786,35 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
     async def test_openai_compatible_models_normalize_errors(self) -> None:
         """OpenAI-compatible providers normalize explicit filter codes."""
         providers = [
-            (DeepSeekChatModel, "deepseek"),
-            (MoonshotChatModel, "moonshot"),
-            (VolcengineChatModel, "volcengine"),
+            (
+                MoonshotChatModel,
+                "moonshot",
+                "type",
+                "content_filter",
+                ContentBlockedPhase.UNKNOWN,
+            ),
+            (
+                VolcengineChatModel,
+                "volcengine",
+                "code",
+                "InputTextSensitiveContentDetected",
+                ContentBlockedPhase.INPUT,
+            ),
+            (
+                VolcengineChatModel,
+                "volcengine",
+                "code",
+                "OutputTextSensitiveContentDetected",
+                ContentBlockedPhase.OUTPUT,
+            ),
         ]
 
-        for model_class, provider in providers:
+        for model_class, provider, field, code, phase in providers:
             with self.subTest(provider=provider):
-                model = object.__new__(model_class)
+                model = _model_with_filters(model_class)
                 original = _ProviderError(
                     {
-                        "code": "content_filter",
+                        field: code,
                         "message": "input blocked",
                     },
                     f"{provider}-request",
@@ -367,9 +823,9 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
                 error = model._normalize_exception(original)
 
                 self.assertIsInstance(error, ContentBlockedError)
-                self.assertEqual(error.phase, ContentBlockedPhase.INPUT)
+                self.assertEqual(error.phase, phase)
                 self.assertEqual(error.provider, provider)
-                self.assertEqual(error.original_code, "content_filter")
+                self.assertEqual(error.original_code, code)
                 self.assertEqual(
                     error.request_id,
                     f"{provider}-request",
@@ -387,7 +843,7 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
 
         for model_class in (AnthropicChatModel, MiniMaxChatModel):
             with self.subTest(model_class=model_class):
-                model = object.__new__(model_class)
+                model = _model_with_filters(model_class)
                 parsed = await model._parse_anthropic_completion_response(
                     datetime.now(),
                     response,
@@ -413,7 +869,7 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
 
         for model_class, provider in providers:
             with self.subTest(provider=provider):
-                model = object.__new__(model_class)
+                model = _model_with_filters(model_class)
 
                 with self.assertRaises(ContentBlockedError) as raised:
                     model._parse_completion_response(
@@ -442,7 +898,7 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
             (MiniMaxChatModel, "minimax"),
         ]:
             with self.subTest(provider=provider):
-                model = object.__new__(model_class)
+                model = _model_with_filters(model_class)
                 model.raise_on_refusal = True
 
                 with self.assertRaises(ContentBlockedError) as raised:
@@ -468,7 +924,7 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
 
     async def test_anthropic_stream_refusal_after_output(self) -> None:
         """An Anthropic stream refusal records prior emitted output."""
-        model = object.__new__(AnthropicChatModel)
+        model = _model_with_filters(AnthropicChatModel)
         model.raise_on_refusal = True
         stream = _Stream(
             [
@@ -515,7 +971,7 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
         """Refusal stop reasons preserve streamed text by default."""
         for model_class in (AnthropicChatModel, MiniMaxChatModel):
             with self.subTest(model=model_class):
-                model = object.__new__(model_class)
+                model = _model_with_filters(model_class)
                 stream = _Stream(
                     [
                         SimpleNamespace(
@@ -560,7 +1016,7 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
 
     async def test_gemini_prompt_block(self) -> None:
         """Gemini prompt feedback maps to an input content block."""
-        model = object.__new__(GeminiChatModel)
+        model = _model_with_filters(GeminiChatModel)
         response = SimpleNamespace(
             response_id="response-6",
             prompt_feedback=SimpleNamespace(
@@ -583,7 +1039,7 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
 
     async def test_gemini_candidate_block(self) -> None:
         """Gemini safety finish reasons map to an output content block."""
-        model = object.__new__(GeminiChatModel)
+        model = _model_with_filters(GeminiChatModel)
         response = SimpleNamespace(
             response_id="response-7",
             prompt_feedback=None,
@@ -604,7 +1060,7 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
 
     async def test_gemini_other_reason_is_not_content_block(self) -> None:
         """Gemini's generic OTHER reason is not treated as content policy."""
-        model = object.__new__(GeminiChatModel)
+        model = _model_with_filters(GeminiChatModel)
         response = SimpleNamespace(
             response_id="response-8",
             prompt_feedback=SimpleNamespace(block_reason="OTHER"),
@@ -622,7 +1078,7 @@ class OpenAIResponseContentBlockTest(IsolatedAsyncioTestCase):
 
     async def test_openai_response_policy_error(self) -> None:
         """A documented Responses policy code maps to an unknown phase."""
-        model = object.__new__(OpenAIResponseModel)
+        model = _model_with_filters(OpenAIResponseModel)
         api_error = _ProviderError(
             {
                 "code": "bio_policy",
@@ -655,7 +1111,7 @@ class OpenAIResponseContentBlockTest(IsolatedAsyncioTestCase):
 
     async def test_openai_response_refusal(self) -> None:
         """A Responses refusal content part is an output block."""
-        model = object.__new__(OpenAIResponseModel)
+        model = _model_with_filters(OpenAIResponseModel)
         model.raise_on_refusal = True
         response = SimpleNamespace(
             id="response-refusal",
@@ -684,7 +1140,7 @@ class OpenAIResponseContentBlockTest(IsolatedAsyncioTestCase):
 
     async def test_openai_response_stream_refusal_after_output(self) -> None:
         """A streamed Responses refusal records prior emitted output."""
-        model = object.__new__(OpenAIResponseModel)
+        model = _model_with_filters(OpenAIResponseModel)
         model.raise_on_refusal = True
         stream = _Stream(
             [
@@ -715,7 +1171,7 @@ class OpenAIResponseContentBlockTest(IsolatedAsyncioTestCase):
 
     async def test_openai_response_incomplete_after_output(self) -> None:
         """A streamed Responses filter records prior emitted output."""
-        model = object.__new__(OpenAIResponseModel)
+        model = _model_with_filters(OpenAIResponseModel)
         stream = _Stream(
             [
                 SimpleNamespace(

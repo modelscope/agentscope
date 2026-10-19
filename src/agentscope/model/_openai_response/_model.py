@@ -34,7 +34,6 @@ else:
 _RESPONSES_UNSUPPORTED_KWARGS = frozenset({"modalities", "audio"})
 _RESPONSE_BLOCK_ERROR_CODES = frozenset(
     {
-        "CONTENT_FILTER",
         "BIO_POLICY",
         "MISALIGNMENT_POLICY_VIOLATION",
         "IMAGE_CONTENT_POLICY_VIOLATION",
@@ -75,12 +74,14 @@ def _openai_response_block_error(
     *,
     partial_output: bool = False,
     include_refusal: bool = False,
+    include_content_filter: bool = True,
 ) -> ContentBlockedError | None:
     """Build an error from explicit signals on a full Responses object.
 
     Inspect the content-filter incomplete reason, then the safety error
     object, then refusal content parts when ``include_refusal=True``.
-    Content filters and safety codes do not depend on that option. Ordinary
+    Content filters and safety codes require ``include_content_filter``.
+    They do not depend on the refusal option. Ordinary
     response text is never scanned for refusal phrases.
 
     Return ``None`` if no supported signal is present. Otherwise use the
@@ -91,7 +92,7 @@ def _openai_response_block_error(
     request_id = getattr(response, "id", None)
     details = getattr(response, "incomplete_details", None)
     reason = _enum_name(getattr(details, "reason", None))
-    if reason == "CONTENT_FILTER":
+    if include_content_filter and reason == "CONTENT_FILTER":
         return ContentBlockedError(
             "OpenAI filtered the generated response.",
             phase=ContentBlockedPhase.OUTPUT,
@@ -106,7 +107,7 @@ def _openai_response_block_error(
         request_id=request_id,
         partial_output=partial_output,
     )
-    if error is not None:
+    if include_content_filter and error is not None:
         return error
 
     if include_refusal:
@@ -215,6 +216,7 @@ class OpenAIResponseModel(ChatModelBase):
         formatter: FormatterBase | None = None,
         client_kwargs: dict[str, Any] | None = None,
         raise_on_refusal: bool = False,
+        raise_on_content_filter: bool = False,
     ) -> None:
         """Initialize the OpenAI Responses API chat model.
 
@@ -245,6 +247,11 @@ class OpenAIResponseModel(ChatModelBase):
             raise_on_refusal (`bool`, defaults to `False`):
                 Whether an explicit OpenAI refusal should raise a
                 ``ContentBlockedError`` instead of remaining normal output.
+            raise_on_content_filter (`bool`, defaults to `False`):
+                Opt in to content-filter exceptions and SDK error
+                normalization, including structured-output calls. When
+                disabled, preserve legacy parsing and SDK exceptions.
+                This does not change the provider's filtering policy.
         """
         super().__init__(
             credential=credential,
@@ -254,6 +261,7 @@ class OpenAIResponseModel(ChatModelBase):
             max_retries=max_retries,
             retry_delay=retry_delay,
             context_size=context_size,
+            raise_on_content_filter=raise_on_content_filter,
             raise_on_refusal=raise_on_refusal,
         )
         self.formatter = formatter or OpenAIResponseFormatter()
@@ -283,23 +291,16 @@ class OpenAIResponseModel(ChatModelBase):
 
     def _normalize_exception(self, error: Exception) -> Exception:
         """Normalize structured OpenAI Responses content-filter errors."""
+        if not self.raise_on_content_filter:
+            return error
         normalized = _normalize_openai_compatible_content_error(
             error,
             provider="openai",
-            blocked_codes={"content_filter"},
-            phase=ContentBlockedPhase.INPUT,
+            blocked_codes={
+                code.casefold() for code in _RESPONSE_BLOCK_ERROR_CODES
+            },
+            phase=ContentBlockedPhase.UNKNOWN,
         )
-        if normalized is None:
-            normalized = _normalize_openai_compatible_content_error(
-                error,
-                provider="openai",
-                blocked_codes={
-                    code.casefold()
-                    for code in _RESPONSE_BLOCK_ERROR_CODES
-                    if code != "CONTENT_FILTER"
-                },
-                phase=ContentBlockedPhase.UNKNOWN,
-            )
         return normalized or error
 
     async def _call_api(
@@ -427,12 +428,9 @@ class OpenAIResponseModel(ChatModelBase):
                 }:
                     blocked_error = _openai_response_block_error(
                         event.response,
+                        include_content_filter=self.raise_on_content_filter,
                         partial_output=has_output,
-                        include_refusal=getattr(
-                            self,
-                            "raise_on_refusal",
-                            False,
-                        ),
+                        include_refusal=self.raise_on_refusal,
                     )
                     if blocked_error is not None:
                         raise blocked_error
@@ -444,27 +442,26 @@ class OpenAIResponseModel(ChatModelBase):
                         if event_type == "response.failed"
                         else event
                     )
-                    blocked_error = _openai_response_error(
-                        error,
-                        request_id=response_id,
-                        partial_output=has_output,
-                    )
-                    if blocked_error is not None:
-                        raise blocked_error
+                    if event_type == "error" and self.raise_on_content_filter:
+                        blocked_error = _openai_response_error(
+                            error,
+                            request_id=response_id,
+                            partial_output=has_output,
+                        )
+                        if blocked_error is not None:
+                            raise blocked_error
                     raise openai.APIError(
                         message=error.message if error else "Response failed",
                         request=stream.response.request,
                         body=error.model_dump() if error else None,
                     )
 
-                if event_type == "response.refusal.delta" and getattr(
-                    self,
-                    "raise_on_refusal",
-                    False,
+                if (
+                    event_type == "response.refusal.delta"
+                    and self.raise_on_refusal
                 ):
                     raise ContentBlockedError(
-                        event.delta
-                        or "OpenAI refused to generate the response.",
+                        "OpenAI refused to generate the response.",
                         phase=ContentBlockedPhase.OUTPUT,
                         provider="openai",
                         original_code="refusal",
@@ -633,11 +630,8 @@ class OpenAIResponseModel(ChatModelBase):
         """
         blocked_error = _openai_response_block_error(
             response,
-            include_refusal=getattr(
-                self,
-                "raise_on_refusal",
-                False,
-            ),
+            include_content_filter=self.raise_on_content_filter,
+            include_refusal=self.raise_on_refusal,
         )
         if blocked_error is not None:
             raise blocked_error

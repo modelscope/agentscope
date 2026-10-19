@@ -8,14 +8,12 @@ from pydantic import BaseModel, Field
 
 from .._base import ChatModelBase, _TOOL_CHOICE_LITERAL_MODES
 from .._content_block import (
-    _normalize_openai_compatible_content_error,
     _openai_compatible_response_block_error,
 )
 from .._model_response import ChatResponse
 from .._model_usage import ChatUsage
 from ..._utils._common import _generate_id
 from ...credential import DeepSeekCredential
-from ...exception import ContentBlockedPhase
 from ...formatter import FormatterBase, DeepSeekChatFormatter
 from ...message import Msg, ThinkingBlock, ToolCallBlock, TextBlock
 from ...tool import ToolChoice
@@ -92,6 +90,7 @@ class DeepSeekChatModel(ChatModelBase):
         context_size: int = 65536,
         formatter: FormatterBase | None = None,
         client_kwargs: dict[str, Any] | None = None,
+        raise_on_content_filter: bool = False,
     ) -> None:
         """Initialize the DeepSeek chat model.
 
@@ -119,6 +118,11 @@ class DeepSeekChatModel(ChatModelBase):
             client_kwargs (`dict[str, Any] | None`, defaults to `None`):
                 Extra keyword arguments forwarded to ``openai.AsyncClient``
                 (e.g. ``timeout``, ``default_headers``, ``http_client``).
+            raise_on_content_filter (`bool`, defaults to `False`):
+                Opt in to content-filter exceptions and SDK error
+                normalization, including structured-output calls. When
+                disabled, preserve legacy parsing and SDK exceptions.
+                This does not change the provider's filtering policy.
         """
         super().__init__(
             credential=credential,
@@ -128,6 +132,7 @@ class DeepSeekChatModel(ChatModelBase):
             max_retries=max_retries,
             retry_delay=retry_delay,
             context_size=context_size,
+            raise_on_content_filter=raise_on_content_filter,
         )
         self.formatter = formatter or DeepSeekChatFormatter()
         self.client_kwargs = client_kwargs or {}
@@ -158,16 +163,6 @@ class DeepSeekChatModel(ChatModelBase):
         import openai
 
         return (openai.BadRequestError,)
-
-    def _normalize_exception(self, error: Exception) -> Exception:
-        """Normalize explicit DeepSeek content-filter errors."""
-        normalized = _normalize_openai_compatible_content_error(
-            error,
-            provider="deepseek",
-            blocked_codes={"content_filter"},
-            phase=ContentBlockedPhase.INPUT,
-        )
-        return normalized or error
 
     async def _call_api(
         self,
@@ -316,6 +311,7 @@ class DeepSeekChatModel(ChatModelBase):
                 choice = chunk.choices[0]
                 blocked_error = _openai_compatible_response_block_error(
                     choice,
+                    include_content_filter=self.raise_on_content_filter,
                     provider="deepseek",
                     request_id=response_id,
                     partial_output=has_output,
@@ -389,6 +385,7 @@ class DeepSeekChatModel(ChatModelBase):
             choice = response.choices[0]
             blocked_error = _openai_compatible_response_block_error(
                 choice,
+                include_content_filter=self.raise_on_content_filter,
                 provider="deepseek",
                 request_id=getattr(response, "id", None),
             )

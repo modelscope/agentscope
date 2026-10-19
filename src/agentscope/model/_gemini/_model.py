@@ -267,6 +267,7 @@ class GeminiChatModel(ChatModelBase):
         context_size: int = 1048576,
         formatter: FormatterBase | None = None,
         client_kwargs: dict[str, Any] | None = None,
+        raise_on_content_filter: bool = False,
     ) -> None:
         """Initialize the Gemini chat model.
 
@@ -295,6 +296,11 @@ class GeminiChatModel(ChatModelBase):
                 Extra keyword arguments forwarded to ``google.genai.Client``
                 (e.g. ``vertexai``, ``project``, ``location``,
                 ``credentials``, ``http_options``).
+            raise_on_content_filter (`bool`, defaults to `False`):
+                Opt in to content-filter exceptions and SDK error
+                normalization, including structured-output calls. When
+                disabled, preserve legacy parsing and SDK exceptions.
+                This does not change the provider's filtering policy.
         """
         super().__init__(
             credential=credential,
@@ -304,6 +310,7 @@ class GeminiChatModel(ChatModelBase):
             max_retries=max_retries,
             retry_delay=retry_delay,
             context_size=context_size,
+            raise_on_content_filter=raise_on_content_filter,
         )
         self.formatter = formatter or GeminiChatFormatter()
         self.client_kwargs = client_kwargs or {}
@@ -450,7 +457,7 @@ class GeminiChatModel(ChatModelBase):
                 chunk,
                 partial_output=has_output,
             )
-            if blocked_error is not None:
+            if self.raise_on_content_filter and blocked_error is not None:
                 if blocked_error.request_id is None:
                     blocked_error.request_id = response_id
                 raise blocked_error
@@ -519,7 +526,7 @@ class GeminiChatModel(ChatModelBase):
                 A single ``ChatResponse`` with ``is_last=True``.
         """
         blocked_error = _gemini_content_block_error(response)
-        if blocked_error is not None:
+        if self.raise_on_content_filter and blocked_error is not None:
             raise blocked_error
 
         content_blocks: List[TextBlock | ToolCallBlock | ThinkingBlock] = []
