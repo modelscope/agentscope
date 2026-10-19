@@ -951,7 +951,8 @@ class WorkspaceBase:
             if not await backend.file_exists(self._mcp_file):
                 return {}
             raw = await backend.read_file(self._mcp_file)
-            data = json.loads(raw.decode("utf-8"))
+            # Accept a leading UTF-8 BOM from external editors.
+            data = json.loads(raw.decode("utf-8-sig"))
         except Exception as e:
             logger.warning(
                 "Failed to read MCP file at %s, falling back to "
