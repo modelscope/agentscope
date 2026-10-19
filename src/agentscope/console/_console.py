@@ -55,13 +55,22 @@ async def _run_reply(
 
     async def consume() -> None:
         nonlocal pending
-        async for event in agent.reply_stream(inputs):
-            renderer.render(event)
-            if isinstance(
-                event,
-                (RequireUserConfirmEvent, RequireExternalExecutionEvent),
-            ):
-                pending = event
+        try:
+            async for event in agent.reply_stream(inputs):
+                renderer.render(event)
+                if isinstance(
+                    event,
+                    (
+                        RequireUserConfirmEvent,
+                        RequireExternalExecutionEvent,
+                    ),
+                ):
+                    pending = event
+        except BaseException:
+            # Failed streams may omit REPLY_END for several participants.
+            pending = None
+            renderer.reset()
+            raise
 
     task = asyncio.ensure_future(consume())
     loop = asyncio.get_running_loop()
