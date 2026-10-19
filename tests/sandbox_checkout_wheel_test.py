@@ -47,8 +47,15 @@ class TestCheckoutWheelBuild(unittest.TestCase):
         """Stage actual checkout files and reuse the same wheel path."""
         cleanups = []
 
-        def build(args: list[str], **_kwargs: object) -> None:
+        def build(args: list[str], **kwargs: object) -> None:
             """Produce one fake wheel after checking the staged source."""
+            self.assertEqual(
+                kwargs["env"],
+                {
+                    "BUILD_SENTINEL": "retained",
+                    "SOURCE_DATE_EPOCH": "315532800",
+                },
+            )
             source = Path(args[-1])
             repo = Path(support.__file__).resolve().parents[2]
             self.assertEqual(
@@ -79,6 +86,11 @@ class TestCheckoutWheelBuild(unittest.TestCase):
 
         support.checkout_wheel.cache_clear()
         with (
+            patch.dict(
+                support.os.environ,
+                {"BUILD_SENTINEL": "retained", "SOURCE_DATE_EPOCH": "123"},
+                clear=True,
+            ),
             patch.object(support.subprocess, "run", side_effect=build) as run,
             patch.object(
                 support.atexit,

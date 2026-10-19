@@ -3,6 +3,7 @@
 """Install the current checkout only in opted-in live workspace tests."""
 
 import atexit
+import os
 import shlex
 import shutil
 import subprocess
@@ -41,6 +42,7 @@ def checkout_wheel() -> Path:
         # Keep these root inputs in sync with the packaging configuration.
         for name in ("pyproject.toml", "README.md", "LICENSE"):
             shutil.copy2(repo / name, source / name)
+        # Include uncommitted and untracked source files in the working tree.
         shutil.copytree(
             repo / "src",
             source / "src",
@@ -60,6 +62,8 @@ def checkout_wheel() -> Path:
             check=True,
             capture_output=True,
             text=True,
+            # Fix ZIP timestamps so unchanged wheels reuse Docker image tags.
+            env={**os.environ, "SOURCE_DATE_EPOCH": "315532800"},
         )
         wheels = list((root / "wheels").glob("*.whl"))
         if len(wheels) != 1:
