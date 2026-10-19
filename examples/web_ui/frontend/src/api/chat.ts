@@ -1,6 +1,9 @@
 import { client } from './client';
 import type { ChatRequest } from './types';
-import { getEnabledClientExternalToolDefinitions } from '@/lib/client-external-tool-store';
+import {
+	getEnabledClientBuiltinTools,
+	getEnabledClientExternalToolDefinitions,
+} from '@/lib/client-external-tool-store';
 
 /**
  * Chat API — fire-and-forget trigger for chat runs.
@@ -24,6 +27,9 @@ export const chatApi = {
 	trigger: (body: ChatRequest) =>
 		client.post<{ status: string; session_id: string }>('/chat/', {
 			...body,
+			client_builtin_tools:
+				body.client_builtin_tools ??
+				getEnabledClientBuiltinTools(body.agent_id, body.session_id),
 			client_external_tools:
 				body.client_external_tools ??
 				getEnabledClientExternalToolDefinitions(body.agent_id, body.session_id),

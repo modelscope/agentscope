@@ -41,7 +41,10 @@ from ...event import (
 )
 from ...message import Msg
 from ...types import ErrorInfo, ErrorType, ReplyFinishedReason
-from .._client_external_tool import ClientExternalToolDefinition
+from .._client_external_tool import (
+    ClientBuiltinToolName,
+    ClientExternalToolDefinition,
+)
 from ..message_bus import MessageBusKeys
 from .._bus_ops import enqueue_run_trigger, publish_session_event
 
@@ -58,6 +61,9 @@ _RESUME_INPUT_ADAPTER: TypeAdapter = TypeAdapter(
 )
 _CLIENT_EXTERNAL_TOOLS_ADAPTER: TypeAdapter = TypeAdapter(
     list[ClientExternalToolDefinition],
+)
+_CLIENT_BUILTIN_TOOLS_ADAPTER: TypeAdapter = TypeAdapter(
+    list[ClientBuiltinToolName],
 )
 
 # Delay before re-queuing a trigger whose target session still holds
@@ -213,6 +219,7 @@ class WakeupDispatcher:
                 raw_client_external_tools=payload.get(
                     "client_external_tools",
                 ),
+                raw_client_builtin_tools=payload.get("client_builtin_tools"),
             )
 
     async def _dispatch_one(
@@ -223,6 +230,7 @@ class WakeupDispatcher:
         kind: str,
         raw_input: dict | None,
         raw_client_external_tools: list[dict] | None = None,
+        raw_client_builtin_tools: list[str] | None = None,
     ) -> None:
         """Dispatch a single trigger entry by its ``kind``.
 
@@ -240,6 +248,8 @@ class WakeupDispatcher:
                 ``None``.
             raw_client_external_tools (`list[dict] | None`):
                 Serialised client tool definitions for this run.
+            raw_client_builtin_tools (`list[str] | None`):
+                Native external tool names supported by this run's client.
         """
         is_resume = kind == MessageBusKeys.WAKEUP_KIND_RESUME
         is_message = kind == MessageBusKeys.WAKEUP_KIND_MESSAGE
@@ -274,6 +284,21 @@ class WakeupDispatcher:
                 raw_client_external_tools,
             )
             client_external_tools = []
+
+        try:
+            client_builtin_tools = (
+                _CLIENT_BUILTIN_TOOLS_ADAPTER.validate_python(
+                    raw_client_builtin_tools,
+                )
+                if raw_client_builtin_tools is not None
+                else []
+            )
+        except ValueError:
+            message = (
+                f"Ignoring invalid client builtin tools for {session_id}."
+            )
+            logger.exception(message)
+            client_builtin_tools = []
 
         if carries_input:
             if raw_input is None:
@@ -318,6 +343,7 @@ class WakeupDispatcher:
                 kind,
                 input_msg,
                 client_external_tools,
+                client_builtin_tools,
             )
             return
 
@@ -364,6 +390,7 @@ class WakeupDispatcher:
                 agent_id=agent_id,
                 input_msg=input_msg,
                 client_external_tools=client_external_tools or None,
+                client_builtin_tools=client_builtin_tools or None,
             )
             self._registry.spawn(
                 run,
@@ -382,6 +409,7 @@ class WakeupDispatcher:
                 kind,
                 input_msg,
                 client_external_tools,
+                client_builtin_tools,
             )
 
     def _schedule_retry(
@@ -396,6 +424,7 @@ class WakeupDispatcher:
         | Msg
         | None,
         client_external_tools: list[ClientExternalToolDefinition],
+        client_builtin_tools: list[ClientBuiltinToolName],
     ) -> None:
         """Re-enqueue an input-carrying (``resume``/``message``) trigger
         after a short backoff.
@@ -418,6 +447,8 @@ class WakeupDispatcher:
                 The parsed input to redeliver.
             client_external_tools:
                 Client tool definitions to preserve across a retry.
+            client_builtin_tools:
+                Native tool names to preserve across a retry.
         """
 
         async def _retry() -> None:
@@ -431,6 +462,7 @@ class WakeupDispatcher:
                     kind=kind,  # type: ignore[arg-type]  # resume | message
                     inputs=input_msg,
                     client_external_tools=client_external_tools,
+                    client_builtin_tools=client_builtin_tools,
                 )
             except asyncio.CancelledError:
                 pass

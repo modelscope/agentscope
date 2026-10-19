@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
@@ -151,21 +153,19 @@ test('recovers safely from malformed persisted state', () => {
 });
 
 test('clears a deleted session selection without affecting other sessions', () => {
-	setClientExternalToolEnabled('agent-cleanup', 'session-a', 'client__request_user_input', false);
-	setClientExternalToolEnabled('agent-cleanup', 'session-b', 'client__request_user_input', false);
+	setClientExternalToolEnabled('agent-cleanup', 'session-a', 'AskUser', false);
+	setClientExternalToolEnabled('agent-cleanup', 'session-b', 'AskUser', false);
 
 	clearClientExternalToolSelection('agent-cleanup', 'session-a');
 
-	assert.deepEqual(getEnabledClientExternalToolNames('agent-cleanup', 'session-a'), [
-		'client__request_user_input',
-	]);
+	assert.deepEqual(getEnabledClientExternalToolNames('agent-cleanup', 'session-a'), ['AskUser']);
 	assert.deepEqual(getEnabledClientExternalToolNames('agent-cleanup', 'session-b'), []);
 });
 
 test('uses built-ins by default and keeps explicit choices per conversation', () => {
 	const emptyState = parseClientExternalToolStoreState(null);
 	assert.deepEqual(getEnabledClientExternalToolNames('agent-a', 'session-a', emptyState), [
-		'client__request_user_input',
+		'AskUser',
 	]);
 
 	const selectedState = parseClientExternalToolStoreState(

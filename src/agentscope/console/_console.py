@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 """The interactive console entry for trying an agent in the terminal."""
 import asyncio
-import json
 import signal
-
-import jsonschema
 
 from ._renderer import ConsoleRenderer, Verbosity
 from ..agent import Agent
@@ -19,12 +16,16 @@ from ..event import (
 )
 from ..message import (
     Msg,
-    TextBlock,
     ToolResultBlock,
     ToolResultState,
     UserMsg,
 )
-from ..tool import RequestUserInput
+from ..tool import (
+    AskUser,
+    AskUserAnswer,
+    AskUserMetadata,
+    AskUserParams,
+)
 
 
 async def _run_reply(
@@ -127,20 +128,6 @@ async def _confirm(
     )
 
 
-async def _read_choice(maximum: int) -> int:
-    """Read a one-based option number and return its zero-based index."""
-    while True:
-        answer = (
-            await asyncio.to_thread(
-                input,
-                f"Select an option [1-{maximum}]: ",
-            )
-        ).strip()
-        if answer.isdigit() and 1 <= int(answer) <= maximum:
-            return int(answer) - 1
-        print(f"Enter a number from 1 to {maximum}.")
-
-
 async def _read_other() -> str:
     """Read a non-empty custom answer for the Other option."""
     while True:
@@ -152,68 +139,86 @@ async def _read_other() -> str:
         print("The answer cannot be empty.")
 
 
+async def _ask_user(input_json: str) -> tuple[str, dict]:
+    """Collect native question answers and their structured metadata."""
+    params = AskUserParams.model_validate_json(input_json)
+    answers = []
+    for question in params.questions:
+        print(f"\n[{question.header}] {question.question}")
+        if question.context:
+            print(f"{question.context}")
+        for index, option in enumerate(question.options, start=1):
+            print(f"  {index}. {option.label}: {option.description}")
+            if option.preview and not question.multi_select:
+                print(f"     {option.preview}")
+        other_index = len(question.options) + 1
+        print(f"  {other_index}. Other")
+        prompt = (
+            f"Select numbers [1-{other_index}] separated by commas, "
+            f"or type your answer: "
+            if question.multi_select
+            else f"Select a number [1-{other_index}], or type your answer: "
+        )
+        while True:
+            raw = (await asyncio.to_thread(input, prompt)).strip()
+            if not raw:
+                continue
+            parts = [part.strip() for part in raw.split(",")]
+            if not all(part.isdigit() for part in parts):
+                selected, other = [], raw
+                break
+            try:
+                indexes = {int(part) for part in parts}
+            except ValueError:
+                continue
+            if not indexes <= set(range(1, other_index + 1)) or (
+                not question.multi_select and len(indexes) > 1
+            ):
+                print(f"Choose option numbers from 1 to {other_index}.")
+                continue
+            selected = [
+                option.label
+                for i, option in enumerate(question.options, start=1)
+                if i in indexes
+            ]
+            other = await _read_other() if other_index in indexes else None
+            break
+        answers.append(
+            AskUserAnswer(
+                question=question.question,
+                selected=selected,
+                other=other,
+            ),
+        )
+    lines = []
+    for answer in answers:
+        values = answer.selected + ([answer.other] if answer.other else [])
+        lines.append(f"{answer.question}\n{', '.join(values)}")
+    output = "\n\n".join(lines)
+    return output, AskUserMetadata(answers=answers).model_dump(mode="json")
+
+
 async def _request_user_input(
     pending: RequireExternalExecutionEvent,
 ) -> ExternalExecutionResultEvent:
-    """Collect results for pending ``RequestUserInput`` tool calls."""
+    """Collect answers for pending native AskUser calls."""
     results: list[ToolResultBlock] = []
     for tool_call in pending.tool_calls:
-        if tool_call.name != RequestUserInput.name:
+        if tool_call.name != AskUser.name:
             raise ValueError(
                 f"The console cannot execute external tool "
                 f"'{tool_call.name}'.",
             )
-
-        tool_input = json.loads(tool_call.input)
-        try:
-            jsonschema.validate(
-                tool_input,
-                RequestUserInput.input_schema,
-            )
-        except jsonschema.ValidationError as error:
-            raise ValueError(
-                f"Invalid RequestUserInput payload: {error.message}",
-            ) from error
-        options = tool_input["options"]
-        question = tool_input["question"]
-        print(f"\n{question}")
-        for index, option in enumerate(options, start=1):
-            recommended = " (Recommended)" if option.get("recommended") else ""
-            label = option["label"]
-            print(f"  {index}. {label}{recommended}")
-            description = option.get("description")
-            if description:
-                print(f"     {description}")
-
-        other_index = len(options)
-        print(f"  {other_index + 1}. Other")
-        selected = await _read_choice(other_index + 1)
-        payload: dict[str, str | int]
-        if selected == other_index:
-            payload = {
-                "type": "other",
-                "text": await _read_other(),
-            }
-        else:
-            payload = {
-                "type": "option",
-                "option_index": selected,
-                "label": options[selected]["label"],
-            }
-
+        output, metadata = await _ask_user(tool_call.input)
         results.append(
             ToolResultBlock(
                 id=tool_call.id,
                 name=tool_call.name,
-                output=[
-                    TextBlock(
-                        text=json.dumps(payload, ensure_ascii=False),
-                    ),
-                ],
+                output=output,
+                metadata=metadata,
                 state=ToolResultState.SUCCESS,
             ),
         )
-
     return ExternalExecutionResultEvent(
         reply_id=pending.reply_id,
         execution_results=results,
@@ -233,7 +238,7 @@ async def launch_console(
     the process. Reads user messages from stdin, renders every streamed
     :class:`~agentscope.event.AgentEvent`, asks for tool-call
     confirmation (y/n) when the agent requires it, handles structured
-    ``RequestUserInput`` choices, and turns Ctrl+C into an interruption
+    ``AskUser`` choices, and turns Ctrl+C into an interruption
     of the current reply. Type ``exit``/``quit`` or press Ctrl+D to leave.
 
     .. code-block:: python

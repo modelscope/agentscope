@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 """The chat endpoint schema."""
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
-from ..._client_external_tool import ClientExternalToolDefinition
-from ....message import Msg
+from ..._client_external_tool import (
+    ClientBuiltinToolName,
+    ClientExternalToolDefinition,
+)
+from ....message import Msg, ToolResultState
+from ....tool import AskUser, AskUserMetadata
 from ....event import UserConfirmResultEvent, ExternalExecutionResultEvent
 
 
@@ -29,6 +33,12 @@ class ChatRequest(BaseModel):
         description="The input message(s), or agent event, or None.",
     )
 
+    client_builtin_tools: list[ClientBuiltinToolName] = Field(
+        default_factory=list,
+        max_length=1,
+        description="Native external tools supported by this client run.",
+    )
+
     client_external_tools: list[ClientExternalToolDefinition] = Field(
         default_factory=list,
         max_length=16,
@@ -48,6 +58,22 @@ class ChatRequest(BaseModel):
         if len(names) != len(set(names)):
             raise ValueError("Client external tool names must be unique.")
         return value
+
+    @model_validator(mode="after")
+    def validate_native_answers(self) -> "ChatRequest":
+        """Validate resumed native results even if the tool was disabled.
+
+        Disabling a tool governs future calls, not the contract of a call
+        already waiting for its result.
+        """
+        if isinstance(self.input, ExternalExecutionResultEvent):
+            for result in self.input.execution_results:
+                if (
+                    result.name == AskUser.name
+                    and result.state == ToolResultState.SUCCESS
+                ):
+                    AskUserMetadata.model_validate(result.metadata)
+        return self
 
 
 class ChatTriggerResponse(BaseModel):

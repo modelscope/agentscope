@@ -36,7 +36,7 @@ from agentscope.app.storage import (
     SessionConfig,
     SessionRecord,
 )
-from agentscope.tool import ToolBase
+from agentscope.tool import AskUser, ToolBase
 
 
 class _FakeWorkspace:
@@ -238,7 +238,7 @@ class TestGetToolkitBaseAssembly(IsolatedAsyncioTestCase):
         # Background task control present.
         self.assertIn("ToolStop", names)
         # No client tool is attached without a per-run declaration.
-        self.assertNotIn("RequestUserInput", names)
+        self.assertNotIn("AskUser", names)
         # Schedule control present (model_config is set).
         self.assertTrue(
             {
@@ -265,7 +265,7 @@ class TestGetToolkitBaseAssembly(IsolatedAsyncioTestCase):
             with_model=True,
         )
         definition = ClientExternalToolDefinition(
-            name="client__request_user_input",
+            name="client__choose_option",
             description="Ask the user to choose.",
             input_schema={
                 "type": "object",
@@ -296,9 +296,14 @@ class TestGetToolkitBaseAssembly(IsolatedAsyncioTestCase):
             middlewares=[],
             resource_access_service=_make_access(_NoOpStorage()),
             client_external_tools=[definition],
+            client_builtin_tools=["AskUser"],
         )
 
-        tool = await toolkit.get_tool("client__request_user_input")
+        native_tool = await toolkit.get_tool("AskUser")
+        self.assertIsInstance(native_tool, AskUser)
+        self.assertEqual(native_tool.metadata_schema, AskUser.metadata_schema)
+
+        tool = await toolkit.get_tool("client__choose_option")
         self.assertIsNotNone(tool)
         self.assertEqual(
             {
@@ -308,7 +313,7 @@ class TestGetToolkitBaseAssembly(IsolatedAsyncioTestCase):
                 "is_external_tool": tool.is_external_tool,
             },
             {
-                "name": "client__request_user_input",
+                "name": "client__choose_option",
                 "description": "Ask the user to choose.",
                 "input_schema": {
                     "type": "object",
@@ -416,7 +421,6 @@ class TestGetToolkitWorkerVariant(IsolatedAsyncioTestCase):
         names = set(_tool_names(toolkit))
         # Only TeamSay from the team toolset.
         self.assertIn("TeamSay", names)
-        self.assertNotIn("RequestUserInput", names)
         for missing in (
             "TeamCreate",
             "AgentCreate",

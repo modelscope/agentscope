@@ -22,7 +22,7 @@ service or writing any UI code.
     blocks and token usage;
   - tool-call confirmation — `y` allows once, `a` also accepts the
     suggested permission rules so matching calls won't ask again;
-  - structured choices — `RequestUserInput` displays the model's options,
+  - structured choices — `AskUser` supports single/multi-select questions,
     plus an `Other` option for a custom answer;
   - Ctrl+C interrupts the current reply; `exit`/`quit`/Ctrl+D leaves.
 

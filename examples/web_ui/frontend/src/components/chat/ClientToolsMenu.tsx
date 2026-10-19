@@ -41,7 +41,7 @@ type ToolEntry =
 			name: string;
 			displayName: string;
 			description: string;
-			inputSchema: Record<string, unknown>;
+			inputSchema?: Record<string, unknown>;
 	  }
 	| {
 			kind: 'custom';
@@ -75,10 +75,9 @@ function ClientToolsContent({
 	const entries: ToolEntry[] = [
 		...CLIENT_EXTERNAL_TOOL_REGISTRY.map((registration) => ({
 			kind: 'built-in' as const,
-			name: registration.definition.name,
+			name: registration.name,
 			displayName: t(registration.displayNameKey),
 			description: t(registration.displayDescriptionKey),
-			inputSchema: registration.definition.input_schema,
 		})),
 		...state.customTools.map((tool) => ({
 			kind: 'custom' as const,
@@ -181,18 +180,20 @@ function ClientToolsContent({
 								</div>
 							</div>
 
-							<details className="group border-t border-border/70">
-								<summary className="flex cursor-pointer list-none items-center gap-2 px-3 py-2 text-xs font-medium text-muted-foreground outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">
-									<Braces className="size-3.5" />
-									{t('clientTools.inputSchema')}
-									<ChevronRight className="ml-auto size-3.5 transition-transform group-open:rotate-90" />
-								</summary>
-								<div className="px-3 pb-3">
-									<pre className="max-h-56 overflow-auto rounded-lg bg-background p-3 font-mono text-[11px] leading-5 text-secondary-foreground ring-1 ring-border">
-										{JSON.stringify(entry.inputSchema, null, 2)}
-									</pre>
-								</div>
-							</details>
+							{entry.inputSchema && (
+								<details className="group border-t border-border/70">
+									<summary className="flex cursor-pointer list-none items-center gap-2 px-3 py-2 text-xs font-medium text-muted-foreground outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">
+										<Braces className="size-3.5" />
+										{t('clientTools.inputSchema')}
+										<ChevronRight className="ml-auto size-3.5 transition-transform group-open:rotate-90" />
+									</summary>
+									<div className="px-3 pb-3">
+										<pre className="max-h-56 overflow-auto rounded-lg bg-background p-3 font-mono text-[11px] leading-5 text-secondary-foreground ring-1 ring-border">
+											{JSON.stringify(entry.inputSchema, null, 2)}
+										</pre>
+									</div>
+								</details>
+							)}
 						</div>
 					);
 				})}

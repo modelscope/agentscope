@@ -17,6 +17,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { sessionApi, takeFreshlyCreated } from '@/api';
 import { chatApi } from '@/api';
 import { useAudioManager } from '@/context/AudioContext';
+import { ASK_USER_TOOL_NAME, formatAskUserOutput, parseAskUserResult } from '@/lib/ask-user';
 import type { ClientExternalToolResult } from '@/lib/client-external-tools';
 
 /**
@@ -485,6 +486,11 @@ export function useMessages(
 
 			currentReplyRef.current = msgsRef.current.find((msg) => msg.id === replyId) ?? null;
 			const createdAt = new Date().toISOString();
+			const nativeResult =
+				toolCall.name === ASK_USER_TOOL_NAME ? parseAskUserResult(result) : null;
+			if (toolCall.name === ASK_USER_TOOL_NAME && !nativeResult) {
+				throw new Error('Invalid AskUser answers');
+			}
 			const toolResult: ToolResultBlock = {
 				type: 'tool_result',
 				id: toolCall.id,
@@ -493,12 +499,15 @@ export function useMessages(
 					{
 						type: 'text',
 						id: crypto.randomUUID(),
-						text: JSON.stringify(result),
+						text: nativeResult
+							? formatAskUserOutput(nativeResult)
+							: JSON.stringify(result),
 						created_at: createdAt,
 						finished_at: createdAt,
 					},
 				],
 				state: 'success',
+				metadata: nativeResult ?? {},
 				created_at: createdAt,
 				finished_at: createdAt,
 			};

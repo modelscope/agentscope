@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Client-provided external tool definitions and runtime adapters."""
 import json
-from typing import Any
+from typing import Any, Literal
 
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import SchemaError
@@ -16,6 +16,7 @@ from ..tool import ToolBase
 
 
 _MAX_INPUT_SCHEMA_BYTES = 64 * 1024
+ClientBuiltinToolName = Literal["AskUser"]
 CLIENT_EXTERNAL_TOOL_NAME_PREFIX = "client__"
 _REFERENCE_KEYWORDS = {"$ref", "$dynamicRef", "$recursiveRef"}
 

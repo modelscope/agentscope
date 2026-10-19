@@ -1,15 +1,10 @@
 import type { ContentBlock, ToolCallBlock } from '@agentscope-ai/agentscope/message';
 import type { ComponentType } from 'react';
 
-import type { ClientExternalToolDefinition } from '@/api/types';
-import { PendingRequestUserInputCard } from '@/components/chat/PendingRequestUserInputCard';
-import { RequestUserInputRenderer } from '@/components/chat/tool-renderers/RequestUserInputRenderer';
+import { AskUserCard } from '@/components/chat/AskUserCard';
+import { AskUserRenderer } from '@/components/chat/tool-renderers/AskUserRenderer';
 import type { ToolRenderer } from '@/components/chat/tool-renderers/types';
-import {
-	LEGACY_REQUEST_USER_INPUT_TOOL_NAME,
-	REQUEST_USER_INPUT_EXTERNAL_TOOL,
-	toOtherUserInputResult,
-} from '@/lib/request-user-input';
+import { ASK_USER_TOOL_NAME, parseAskUserPayload, toAskUserComposerResult } from '@/lib/ask-user';
 
 export type ClientExternalToolResult =
 	| string
@@ -27,33 +22,32 @@ export type PendingClientExternalToolProps = {
 };
 
 export type ClientExternalToolRegistration = {
-	definition: ClientExternalToolDefinition;
+	name: string;
 	displayNameKey: string;
 	displayDescriptionKey: string;
-	legacyNames?: readonly string[];
 	PendingComponent: ComponentType<PendingClientExternalToolProps>;
-	composerResult?: (blocks: ContentBlock[]) => ClientExternalToolResult | null;
+	canCompose?: (toolCall: ToolCallBlock) => boolean;
+	composerResult?: (
+		blocks: ContentBlock[],
+		toolCall: ToolCallBlock,
+	) => ClientExternalToolResult | null;
 	historyRenderer?: ToolRenderer;
 };
 
 export const CLIENT_EXTERNAL_TOOL_REGISTRY: readonly ClientExternalToolRegistration[] = [
 	{
-		definition: REQUEST_USER_INPUT_EXTERNAL_TOOL,
-		displayNameKey: 'clientTools.requestUserInput.name',
-		displayDescriptionKey: 'clientTools.requestUserInput.description',
-		legacyNames: [LEGACY_REQUEST_USER_INPUT_TOOL_NAME],
-		PendingComponent: PendingRequestUserInputCard,
-		composerResult: toOtherUserInputResult,
-		historyRenderer: RequestUserInputRenderer,
+		name: ASK_USER_TOOL_NAME,
+		displayNameKey: 'clientTools.askUser.name',
+		displayDescriptionKey: 'clientTools.askUser.description',
+		PendingComponent: AskUserCard,
+		canCompose: (toolCall) => parseAskUserPayload(toolCall.input)?.questions.length === 1,
+		composerResult: (blocks, toolCall) => toAskUserComposerResult(blocks, toolCall.input),
+		historyRenderer: AskUserRenderer,
 	},
 ];
 
 const registrationsByName = new Map(
-	CLIENT_EXTERNAL_TOOL_REGISTRY.flatMap((registration) =>
-		[registration.definition.name, ...(registration.legacyNames ?? [])].map(
-			(name) => [name, registration] as const,
-		),
-	),
+	CLIENT_EXTERNAL_TOOL_REGISTRY.map((registration) => [registration.name, registration]),
 );
 
 export function getClientExternalToolRegistration(

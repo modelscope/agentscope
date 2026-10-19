@@ -15,7 +15,6 @@ from ._grep import Grep
 from ._meta import ResetTools
 from ._powershell import PowerShell
 from ._read import Read
-from ._request_user_input import RequestUserInput
 from ._skill import SkillViewer
 from ._write import Write
 
@@ -32,7 +31,6 @@ __all__ = [
     "Glob",
     "Grep",
     "Read",
-    "RequestUserInput",
     "Write",
     "BackendBase",
     "DirEntry",

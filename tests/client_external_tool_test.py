@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Tests for per-run client external tool definitions."""
+import json
 from unittest import IsolatedAsyncioTestCase, TestCase
 
 from pydantic import ValidationError
@@ -11,18 +12,28 @@ from agentscope.app._client_external_tool import (
     ClientExternalToolDefinition,
 )
 from agentscope.app._router._schema import ChatRequest
-from agentscope.message import TextBlock, ToolCallBlock, UserMsg
+from agentscope.event import (
+    ExternalExecutionResultEvent,
+    RequireExternalExecutionEvent,
+)
+from agentscope.message import (
+    TextBlock,
+    ToolCallBlock,
+    ToolResultBlock,
+    ToolResultState,
+    UserMsg,
+)
 from agentscope.model import ChatResponse
 from agentscope.permission import (
     PermissionBehavior,
     PermissionContext,
     PermissionDecision,
 )
-from agentscope.tool import Toolkit
+from agentscope.tool import AskUser, Toolkit
 
 
 def _definition(
-    name: str = "client__request_user_input",
+    name: str = "client__choose_option",
     read_only: bool = False,
 ) -> ClientExternalToolDefinition:
     """Build a minimal valid client external tool definition."""
@@ -43,6 +54,60 @@ def _definition(
 class ClientExternalToolDefinitionTest(TestCase):
     """Validate the public request contract and its guardrails."""
 
+    def test_native_resume_validates_metadata_when_tool_is_disabled(
+        self,
+    ) -> None:
+        """An existing answer remains valid without enabling future calls."""
+        metadata = {
+            "answers": [
+                {"question": "Which?", "selected": ["A"], "other": None},
+            ],
+        }
+        event = ExternalExecutionResultEvent(
+            reply_id="r",
+            execution_results=[
+                ToolResultBlock(
+                    id="c",
+                    name="AskUser",
+                    output="Which?\nA",
+                    state=ToolResultState.SUCCESS,
+                    metadata=metadata,
+                ),
+            ],
+        )
+        request = ChatRequest(
+            agent_id="a",
+            session_id="s",
+            input=event,
+        )
+        self.assertEqual(request.client_builtin_tools, [])
+        self.assertEqual(
+            request.input.execution_results[0].metadata,
+            metadata,
+        )
+        event.execution_results[0].metadata = {}
+        with self.assertRaises(ValidationError):
+            ChatRequest(agent_id="a", session_id="s", input=event)
+
+    def test_native_capability_only_accepts_known_tools(self) -> None:
+        """Native declarations carry names, not client-owned schemas."""
+        request = ChatRequest(
+            agent_id="a",
+            session_id="s",
+            input=None,
+            client_builtin_tools=["AskUser"],
+        )
+        self.assertEqual(request.client_builtin_tools, ["AskUser"])
+        self.assertEqual(request.client_external_tools, [])
+        for names in (["Unknown"], ["AskUser", "AskUser"]):
+            with self.subTest(names=names), self.assertRaises(ValidationError):
+                ChatRequest(
+                    agent_id="a",
+                    session_id="s",
+                    input=None,
+                    client_builtin_tools=names,
+                )
+
     def test_chat_request_preserves_valid_definition(self) -> None:
         """A valid definition is available to the current chat run."""
         request = ChatRequest(
@@ -58,9 +123,10 @@ class ClientExternalToolDefinitionTest(TestCase):
                 "agent_id": "agent-1",
                 "session_id": "session-1",
                 "input": None,
+                "client_builtin_tools": [],
                 "client_external_tools": [
                     {
-                        "name": "client__request_user_input",
+                        "name": "client__choose_option",
                         "description": "Ask the user to choose.",
                         "read_only": False,
                         "input_schema": {
@@ -188,6 +254,95 @@ class ClientExternalToolDefinitionTest(TestCase):
 class ClientExternalToolRuntimeTest(IsolatedAsyncioTestCase):
     """Validate failures at the agent's schema evaluation boundary."""
 
+    async def test_native_ask_user_parks_and_resumes_with_metadata(
+        self,
+    ) -> None:
+        """A native question uses the existing external execution loop."""
+        model = MockModel(context_size=10000)
+        model.set_responses(
+            [
+                ChatResponse(
+                    content=[
+                        ToolCallBlock(
+                            id="ask",
+                            name="AskUser",
+                            input=json.dumps(
+                                {
+                                    "questions": [
+                                        {
+                                            "question": "Which?",
+                                            "header": "Choice",
+                                            "options": [
+                                                {
+                                                    "label": "A",
+                                                    "description": "First",
+                                                },
+                                                {
+                                                    "label": "B",
+                                                    "description": "Second",
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ),
+                        ),
+                    ],
+                    is_last=True,
+                ),
+                ChatResponse(content=[TextBlock(text="Done")], is_last=True),
+            ],
+        )
+        agent = Agent(
+            name="Friday",
+            system_prompt="Help the user.",
+            model=model,
+            toolkit=Toolkit(tools=[AskUser()]),
+            injection_config=InjectionConfig(inject_runtime_state=False),
+        )
+        events = [
+            event
+            async for event in agent.reply_stream(
+                UserMsg(name="user", content="Ask me."),
+            )
+        ]
+        pending = [
+            event
+            for event in events
+            if isinstance(event, RequireExternalExecutionEvent)
+        ]
+        self.assertEqual(len(pending), 1)
+        self.assertEqual(
+            [call.name for call in pending[0].tool_calls],
+            ["AskUser"],
+        )
+        metadata = {
+            "answers": [
+                {"question": "Which?", "selected": ["B"], "other": None},
+            ],
+        }
+        reply = await agent.reply(
+            ExternalExecutionResultEvent(
+                reply_id=pending[0].reply_id,
+                execution_results=[
+                    ToolResultBlock(
+                        id="ask",
+                        name="AskUser",
+                        output="Which?\nB",
+                        state=ToolResultState.SUCCESS,
+                        metadata=metadata,
+                    ),
+                ],
+            ),
+        )
+        self.assertEqual(reply.get_text_content(), "Done")
+        results = [
+            result
+            for message in agent.state.context
+            for result in message.get_content_blocks("tool_result")
+        ]
+        self.assertEqual([result.metadata for result in results], [metadata])
+
     async def test_permissions_follow_explicit_read_only_contract(
         self,
     ) -> None:
@@ -203,12 +358,12 @@ class ClientExternalToolRuntimeTest(IsolatedAsyncioTestCase):
             PermissionDecision(
                 behavior=PermissionBehavior.ASK,
                 message=(
-                    "Client external tool 'client__request_user_input' "
+                    "Client external tool 'client__choose_option' "
                     "may change client-side state."
                 ),
                 decision_reason=(
                     "The active client did not declare "
-                    "'client__request_user_input' read-only."
+                    "'client__choose_option' read-only."
                 ),
             ),
         )
@@ -220,12 +375,12 @@ class ClientExternalToolRuntimeTest(IsolatedAsyncioTestCase):
             PermissionDecision(
                 behavior=PermissionBehavior.ALLOW,
                 message=(
-                    "Client external tool 'client__request_user_input' "
+                    "Client external tool 'client__choose_option' "
                     "is read-only."
                 ),
                 decision_reason=(
                     "The active client declared "
-                    "'client__request_user_input' read-only."
+                    "'client__choose_option' read-only."
                 ),
             ),
         )

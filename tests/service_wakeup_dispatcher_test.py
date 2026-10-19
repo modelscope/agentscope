@@ -225,6 +225,7 @@ class _FakeChatService:
         input_msg: Any = None,
         client_external_tools: list[ClientExternalToolDefinition]
         | None = None,
+        client_builtin_tools: list[str] | None = None,
     ) -> None:
         """Record the call and signal a waiter."""
         call: dict[str, Any] = {
@@ -235,6 +236,8 @@ class _FakeChatService:
         }
         if client_external_tools is not None:
             call["client_external_tools"] = client_external_tools
+        if client_builtin_tools is not None:
+            call["client_builtin_tools"] = client_builtin_tools
         self.calls.append(call)
         self.notify.set()
 
@@ -453,7 +456,7 @@ class TestWakeupDispatcherDispatch(IsolatedAsyncioTestCase):
             confirm_results=[],
         )
         definition = ClientExternalToolDefinition(
-            name="client__request_user_input",
+            name="client__choose_option",
             description="Ask the user to choose.",
             input_schema={
                 "type": "object",
@@ -480,6 +483,7 @@ class TestWakeupDispatcherDispatch(IsolatedAsyncioTestCase):
                     "client_external_tools": [
                         definition.model_dump(mode="json"),
                     ],
+                    "client_builtin_tools": ["AskUser"],
                 },
             )
             await bus.publish(MessageBusKeys.wakeup_signal(), {})
@@ -490,6 +494,7 @@ class TestWakeupDispatcherDispatch(IsolatedAsyncioTestCase):
             chat.calls[0]["client_external_tools"],
             [definition],
         )
+        self.assertEqual(chat.calls[0]["client_builtin_tools"], ["AskUser"])
 
     async def test_invalid_client_tools_do_not_drop_resume(self) -> None:
         """Invalid optional tools cannot strand an external result."""
@@ -502,7 +507,7 @@ class TestWakeupDispatcherDispatch(IsolatedAsyncioTestCase):
             execution_results=[
                 ToolResultBlock(
                     id="tool-call-1",
-                    name="client__request_user_input",
+                    name="client__choose_option",
                     output="Minimal change",
                 ),
             ],
@@ -523,6 +528,7 @@ class TestWakeupDispatcherDispatch(IsolatedAsyncioTestCase):
                     "kind": MessageBusKeys.WAKEUP_KIND_RESUME,
                     "input": event.model_dump(mode="json"),
                     "client_external_tools": [{"name": "invalid"}],
+                    "client_builtin_tools": ["unknown"],
                 },
             )
             await bus.publish(MessageBusKeys.wakeup_signal(), {})
@@ -608,6 +614,7 @@ class TestWakeupDispatcherDispatch(IsolatedAsyncioTestCase):
                     "agent_id": "wa1",
                     "kind": MessageBusKeys.WAKEUP_KIND_RESUME,
                     "input": event.model_dump(mode="json"),
+                    "client_builtin_tools": ["AskUser"],
                 },
             )
             await bus.publish(MessageBusKeys.wakeup_signal(), {})
@@ -622,6 +629,7 @@ class TestWakeupDispatcherDispatch(IsolatedAsyncioTestCase):
 
         self.assertEqual(len(chat.calls), 1)
         self.assertEqual(chat.calls[0]["session_id"], "w1")
+        self.assertEqual(chat.calls[0]["client_builtin_tools"], ["AskUser"])
         self.assertIsInstance(
             chat.calls[0]["input_msg"],
             UserConfirmResultEvent,

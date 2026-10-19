@@ -498,6 +498,7 @@ export interface ChatRequest {
 	session_id: string;
 	input: Msg | Msg[] | UserConfirmResultEvent | ExternalExecutionResultEvent | null;
 	client_external_tools?: ClientExternalToolDefinition[];
+	client_builtin_tools?: Array<'AskUser'>;
 }
 
 // ─── MCP ──────────────────────────────────────────────────────────────────────

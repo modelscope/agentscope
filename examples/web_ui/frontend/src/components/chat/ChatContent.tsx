@@ -206,7 +206,7 @@ const ChatContentComponent: React.FC<ChatContentProps> = ({
 			return;
 		}
 
-		const result = pendingExternalToolRegistration?.composerResult?.(content);
+		const result = pendingExternalToolRegistration?.composerResult?.(content, pending.toolCall);
 		if (result === null || result === undefined) return;
 		void onClientExternalToolResult(pending.toolCall, result, pending.replyId).catch(
 			() => undefined,
@@ -388,7 +388,16 @@ const ChatContentComponent: React.FC<ChatContentProps> = ({
 						allowedInputTypes={pendingExternalTools.length > 0 ? [] : allowedInputTypes}
 						fileProcessor={fileProcessor}
 						phase={phase}
-						acceptsInput={Boolean(pendingExternalToolRegistration?.composerResult)}
+						acceptsInput={
+							Boolean(pendingExternalToolRegistration?.composerResult) &&
+							(!pendingExternalToolRegistration?.canCompose ||
+								Boolean(
+									pendingExternalTool &&
+									pendingExternalToolRegistration.canCompose(
+										pendingExternalTool.toolCall,
+									),
+								))
+						}
 						onInterrupt={onInterrupt}
 						voiceState={voiceState}
 						onVoiceToggle={onVoiceToggle}

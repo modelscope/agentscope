@@ -24,7 +24,10 @@ from typing import TYPE_CHECKING, Literal
 from .message_bus._keys import MessageBusKeys
 
 if TYPE_CHECKING:
-    from ._client_external_tool import ClientExternalToolDefinition
+    from ._client_external_tool import (
+        ClientBuiltinToolName,
+        ClientExternalToolDefinition,
+    )
     from .message_bus._base import MessageBus
 
     from agentscope.event import (
@@ -87,6 +90,7 @@ async def enqueue_run_trigger(
     | Msg
     | None = None,
     client_external_tools: list[ClientExternalToolDefinition] | None = None,
+    client_builtin_tools: list[ClientBuiltinToolName] | None = None,
 ) -> None:
     """Enqueue a typed run trigger and signal dispatchers.
 
@@ -127,6 +131,8 @@ async def enqueue_run_trigger(
         client_external_tools:
             External tools supported by the client that produced this
             trigger. They remain scoped to the resulting run.
+        client_builtin_tools:
+            Native external tool names supported by this trigger's client.
     """
     payload: dict[str, object] = {
         "user_id": user_id,
@@ -135,6 +141,8 @@ async def enqueue_run_trigger(
         "kind": kind,
         "input": inputs.model_dump(mode="json") if inputs else None,
     }
+    if client_builtin_tools:
+        payload["client_builtin_tools"] = client_builtin_tools
     if client_external_tools:
         payload["client_external_tools"] = [
             tool.model_dump(mode="json") for tool in client_external_tools

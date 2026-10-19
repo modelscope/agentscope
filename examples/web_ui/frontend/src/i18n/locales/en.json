@@ -106,14 +106,13 @@
 		"toConfirm": "to confirm",
 		"yesWithRule": "Yes, and allow {{toolName}} to execute {{ruleContent}} for this session"
 	},
-	"requestUserInput": {
-		"eyebrow": "Your decision",
-		"recommended": "Recommended",
+	"askUser": {
+		"multiSelect": "Select one or more options. Space toggles a choice; Enter continues.",
+		"back": "Back",
+		"next": "Next",
 		"other": "Other",
 		"otherPlaceholder": "Enter a different answer",
 		"cancel": "Cancel",
-		"cancelling": "Cancelling",
-		"invalidTitle": "This choice cannot be displayed",
 		"invalidDescription": "Cancel this request and ask the agent to try again.",
 		"historyAsked": "Asked",
 		"historyAnswered": "Selected",
@@ -175,7 +174,7 @@
 			"invalidJson": "Enter a valid JSON value before continuing.",
 			"submit": "Return result"
 		},
-		"requestUserInput": {
+		"askUser": {
 			"name": "Request user input",
 			"description": "Ask you to choose from structured options or enter another answer."
 		}

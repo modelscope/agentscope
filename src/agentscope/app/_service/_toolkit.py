@@ -10,6 +10,7 @@ from typing import Any, Literal
 
 from .._manager import BackgroundTaskManager, SchedulerManager
 from .._client_external_tool import (
+    ClientBuiltinToolName,
     ClientExternalTool,
     ClientExternalToolDefinition,
 )
@@ -28,6 +29,7 @@ from ..storage import AgentRecord, SessionRecord, StorageBase
 from ..workspace_manager import WorkspaceManagerBase
 from ...middleware import MiddlewareBase
 from ...tool import (
+    AskUser,
     TaskCreate,
     TaskGet,
     TaskList,
@@ -60,6 +62,7 @@ async def get_toolkit(
     channel_tools: list[ToolBase] | None = None,
     client_external_tools: list[ClientExternalToolDefinition] | None = None,
     sop_dispatch: str | None = None,
+    client_builtin_tools: list[ClientBuiltinToolName] | None = None,
 ) -> Toolkit:
     """Assemble the complete :class:`Toolkit` for one chat turn.
 
@@ -145,6 +148,9 @@ optional):
 optional):
             Validated external tools supported by the active client for this
             run. They are not persisted in the session.
+        client_builtin_tools (`list[ClientBuiltinToolName] | None`):
+            Native external tools enabled by the active client for this run.
+            Unattended callers leave this empty.
 
     Returns:
         `Toolkit`: Fully populated toolkit (tools + skills + MCPs).
@@ -282,6 +288,9 @@ time or interval"
     # the channel section of the system prompt).
     if channel_tools:
         tools += channel_tools
+
+    if "AskUser" in (client_builtin_tools or []):
+        tools.append(AskUser())
 
     # Client-provided tools are appended last, but never replace a server
     # tool. Fail closed on a conflict because the client dispatches pending

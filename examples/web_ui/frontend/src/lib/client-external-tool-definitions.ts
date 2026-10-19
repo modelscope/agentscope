@@ -1,6 +1,2 @@
-import { REQUEST_USER_INPUT_EXTERNAL_TOOL } from './request-user-input.ts';
-import type { ClientExternalToolDefinition } from '../api/types.ts';
-
-export const CLIENT_EXTERNAL_TOOL_DEFINITIONS: ClientExternalToolDefinition[] = [
-	REQUEST_USER_INPUT_EXTERNAL_TOOL,
-];
+// Native tool schemas are owned by the server, not sent by the browser.
+export const CLIENT_BUILTIN_TOOL_NAMES = ['AskUser'] as const;

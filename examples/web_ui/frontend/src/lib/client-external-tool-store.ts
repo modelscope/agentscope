@@ -1,6 +1,6 @@
 import Ajv2020 from 'ajv/dist/2020.js';
 
-import { CLIENT_EXTERNAL_TOOL_DEFINITIONS } from './client-external-tool-definitions.ts';
+import { CLIENT_BUILTIN_TOOL_NAMES } from './client-external-tool-definitions.ts';
 import type { ClientExternalToolDefinition } from '../api/types.ts';
 
 export const CLIENT_EXTERNAL_TOOL_STORAGE_KEY = 'agentscope.client-external-tools.v1';
@@ -63,7 +63,7 @@ const EMPTY_STATE: ClientExternalToolStoreState = {
 	selections: {},
 };
 
-const builtInNames = new Set(CLIENT_EXTERNAL_TOOL_DEFINITIONS.map((tool) => tool.name));
+const builtInNames = new Set<string>(CLIENT_BUILTIN_TOOL_NAMES);
 const listeners = new Set<() => void>();
 let storageListenerAttached = false;
 const schemaValidator = new Ajv2020({ strict: false });
@@ -201,7 +201,7 @@ export function parseClientExternalToolStoreState(
 						.filter(
 							(name, index): name is string =>
 								typeof name === 'string' &&
-								TOOL_NAME_PATTERN.test(name) &&
+								(builtInNames.has(name) || TOOL_NAME_PATTERN.test(name)) &&
 								names.indexOf(name) === index,
 						)
 						.slice(0, MAX_CLIENT_TOOLS);
@@ -304,14 +304,20 @@ export function getEnabledClientExternalToolDefinitions(
 	sessionId: string,
 	state: ClientExternalToolStoreState = snapshot,
 ): ClientExternalToolDefinition[] {
-	const definitions = [
-		...CLIENT_EXTERNAL_TOOL_DEFINITIONS,
-		...state.customTools.map((tool) => tool.definition),
-	];
+	const definitions = state.customTools.map((tool) => tool.definition);
 	const byName = new Map(definitions.map((definition) => [definition.name, definition]));
 	return getEnabledClientExternalToolNames(agentId, sessionId, state)
 		.map((name) => byName.get(name))
 		.filter((definition): definition is ClientExternalToolDefinition => Boolean(definition));
+}
+
+export function getEnabledClientBuiltinTools(
+	agentId: string,
+	sessionId: string,
+	state: ClientExternalToolStoreState = snapshot,
+): Array<(typeof CLIENT_BUILTIN_TOOL_NAMES)[number]> {
+	const enabled = new Set(getEnabledClientExternalToolNames(agentId, sessionId, state));
+	return CLIENT_BUILTIN_TOOL_NAMES.filter((name) => enabled.has(name));
 }
 
 export function setClientExternalToolEnabled(
@@ -348,7 +354,7 @@ export function saveCustomClientExternalTool(
 ): CustomToolValidationResult {
 	if (
 		!originalName &&
-		CLIENT_EXTERNAL_TOOL_DEFINITIONS.length + snapshot.customTools.length >= MAX_CLIENT_TOOLS
+		CLIENT_BUILTIN_TOOL_NAMES.length + snapshot.customTools.length >= MAX_CLIENT_TOOLS
 	) {
 		return { ok: false, error: { field: 'name', code: 'toolLimit' } };
 	}

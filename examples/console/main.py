@@ -22,7 +22,7 @@ from agentscope.console import launch_console
 from agentscope.credential import DashScopeCredential
 from agentscope.middleware import AgenticMemoryMiddleware
 from agentscope.model import DashScopeChatModel
-from agentscope.tool import RequestUserInput, Toolkit
+from agentscope.tool import AskUser, Toolkit
 from agentscope.workspace import LocalWorkspace
 
 
@@ -70,7 +70,7 @@ async def main() -> None:
                 # workspace, bound to its backend and skill partition
                 tools=[
                     *await workspace.list_tools(),
-                    RequestUserInput(),
+                    AskUser(),
                 ],
                 skills_or_loaders=await workspace.list_skills(),
             ),
