@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=protected-access,unused-argument
 """Unit tests for DashScopeEmbeddingModel."""
+import tempfile
 from dataclasses import asdict
 from threading import get_ident
+from types import SimpleNamespace
 from typing import Any
 from unittest import IsolatedAsyncioTestCase
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, call, patch
 
 from utils import AnyValue
 
@@ -14,6 +16,7 @@ from agentscope.embedding import (
     DashScopeEmbeddingModel,
     EmbeddingResponse,
     EmbeddingUsage,
+    FileEmbeddingCache,
 )
 from agentscope.message import DataBlock, Base64Source, URLSource
 
@@ -57,6 +60,46 @@ def _mock_resp(embeddings: list[list[float]]) -> EmbeddingResponse:
     return EmbeddingResponse(
         embeddings=embeddings,
         usage=EmbeddingUsage(tokens=len(embeddings), time=0.01),
+    )
+
+
+_MULTIMODAL_MODELS = (
+    "qwen3-vl-embedding",
+    "qwen2.5-vl-embedding",
+    "tongyi-embedding-vision-plus",
+    "tongyi-embedding-vision-flash",
+    "tongyi-embedding-vision-plus-2026-03-06",
+    "tongyi-embedding-vision-flash-2026-03-06",
+    "multimodal-embedding-v1",
+)
+
+
+def _multimodal_resp(**kwargs: Any) -> SimpleNamespace:
+    """Return deterministic vectors without calling a provider."""
+    dimension = kwargs.get("dimension", 2560)
+    return SimpleNamespace(
+        status_code=200,
+        output={
+            "embeddings": [
+                {"embedding": [0.25] * dimension} for _ in kwargs["input"]
+            ],
+        },
+        usage={"input_tokens": 1, "image_tokens": 0},
+    )
+
+
+def _multimodal_model(
+    dimensions: int,
+    name: str = "qwen3-vl-embedding",
+    cache: FileEmbeddingCache | None = None,
+) -> DashScopeEmbeddingModel:
+    """Build a public model wrapper with an offline credential."""
+    return DashScopeEmbeddingModel(
+        credential=DashScopeCredential(api_key="offline-placeholder"),
+        model=name,
+        dimensions=dimensions,
+        embedding_cache=cache,
+        max_retries=0,
     )
 
 
@@ -274,3 +317,142 @@ class DashScopeMultimodalCallTest(IsolatedAsyncioTestCase):
         bad = DataBlock(source=Base64Source(data="x", media_type="video/mp4"))
         with self.assertRaises(ValueError):
             DashScopeEmbeddingModel._format_data_block(bad)
+
+
+class DashScopeMultimodalDimensionsTest(IsolatedAsyncioTestCase):
+    """Configured dimensions must reach both the SDK and cache identity."""
+
+    def _assert_response(
+        self,
+        response: EmbeddingResponse,
+        dimension: int,
+        source: str,
+    ) -> None:
+        """Compare the complete response, matching only dynamic fields."""
+        self.assertEqual(
+            asdict(response),
+            {
+                "embeddings": [[0.25] * dimension],
+                "id": AnyValue(),
+                "created_at": AnyValue(),
+                "type": "embedding",
+                "usage": {
+                    "tokens": 0 if source == "cache" else 1,
+                    "time": 0 if source == "cache" else AnyValue(),
+                    "type": "embedding",
+                },
+                "source": source,
+            },
+        )
+
+    @patch("dashscope.MultiModalEmbedding.call", side_effect=_multimodal_resp)
+    async def test_qwen_dimensions(self, sdk: Any) -> None:
+        """Every advertised dimension is sent to the configurable model."""
+        for dimension in (2560, 2048, 1536, 1024, 768, 512, 256):
+            with self.subTest(dimension=dimension):
+                sdk.reset_mock()
+                response = await _multimodal_model(dimension)(["hello"])
+                self.assertEqual(
+                    sdk.call_args_list,
+                    [
+                        call(
+                            input=[{"text": "hello"}],
+                            model="qwen3-vl-embedding",
+                            api_key="offline-placeholder",
+                            dimension=dimension,
+                        ),
+                    ],
+                )
+                self._assert_response(response, dimension, "api")
+
+    @patch("dashscope.MultiModalEmbedding.call", side_effect=_multimodal_resp)
+    async def test_file_cache_separates_dimensions(self, sdk: Any) -> None:
+        """Different contracts must not read each other's stored vectors."""
+        for name in _MULTIMODAL_MODELS:
+            with (
+                self.subTest(model=name),
+                tempfile.TemporaryDirectory() as directory,
+            ):
+                sdk.reset_mock()
+                cache = FileEmbeddingCache(cache_dir=directory)
+                small = _multimodal_model(512, name=name, cache=cache)
+                large = _multimodal_model(1024, name=name, cache=cache)
+                first = await small(["same input"])
+                second = await large(["same input"])
+                repeated = await small(["same input"])
+                self.assertEqual(
+                    sdk.call_args_list,
+                    [
+                        call(
+                            input=[{"text": "same input"}],
+                            model=name,
+                            api_key="offline-placeholder",
+                            dimension=dimension,
+                        )
+                        for dimension in (512, 1024)
+                    ],
+                )
+                self._assert_response(first, 512, "api")
+                self._assert_response(second, 1024, "api")
+                self._assert_response(repeated, 512, "cache")
+
+    @patch("dashscope.MultiModalEmbedding.call", side_effect=_multimodal_resp)
+    async def test_explicit_dimension_override(self, sdk: Any) -> None:
+        """An explicit override determines the request and cache identity."""
+        for name in _MULTIMODAL_MODELS:
+            with (
+                self.subTest(model=name),
+                tempfile.TemporaryDirectory() as directory,
+            ):
+                sdk.reset_mock()
+                cache = FileEmbeddingCache(cache_dir=directory)
+                first = await _multimodal_model(1024, name=name, cache=cache)(
+                    ["same input"],
+                    dimension=512,
+                    output_type="dense",
+                )
+                second = await _multimodal_model(512, name=name, cache=cache)(
+                    ["same input"],
+                    output_type="dense",
+                )
+                model = _multimodal_model(1024, name=name, cache=cache)
+                reordered = await model(
+                    ["same input"],
+                    output_type="dense",
+                    dimension=512,
+                )
+                self.assertEqual(
+                    sdk.call_args_list,
+                    [
+                        call(
+                            input=[{"text": "same input"}],
+                            model=name,
+                            api_key="offline-placeholder",
+                            dimension=512,
+                            output_type="dense",
+                        ),
+                    ],
+                )
+                self._assert_response(first, 512, "api")
+                self._assert_response(second, 512, "cache")
+                self._assert_response(reordered, 512, "cache")
+
+    @patch("dashscope.MultiModalEmbedding.call", side_effect=_multimodal_resp)
+    async def test_multimodal_dimensions(self, sdk: Any) -> None:
+        """Every multimodal model forwards the configured dimensions."""
+        for name in _MULTIMODAL_MODELS:
+            with self.subTest(model=name):
+                sdk.reset_mock()
+                response = await _multimodal_model(512, name=name)(["hello"])
+                self.assertEqual(
+                    sdk.call_args_list,
+                    [
+                        call(
+                            input=[{"text": "hello"}],
+                            model=name,
+                            api_key="offline-placeholder",
+                            dimension=512,
+                        ),
+                    ],
+                )
+                self._assert_response(response, 512, "api")
