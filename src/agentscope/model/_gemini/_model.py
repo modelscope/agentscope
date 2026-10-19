@@ -297,10 +297,9 @@ class GeminiChatModel(ChatModelBase):
                 (e.g. ``vertexai``, ``project``, ``location``,
                 ``credentials``, ``http_options``).
             raise_on_content_filter (`bool`, defaults to `False`):
-                Opt in to content-filter exceptions and SDK error
-                normalization, including structured-output calls. When
-                disabled, preserve legacy parsing and SDK exceptions.
-                This does not change the provider's filtering policy.
+                Raise ``ContentBlockedError`` for supported filter signals.
+                Disabled by default. See ``ChatModelBase.__init__`` for
+                compatibility, structured-output, and stream retry limits.
         """
         super().__init__(
             credential=credential,
@@ -453,14 +452,15 @@ class GeminiChatModel(ChatModelBase):
             response_id = getattr(chunk, "response_id", None) or response_id
             delta_res.id = response_id
 
-            blocked_error = _gemini_content_block_error(
-                chunk,
-                partial_output=has_output,
-            )
-            if self.raise_on_content_filter and blocked_error is not None:
-                if blocked_error.request_id is None:
-                    blocked_error.request_id = response_id
-                raise blocked_error
+            if self.raise_on_content_filter:
+                blocked_error = _gemini_content_block_error(
+                    chunk,
+                    partial_output=has_output,
+                )
+                if blocked_error is not None:
+                    if blocked_error.request_id is None:
+                        blocked_error.request_id = response_id
+                    raise blocked_error
 
             if (
                 chunk.candidates
@@ -525,9 +525,10 @@ class GeminiChatModel(ChatModelBase):
             `ChatResponse`:
                 A single ``ChatResponse`` with ``is_last=True``.
         """
-        blocked_error = _gemini_content_block_error(response)
-        if self.raise_on_content_filter and blocked_error is not None:
-            raise blocked_error
+        if self.raise_on_content_filter:
+            blocked_error = _gemini_content_block_error(response)
+            if blocked_error is not None:
+                raise blocked_error
 
         content_blocks: List[TextBlock | ToolCallBlock | ThinkingBlock] = []
 

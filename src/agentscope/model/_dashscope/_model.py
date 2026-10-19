@@ -156,10 +156,9 @@ class DashScopeChatModel(ChatModelBase):
                 Extra keyword arguments forwarded to ``openai.AsyncClient``
                 (e.g. ``timeout``, ``default_headers``, ``http_client``).
             raise_on_content_filter (`bool`, defaults to `False`):
-                Opt in to content-filter exceptions and SDK error
-                normalization, including structured-output calls. When
-                disabled, preserve legacy parsing and SDK exceptions.
-                This does not change the provider's filtering policy.
+                Raise ``ContentBlockedError`` for supported filter signals.
+                Disabled by default. See ``ChatModelBase.__init__`` for
+                compatibility, structured-output, and stream retry limits.
         """
         super().__init__(
             credential=credential,

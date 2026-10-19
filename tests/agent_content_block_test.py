@@ -78,8 +78,33 @@ class AgentContentBlockTest(IsolatedAsyncioTestCase):
                 "original_code": "blocked_input",
                 "request_id": "request-1",
                 "partial_output": True,
+                "requires_review": False,
             },
         )
+
+    def test_review_flag_is_not_inferred_from_provider_codes(self) -> None:
+        """Only explicit adapter decisions set the provider-neutral flag."""
+        for provider, code in (
+            ("openai", "bio_policy"),
+            ("openai", "misalignment_policy_violation"),
+            ("custom", "review_required"),
+        ):
+            with self.subTest(provider=provider, code=code):
+                default = ContentBlockedError(
+                    "blocked",
+                    provider=provider,
+                    original_code=code,
+                )
+                explicit = ContentBlockedError(
+                    "blocked",
+                    provider=provider,
+                    original_code=code,
+                    requires_review=True,
+                )
+                self.assertEqual(
+                    (default.requires_review, explicit.requires_review),
+                    (False, True),
+                )
 
     async def test_model_normalization_preserves_cause(self) -> None:
         """Both immediate and streamed SDK errors preserve their cause."""
@@ -137,11 +162,19 @@ class AgentContentBlockTest(IsolatedAsyncioTestCase):
                 "blocked",
                 provider="openai",
                 original_code="misalignment_policy_violation",
+                requires_review=True,
             ),
             ContentBlockedError(
                 "blocked",
                 provider="openai",
                 original_code="BIO_POLICY",
+                requires_review=True,
+            ),
+            ContentBlockedError(
+                "blocked",
+                phase=ContentBlockedPhase.OUTPUT,
+                provider="custom",
+                requires_review=True,
             ),
         )
         for error in cases:

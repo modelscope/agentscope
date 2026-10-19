@@ -34,6 +34,7 @@ class ContentBlockedError(DeveloperOrientedException):
         original_code: str | None = None,
         request_id: str | None = None,
         partial_output: bool = False,
+        requires_review: bool = False,
     ) -> None:
         """Initialize a normalized content-blocked error.
 
@@ -50,6 +51,11 @@ class ContentBlockedError(DeveloperOrientedException):
                 The provider request identifier, when available.
             partial_output (`bool`):
                 Whether model output was emitted before the block signal.
+            requires_review (`bool`, defaults to `False`):
+                Whether the provider requires review before further actions.
+                Adapters set this flag from explicit provider signals. The
+                agent must not automatically retry or switch fallback models
+                when it is set.
         """
         super().__init__(message)
         self.phase = phase
@@ -57,20 +63,7 @@ class ContentBlockedError(DeveloperOrientedException):
         self.original_code = original_code
         self.request_id = request_id
         self.partial_output = partial_output
-
-    @property
-    def requires_review(self) -> bool:
-        """Whether automatic replay must stop for a provider safety review.
-
-        These OpenAI policy stops are not ordinary context-filter failures.
-        Neither masking nor switching models is an automatic recovery path.
-        """
-        return self.provider == "openai" and (
-            self.original_code or ""
-        ).casefold() in {
-            "bio_policy",
-            "misalignment_policy_violation",
-        }
+        self.requires_review = requires_review
 
 
 class StructuredOutputError(DeveloperOrientedException):

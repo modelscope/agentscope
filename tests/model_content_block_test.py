@@ -154,6 +154,7 @@ class ContentBlockCompatibilityTest(IsolatedAsyncioTestCase):
                             "original_code": normalized.original_code,
                             "request_id": normalized.request_id,
                             "partial_output": normalized.partial_output,
+                            "requires_review": normalized.requires_review,
                         },
                         {
                             "message": "inner",
@@ -162,6 +163,11 @@ class ContentBlockCompatibilityTest(IsolatedAsyncioTestCase):
                             "original_code": code,
                             "request_id": "request-id",
                             "partial_output": False,
+                            "requires_review": code
+                            in {
+                                "bio_policy",
+                                "misalignment_policy_violation",
+                            },
                         },
                     )
 
@@ -303,6 +309,29 @@ class ContentBlockCompatibilityTest(IsolatedAsyncioTestCase):
                                 [b.text for r in parsed for b in r.content],
                                 ["partial content"],
                             )
+
+    async def test_disabled_gemini_filter_skips_inspection(self) -> None:
+        """The disabled switch avoids inspecting filter signals entirely."""
+        model = _model_with_filters(GeminiChatModel)
+        model.raise_on_content_filter = False
+        response = SimpleNamespace(
+            response_id="gemini-filter",
+            candidates=[],
+            usage_metadata=None,
+        )
+        with patch(
+            "agentscope.model._gemini._model._gemini_content_block_error",
+        ) as inspect_block:
+            parsed = model._parse_completion_response(datetime.now(), response)
+            chunks = [
+                chunk
+                async for chunk in model._parse_stream_response(
+                    datetime.now(),
+                    _Stream([response]),
+                )
+            ]
+        self.assertEqual((parsed.content, chunks), ([], []))
+        inspect_block.assert_not_called()
 
     async def test_default_gemini_and_responses_filters_are_not_errors(
         self,
@@ -1075,6 +1104,61 @@ class ModelContentBlockTest(IsolatedAsyncioTestCase):
 
 class OpenAIResponseContentBlockTest(IsolatedAsyncioTestCase):
     """Test explicit content-block signals from the Responses API."""
+
+    async def test_review_flags_cover_all_policy_error_paths(self) -> None:
+        """The adapter assigns review flags for SDK and response errors."""
+        model = _model_with_filters(OpenAIResponseModel)
+        for code, requires_review in (
+            ("bio_policy", True),
+            ("MISALIGNMENT_POLICY_VIOLATION", True),
+            ("image_content_policy_violation", False),
+        ):
+            with self.subTest(code=code):
+                fields = {"code": code, "message": "policy block"}
+                response = SimpleNamespace(
+                    id="response-policy",
+                    incomplete_details=None,
+                    error=SimpleNamespace(**fields),
+                    output=[],
+                    usage=None,
+                )
+                errors = [
+                    model._normalize_exception(
+                        _ProviderError(fields, "response-policy"),
+                    ),
+                ]
+                with self.assertRaises(ContentBlockedError) as caught:
+                    model._parse_completion_response(datetime.now(), response)
+                errors.append(caught.exception)
+                for event in (
+                    SimpleNamespace(type="response.failed", response=response),
+                    SimpleNamespace(type="error", **fields),
+                ):
+                    with patch(
+                        "agentscope.model._openai_response._model."
+                        "_generate_id",
+                        return_value="response-policy",
+                    ):
+                        with self.assertRaises(ContentBlockedError) as caught:
+                            async for _ in model._parse_stream_response(
+                                datetime.now(),
+                                _Stream([event]),
+                            ):
+                                pass
+                    errors.append(caught.exception)
+                expected = {
+                    "message": "policy block",
+                    "phase": ContentBlockedPhase.UNKNOWN,
+                    "provider": "openai",
+                    "original_code": code.casefold(),
+                    "request_id": "response-policy",
+                    "partial_output": False,
+                    "requires_review": requires_review,
+                }
+                self.assertEqual(
+                    [vars(error) for error in errors],
+                    [{**expected, "original_code": code}, *[expected] * 3],
+                )
 
     async def test_openai_response_policy_error(self) -> None:
         """A documented Responses policy code maps to an unknown phase."""

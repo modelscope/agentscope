@@ -102,6 +102,14 @@ class ChatModelBase:
                 normalization, including structured-output calls. When
                 disabled, preserve legacy parsing and SDK exceptions.
                 This does not change the provider's filtering policy.
+
+        Content-block exceptions do not use this model's SDK retry budget.
+        Before a result or stream is returned, Agent may retry OUTPUT blocks
+        within ``ModelConfig.max_retries`` if no output was emitted and no
+        review is required. After a stream is returned, consumption errors
+        are surfaced without Agent retries or fallback-model switching,
+        even before the first chunk. This boundary depends on when the error
+        occurs, not just whether ``stream`` is enabled.
         """
         self.credential = credential
         self.model = model

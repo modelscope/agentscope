@@ -32,13 +32,15 @@ else:
 
 # kwargs accepted by Chat Completions but NOT by the Responses API.
 _RESPONSES_UNSUPPORTED_KWARGS = frozenset({"modalities", "audio"})
-_RESPONSE_BLOCK_ERROR_CODES = frozenset(
+_RESPONSE_REVIEW_ERROR_CODES = frozenset(
     {
         "BIO_POLICY",
         "MISALIGNMENT_POLICY_VIOLATION",
-        "IMAGE_CONTENT_POLICY_VIOLATION",
     },
 )
+_RESPONSE_BLOCK_ERROR_CODES = _RESPONSE_REVIEW_ERROR_CODES | {
+    "IMAGE_CONTENT_POLICY_VIOLATION",
+}
 
 
 def _openai_response_error(
@@ -53,7 +55,8 @@ def _openai_response_error(
     classify error text. The returned error has UNKNOWN phase because the
     code alone does not establish whether input or output was blocked.
     Copy the caller's ``request_id`` and ``partial_output`` flag unchanged;
-    the latter indicates output emitted before this signal.
+    the latter indicates output emitted before this signal. Mark policy
+    review stops explicitly; the shared exception does not classify codes.
     """
     code = _enum_name(getattr(error, "code", None))
     if code not in _RESPONSE_BLOCK_ERROR_CODES:
@@ -66,6 +69,7 @@ def _openai_response_error(
         original_code=code.casefold(),
         request_id=request_id,
         partial_output=partial_output,
+        requires_review=code in _RESPONSE_REVIEW_ERROR_CODES,
     )
 
 
@@ -248,10 +252,9 @@ class OpenAIResponseModel(ChatModelBase):
                 Whether an explicit OpenAI refusal should raise a
                 ``ContentBlockedError`` instead of remaining normal output.
             raise_on_content_filter (`bool`, defaults to `False`):
-                Opt in to content-filter exceptions and SDK error
-                normalization, including structured-output calls. When
-                disabled, preserve legacy parsing and SDK exceptions.
-                This does not change the provider's filtering policy.
+                Raise ``ContentBlockedError`` for supported filter signals.
+                Disabled by default. See ``ChatModelBase.__init__`` for
+                compatibility, structured-output, and stream retry limits.
         """
         super().__init__(
             credential=credential,
@@ -301,7 +304,13 @@ class OpenAIResponseModel(ChatModelBase):
             },
             phase=ContentBlockedPhase.UNKNOWN,
         )
-        return normalized or error
+        if normalized is not None:
+            normalized.requires_review = (
+                _enum_name(normalized.original_code)
+                in _RESPONSE_REVIEW_ERROR_CODES
+            )
+            return normalized
+        return error
 
     async def _call_api(
         self,

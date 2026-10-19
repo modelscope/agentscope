@@ -3375,6 +3375,9 @@ class Agent:
                 except Exception as e:
                     last_exception = e
                     if isinstance(e, ContentBlockedError):
+                        # Custom models or middleware may consume a stream
+                        # before returning. Honor any reported output rather
+                        # than replaying a partially delivered response.
                         if e.partial_output or e.requires_review:
                             raise
                         if e.phase != ContentBlockedPhase.OUTPUT:
