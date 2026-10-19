@@ -68,4 +68,5 @@ class OpenAIASRModel(ASRModelBase):
             **kwargs,
         }
         result = await self.client.audio.transcriptions.create(**api_kwargs)
-        return ASRResponse(content=TextBlock(text=result.text))
+        text = result if isinstance(result, str) else result.text
+        return ASRResponse(content=TextBlock(text=text))
