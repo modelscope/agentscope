@@ -951,10 +951,7 @@ class WorkspaceBase:
             if not await backend.file_exists(self._mcp_file):
                 return {}
             raw = await backend.read_file(self._mcp_file)
-            # ``utf-8-sig`` also accepts a byte order mark. The file is
-            # ordinary JSON in the workspace, so a Windows editor may
-            # re-save it with one; plain UTF-8 would fail to parse and
-            # every persisted declaration would be dropped.
+            # Accept a leading UTF-8 BOM from external editors.
             data = json.loads(raw.decode("utf-8-sig"))
         except Exception as e:
             logger.warning(
