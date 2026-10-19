@@ -4,6 +4,7 @@ import base64
 import fnmatch
 from abc import ABC
 from typing import Any
+from urllib.request import url2pathname
 
 import requests
 from pydantic import Field
@@ -84,7 +85,7 @@ class _GeminiFormatterBase(FormatterBase, ABC):
             url = str(source.url)
             if url.startswith("file://"):
                 # Local file - read and convert to base64
-                file_path = url.removeprefix("file://")
+                file_path = url2pathname(url.removeprefix("file://"))
                 with open(file_path, "rb") as f:
                     data = base64.b64encode(f.read()).decode("utf-8")
                 return {
@@ -152,7 +153,8 @@ class GeminiChatFormatter(_GeminiFormatterBase):
 
             for block in msg.get_content_blocks():
                 if isinstance(block, TextBlock):
-                    parts.append({"text": block.text})
+                    if block.text:
+                        parts.append({"text": block.text})
 
                 elif isinstance(block, ThinkingBlock):
                     # Gemini API requires `thought: true` to mark a part as a
@@ -168,33 +170,33 @@ class GeminiChatFormatter(_GeminiFormatterBase):
                         )
 
                 elif isinstance(block, HintBlock):
-                    if parts:
-                        role = "model" if msg.role == "assistant" else "user"
-                        messages.append({"role": role, "parts": parts})
-                        parts = []
-
                     if isinstance(block.hint, str):
-                        messages.append(
-                            {
-                                "role": "user",
-                                "parts": [{"text": block.hint}],
-                            },
+                        hint_parts = (
+                            [{"text": block.hint}] if block.hint else []
                         )
                     else:
-                        hint_parts: list[dict] = []
+                        hint_parts = []
                         for sub in block.hint:
                             if isinstance(sub, TextBlock):
-                                hint_parts.append({"text": sub.text})
+                                if sub.text:
+                                    hint_parts.append({"text": sub.text})
                             elif isinstance(sub, DataBlock):
                                 formatted_sub = self._format_gemini_data_block(
                                     sub,
                                 )
                                 if formatted_sub:
                                     hint_parts.append(formatted_sub)
-                        if hint_parts:
-                            messages.append(
-                                {"role": "user", "parts": hint_parts},
+
+                    if hint_parts:
+                        if parts:
+                            role = (
+                                "model" if msg.role == "assistant" else "user"
                             )
+                            messages.append({"role": role, "parts": parts})
+                            parts = []
+                        messages.append(
+                            {"role": "user", "parts": hint_parts},
+                        )
 
                 elif isinstance(block, DataBlock):
                     formatted = self._format_gemini_data_block(block)
@@ -347,13 +349,13 @@ class GeminiMultiAgentFormatter(_GeminiFormatterBase):
                         await self._format_tool_sequence(group),
                     )
                 case "agent_message":
-                    formatted_msgs.extend(
-                        await self._format_agent_message(
-                            group,
-                            is_first_agent_message,
-                        ),
+                    formatted_group = await self._format_agent_message(
+                        group,
+                        is_first_agent_message,
                     )
-                    is_first_agent_message = False
+                    formatted_msgs.extend(formatted_group)
+                    if formatted_group:
+                        is_first_agent_message = False
 
         return formatted_msgs
 

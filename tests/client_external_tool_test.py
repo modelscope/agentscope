@@ -287,8 +287,15 @@ class ClientExternalToolRuntimeTest(IsolatedAsyncioTestCase):
             "tool_result",
         )
         self.assertEqual(len(tool_results), 1)
-        self.assertIn(
-            "Input schema evaluation failed for tool "
-            "'client__broken_reference'",
-            str(tool_results[0].output),
+        self.assertEqual(
+            {
+                "id": tool_results[0].id,
+                "name": tool_results[0].name,
+                "state": tool_results[0].state,
+            },
+            {
+                "id": "broken-reference-call",
+                "name": definition.name,
+                "state": "error",
+            },
         )

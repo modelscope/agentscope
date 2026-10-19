@@ -8,6 +8,7 @@ import jsonschema
 
 from ._renderer import ConsoleRenderer, Verbosity
 from ..agent import Agent
+from ..pipeline import PipelineProtocol
 from ..event import (
     ConfirmResult,
     ExternalExecutionResultEvent,
@@ -27,7 +28,7 @@ from ..tool import RequestUserInput
 
 
 async def _run_reply(
-    agent: Agent,
+    agent: Agent | PipelineProtocol,
     renderer: ConsoleRenderer,
     inputs: (
         Msg
@@ -74,8 +75,11 @@ async def _run_reply(
     try:
         await task
     except asyncio.CancelledError:
-        # Raised when the agent re-raises after the interruption
-        pass
+        # Only a caller cancelling this task bumps its ``cancelling()``
+        # counter, while a SIGINT cancels ``task`` alone and leaves it at 0.
+        caller = asyncio.current_task()
+        if caller is not None and caller.cancelling():
+            raise
     finally:
         if sigint_hooked:
             loop.remove_signal_handler(signal.SIGINT)
@@ -208,7 +212,7 @@ async def _request_user_input(
 
 
 async def launch_console(
-    agent: Agent,
+    agent: Agent | PipelineProtocol,
     user_name: str = "user",
     verbosity: Verbosity = "default",
     max_tool_result_lines: int | None = 20,
@@ -229,8 +233,8 @@ async def launch_console(
         await launch_console(agent)
 
     Args:
-        agent (`Agent`):
-            The agent to interact with.
+        agent (`Agent | PipelineProtocol`):
+            The agent or pipeline to interact with.
         user_name (`str`, defaults to `"user"`):
             The name attached to the user's input messages, also used
             as the input prompt.

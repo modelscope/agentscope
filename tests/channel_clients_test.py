@@ -3,9 +3,11 @@
 
 A process that does not hold a channel's long connection must still be
 able to use the channel: attach its platform tools to an agent, deliver
-a reply, and report its status. These cover the two pieces that make
-that work — the client factory and the status heartbeat.
+a reply, and report its status. These cover the three pieces that make
+that work — the client factory, the deliveries it owns, and the status
+heartbeat.
 """
+import asyncio
 import time
 from datetime import datetime
 from typing import Any, AsyncIterator
@@ -59,6 +61,8 @@ class _FakeChannel(ChannelBase):
         self.status = ChannelStatus()
         self.listened = False
         self.closed = False
+        self.sent_to = ""
+        self.returned = False
 
     @property
     def channel_id(self) -> str:
@@ -81,7 +85,11 @@ class _FakeChannel(ChannelBase):
         event: ChannelEvent,
         events: AsyncIterator[dict],
     ) -> None:
-        """No-op; delivery is not what these tests exercise."""
+        """Record the target, then consume the run's events."""
+        self.sent_to = event.chat_id
+        async for _ in events:
+            pass
+        self.returned = True
 
 
 class _Storage:
@@ -124,6 +132,7 @@ class ChannelClientsTest(IsolatedAsyncioTestCase):
     def _clients(self, storage: _Storage) -> ChannelClients:
         return ChannelClients(
             storage=storage,
+            message_bus=InMemoryMessageBus(),
             type_registry=ChannelTypeRegistry([_FakeChannel]),
         )
 
@@ -205,17 +214,77 @@ class ChannelClientsTest(IsolatedAsyncioTestCase):
         """A record whose class this process was not given is skipped."""
         clients = ChannelClients(
             storage=_Storage(_record()),
+            message_bus=InMemoryMessageBus(),
             type_registry=ChannelTypeRegistry([]),
         )
         self.assertIsNone(await clients.get("chan-1"))
 
 
+class ChannelDeliveryTest(IsolatedAsyncioTestCase):
+    """Deliveries run in the background but stay owned."""
+
+    def _clients(self, bus: InMemoryMessageBus) -> ChannelClients:
+        return ChannelClients(
+            storage=_Storage(_record()),
+            message_bus=bus,
+            type_registry=ChannelTypeRegistry([_FakeChannel]),
+        )
+
+    async def _deliver(self, clients: ChannelClients) -> None:
+        await clients.deliver(
+            session_id="s-1",
+            channel_id="chan-1",
+            chat_id="chat-1",
+            agent_id="agent-x",
+        )
+
+    async def test_returns_while_the_reply_is_still_going_out(self) -> None:
+        """The caller is mid-run holding the session lock, so it must not
+        wait on the platform."""
+        bus = InMemoryMessageBus()
+        async with self._clients(bus) as clients:
+            await self._deliver(clients)
+            await asyncio.sleep(0.05)
+
+            channel = await clients.get("chan-1")
+            self.assertEqual(channel.sent_to, "chat-1")
+            self.assertFalse(channel.returned)
+
+    async def test_shutdown_cancels_a_delivery_in_flight(self) -> None:
+        """A delivery outliving the process would be an orphan."""
+        bus = InMemoryMessageBus()
+        clients = self._clients(bus)
+        async with clients:
+            await self._deliver(clients)
+            await asyncio.sleep(0.05)
+            channel = await clients.get("chan-1")
+            self.assertEqual(channel.sent_to, "chat-1")
+
+        self.assertFalse(channel.returned)
+        self.assertEqual(len(clients._deliveries), 0)  # pylint: disable=W0212
+
+    async def test_an_unbuildable_channel_delivers_nothing(self) -> None:
+        """A disabled channel must not raise into the run."""
+        bus = InMemoryMessageBus()
+        storage = _Storage(_record(enabled=False))
+        async with ChannelClients(
+            storage=storage,
+            message_bus=bus,
+            type_registry=ChannelTypeRegistry([_FakeChannel]),
+        ) as clients:
+            await self._deliver(clients)
+
+
 class ChannelStatusTest(IsolatedAsyncioTestCase):
     """Status is read from the heartbeat, not from local instances."""
 
-    def _service(self, bus: InMemoryMessageBus) -> ChannelService:
+    def _service(
+        self,
+        bus: InMemoryMessageBus,
+        enabled: bool = True,
+    ) -> ChannelService:
         return ChannelService(
-            storage=_Storage(_record()),
+            storage=_Storage(_record(enabled=enabled)),
             message_bus=bus,
             type_registry=ChannelTypeRegistry([_FakeChannel]),
         )
@@ -238,11 +307,25 @@ class ChannelStatusTest(IsolatedAsyncioTestCase):
             ttl_secs=LIVENESS_TTL_SECS,
         )
 
-    async def test_no_heartbeat_reads_as_stopped(self) -> None:
-        """Nothing is holding the channel, so nothing reports it."""
+    async def test_an_enabled_channel_with_no_report_is_connecting(
+        self,
+    ) -> None:
+        """A channel just created has not been picked up yet. Calling
+        that stopped sends the operator looking for something to start
+        that is already starting."""
         bus = InMemoryMessageBus()
         self.assertEqual(
             await self._service(bus).get_status("chan-1"),
+            ChannelStatus(state="connecting"),
+        )
+
+    async def test_a_disabled_channel_with_no_report_is_stopped(
+        self,
+    ) -> None:
+        """Nothing is holding it, and nothing is meant to."""
+        bus = InMemoryMessageBus()
+        self.assertEqual(
+            await self._service(bus, enabled=False).get_status("chan-1"),
             ChannelStatus(state="stopped"),
         )
 
@@ -274,8 +357,11 @@ class ChannelStatusTest(IsolatedAsyncioTestCase):
             ChannelStatus(state="connecting"),
         )
 
-    async def test_only_stale_reports_read_as_stopped(self) -> None:
-        """Every holder went away; nothing fresh is left to believe."""
+    async def test_only_stale_reports_fall_back_to_the_enabled_flag(
+        self,
+    ) -> None:
+        """Every holder went away; nothing fresh is left to believe, so
+        this reads like never having been reported at all."""
         bus = InMemoryMessageBus()
         await self._beat(
             bus,
@@ -286,6 +372,10 @@ class ChannelStatusTest(IsolatedAsyncioTestCase):
 
         self.assertEqual(
             await self._service(bus).get_status("chan-1"),
+            ChannelStatus(state="connecting"),
+        )
+        self.assertEqual(
+            await self._service(bus, enabled=False).get_status("chan-1"),
             ChannelStatus(state="stopped"),
         )
 

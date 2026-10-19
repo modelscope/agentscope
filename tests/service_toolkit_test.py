@@ -214,6 +214,7 @@ class TestGetToolkitBaseAssembly(IsolatedAsyncioTestCase):
             scheduler_manager=SchedulerManager(
                 storage=_NoOpStorage(),  # type: ignore[arg-type]
                 message_bus=_NullBus(),  # type: ignore[arg-type]
+                workspace_manager=FakeWorkspaceManager(),
             ),
             background_task_manager=BackgroundTaskManager(
                 message_bus=_NullBus(),  # type: ignore[arg-type]
@@ -282,6 +283,7 @@ class TestGetToolkitBaseAssembly(IsolatedAsyncioTestCase):
             scheduler_manager=SchedulerManager(
                 storage=_NoOpStorage(),  # type: ignore[arg-type]
                 message_bus=_NullBus(),  # type: ignore[arg-type]
+                workspace_manager=FakeWorkspaceManager(),
             ),
             background_task_manager=BackgroundTaskManager(
                 message_bus=_NullBus(),  # type: ignore[arg-type]
@@ -351,6 +353,7 @@ class TestGetToolkitBaseAssembly(IsolatedAsyncioTestCase):
                 scheduler_manager=SchedulerManager(
                     storage=_NoOpStorage(),  # type: ignore[arg-type]
                     message_bus=_NullBus(),  # type: ignore[arg-type]
+                    workspace_manager=FakeWorkspaceManager(),
                 ),
                 background_task_manager=BackgroundTaskManager(
                     message_bus=_NullBus(),  # type: ignore[arg-type]
@@ -396,6 +399,7 @@ class TestGetToolkitWorkerVariant(IsolatedAsyncioTestCase):
             scheduler_manager=SchedulerManager(
                 storage=_NoOpStorage(),  # type: ignore[arg-type]
                 message_bus=_NullBus(),  # type: ignore[arg-type]
+                workspace_manager=FakeWorkspaceManager(),
             ),
             background_task_manager=BackgroundTaskManager(
                 message_bus=_NullBus(),  # type: ignore[arg-type]
@@ -442,6 +446,7 @@ class TestGetToolkitSchedulingGuard(IsolatedAsyncioTestCase):
             scheduler_manager=SchedulerManager(
                 storage=_NoOpStorage(),  # type: ignore[arg-type]
                 message_bus=_NullBus(),  # type: ignore[arg-type]
+                workspace_manager=FakeWorkspaceManager(),
             ),
             background_task_manager=BackgroundTaskManager(
                 message_bus=_NullBus(),  # type: ignore[arg-type]
@@ -500,6 +505,7 @@ class TestGetToolkitExtraFactory(IsolatedAsyncioTestCase):
             scheduler_manager=SchedulerManager(
                 storage=_NoOpStorage(),  # type: ignore[arg-type]
                 message_bus=_NullBus(),  # type: ignore[arg-type]
+                workspace_manager=FakeWorkspaceManager(),
             ),
             background_task_manager=BackgroundTaskManager(
                 message_bus=_NullBus(),  # type: ignore[arg-type]
