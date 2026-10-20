@@ -6,7 +6,7 @@ import asyncio
 import inspect
 from abc import abstractmethod
 from pathlib import Path
-from typing import Any, Generic, TypeVar, Type, Union
+from typing import Any, Generic, Literal, TypeVar, Type, Union
 
 from pydantic import BaseModel, ConfigDict
 
@@ -294,9 +294,10 @@ class EmbeddingModelBase(Generic[InputT]):
                 if resp.usage.tokens:
                     total_tokens += resp.usage.tokens
 
-        # Preserve the documented EmbeddingResponse.source contract: a merge
-        # served entirely from cache must not claim source="api" (#2689).
-        merged_source = "cache" if sources and sources == {"cache"} else "api"
+        # Mark the merged response as cached only if every batch is cached.
+        merged_source: Literal["cache", "api"] = (
+            "cache" if sources and sources == {"cache"} else "api"
+        )
 
         return EmbeddingResponse(
             embeddings=all_embeddings,
