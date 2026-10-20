@@ -88,9 +88,7 @@ class GoalPipeline:
         # Rounds already judged. On the instance rather than in
         # ``reply_stream``, so a HITL resume does not restart the budget.
         self._iters = 0
-        # Replies of each participant that ended without the structured
-        # output, charged against ``max_retries``. On the instance for the
-        # same reason as ``_iters``.
+        # Preserve each participant's retry budget across HITL resumes.
         self._executor_retries = 0
         self._verifier_retries = 0
         self._goal: None | list[TextBlock | DataBlock] = None
@@ -212,9 +210,6 @@ class GoalPipeline:
                         break
 
                     if execution_report is None:
-                        # The reply is one structured-output retry; give up
-                        # once the budget is spent instead of prompting the
-                        # executor forever.
                         self._executor_retries += 1
                         if self._executor_retries > self.max_retries:
                             raise RuntimeError(
@@ -289,9 +284,7 @@ class GoalPipeline:
                     # Escape the loop for hitl events
                     break
                 if final_msg is None:
-                    # A reply that ended without a final message is one
-                    # structured-output retry too; the instruction keeps
-                    # whatever it was, e.g. a resumed confirmation.
+                    # Retry without changing the current instruction.
                     self._verifier_retries += 1
                     if self._verifier_retries > self.max_retries:
                         raise RuntimeError(
@@ -301,9 +294,6 @@ class GoalPipeline:
                         )
                     continue
                 if final_msg.structured_output is None:
-                    # The reply is one structured-output retry; give up
-                    # once the budget is spent instead of prompting the
-                    # verifier forever.
                     self._verifier_retries += 1
                     if self._verifier_retries > self.max_retries:
                         raise RuntimeError(
