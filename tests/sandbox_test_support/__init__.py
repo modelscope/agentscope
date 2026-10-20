@@ -62,6 +62,7 @@ def checkout_wheel() -> Path:
             check=True,
             capture_output=True,
             text=True,
+            timeout=600,
             # Fix ZIP timestamps so unchanged wheels reuse Docker image tags.
             env={**os.environ, "SOURCE_DATE_EPOCH": "315532800"},
         )
@@ -82,6 +83,11 @@ def checkout_wheel() -> Path:
                 raise RuntimeError(
                     "Checkout wheel must contain the complete LICENSE",
                 )
+    except subprocess.TimeoutExpired as exc:
+        temporary.cleanup()
+        raise RuntimeError(
+            f"Checkout wheel build timed out after {exc.timeout} seconds",
+        ) from exc
     except subprocess.CalledProcessError as exc:
         temporary.cleanup()
         raise RuntimeError(
