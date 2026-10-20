@@ -93,6 +93,22 @@ class GoalPipeline:
         self._verifier_retries = 0
         self._goal: None | list[TextBlock | DataBlock] = None
 
+    def _check_retry_budget(
+        self,
+        retries: int,
+        participant: Literal["executor", "verifier"],
+    ) -> None:
+        """Raise when a participant exhausts its structured-output retries."""
+        if retries > self.max_retries:
+            output_name = {
+                "executor": "execution report",
+                "verifier": "verification result",
+            }[participant]
+            raise RuntimeError(
+                f"The {participant} failed to generate a valid "
+                f"{output_name} after {self.max_retries} retries.",
+            )
+
     async def reply_stream(
         self,
         inputs: Msg
@@ -211,12 +227,10 @@ class GoalPipeline:
 
                     if execution_report is None:
                         self._executor_retries += 1
-                        if self._executor_retries > self.max_retries:
-                            raise RuntimeError(
-                                "The executor failed to generate a valid "
-                                "execution report after "
-                                f"{self.max_retries} retries.",
-                            )
+                        self._check_retry_budget(
+                            self._executor_retries,
+                            "executor",
+                        )
                         # Update the instruction
                         executor_inputs = UserMsg(
                             name="system",
@@ -286,21 +300,17 @@ class GoalPipeline:
                 if final_msg is None:
                     # Retry without changing the current instruction.
                     self._verifier_retries += 1
-                    if self._verifier_retries > self.max_retries:
-                        raise RuntimeError(
-                            "The verifier failed to generate a valid "
-                            "verification result after "
-                            f"{self.max_retries} retries.",
-                        )
+                    self._check_retry_budget(
+                        self._verifier_retries,
+                        "verifier",
+                    )
                     continue
                 if final_msg.structured_output is None:
                     self._verifier_retries += 1
-                    if self._verifier_retries > self.max_retries:
-                        raise RuntimeError(
-                            "The verifier failed to generate a valid "
-                            "verification result after "
-                            f"{self.max_retries} retries.",
-                        )
+                    self._check_retry_budget(
+                        self._verifier_retries,
+                        "verifier",
+                    )
                     # Update the instruction for valid verification result
                     final_msg = None
                     instruction = UserMsg(
