@@ -352,7 +352,7 @@ class TestOllamaFormatter(IsolatedAsyncioTestCase):
     async def test_formatters_preserve_local_file_uri_characters(self) -> None:
         """Decode Unicode and literal percent escapes once, preserving '+'."""
         with TemporaryDirectory() as directory:
-            for filename in ("图片.png", "image%20.png", "image+1.png"):
+            for filename in ("caf\u00e9.png", "image%20.png", "image+1.png"):
                 path = Path(directory) / filename
                 path.write_bytes(base64.b64decode(self.image_b64))
                 # URI paths allow a literal '+'; form decoding would lose it.
@@ -365,17 +365,31 @@ class TestOllamaFormatter(IsolatedAsyncioTestCase):
                         content=[DataBlock(source=source)],
                     ),
                 ]
-                for formatter in (
-                    OllamaChatFormatter(),
-                    OllamaMultiAgentFormatter(),
+                for formatter, expected_content in (
+                    (OllamaChatFormatter(), ""),
+                    (
+                        OllamaMultiAgentFormatter(),
+                        "# Conversation History\n"
+                        "The content between <history></history> tags "
+                        "contains your conversation history\n"
+                        "<history>\nuser:\n</history>",
+                    ),
                 ):
                     with self.subTest(
                         filename=filename,
                         formatter=type(formatter).__name__,
                     ):
                         result = await formatter.format(msgs)
-                        self.assertEqual(len(result), 1)
-                        self.assertEqual(result[0]["images"], [self.image_b64])
+                        self.assertEqual(
+                            result,
+                            [
+                                {
+                                    "role": "user",
+                                    "content": expected_content,
+                                    "images": [self.image_b64],
+                                },
+                            ],
+                        )
 
     async def test_chat_formatter_base64_image_in_tool_result(
         self,
