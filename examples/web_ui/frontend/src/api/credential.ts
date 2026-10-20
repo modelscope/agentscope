@@ -29,4 +29,17 @@ export const credentialApi = {
 			undefined,
 			options,
 		),
+
+	/** Probe one model with a 1-token request through the credential. */
+	verifyModel: (
+		credentialId: string,
+		model: string,
+		options?: { silent?: boolean },
+	) =>
+		client.post<{ ok: boolean }>(
+			`/credential/${credentialId}/verify-model`,
+			{ model },
+			undefined,
+			options,
+		),
 };

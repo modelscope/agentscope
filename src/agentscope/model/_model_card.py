@@ -159,3 +159,51 @@ class ModelCard(BaseModel):
             parameter_schema=final_schema,
             parameters_overrides=config.get("parameter_overrides", {}),
         )
+
+    @classmethod
+    def from_defaults(
+        cls,
+        name: str,
+        parameter_class: Type[BaseModel],
+        context_size: int,
+        output_size: int,
+    ) -> Self:
+        """Build a minimal card for a model that has no YAML card.
+
+        Used for user-enabled model IDs that are known-callable on their
+        endpoint but ship no vendor card: the parameter schema comes
+        straight from the model's parameter class, with ``max_tokens``
+        capped at ``output_size``.
+
+        Args:
+            name (`str`):
+                The model ID; also used as the display label.
+            parameter_class (`Type[BaseModel]`):
+                The chat model's parameter class supplying the base
+                parameter schema.
+            context_size (`int`):
+                Placeholder context size.
+            output_size (`int`):
+                Placeholder max output size.
+
+        Returns:
+            `ModelCard`: The synthesized card.
+        """
+        base_schema = parameter_class.model_json_schema()
+        properties = copy.deepcopy(base_schema.get("properties", {}))
+        if "max_tokens" in properties:
+            properties["max_tokens"]["maximum"] = output_size
+
+        return cls(
+            name=name,
+            label=name,
+            status="active",
+            context_size=context_size,
+            output_size=output_size,
+            parameter_schema={
+                "type": "object",
+                "properties": properties,
+                "required": base_schema.get("required", []),
+            },
+            parameters_overrides={},
+        )

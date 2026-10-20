@@ -1,4 +1,16 @@
-import { Cable, Eye, EyeOff, Plus, Trash2, Pen } from 'lucide-react';
+import {
+	Cable,
+	CheckCheck,
+	Eye,
+	EyeOff,
+	ListChecks,
+	Plus,
+	SquareCheck,
+	Trash2,
+	Pen,
+	Zap,
+} from 'lucide-react';
+import { toast } from 'sonner';
 import { useState, useEffect, useCallback } from 'react';
 
 import { ApiError } from '@/api/client';
@@ -55,6 +67,26 @@ type EndpointCheckState =
 	| { status: 'ok'; remote: string[] }
 	| { status: 'unsupported'; detail: string }
 	| { status: 'error'; detail: string };
+
+/** State of the enabled-model manager panel. */
+type ManageState = {
+	/** Live model IDs from the endpoint; null until fetched. */
+	remote: string[] | null;
+	/** IDs the user checked for this credential. */
+	checked: Set<string>;
+	filter: string;
+	saving: boolean;
+};
+
+/** Model IDs the picker shows under the current filter — the scope every
+    bulk action (select-all, probe checked, keep available) operates on. */
+function visibleModelIds(state: ManageState): string[] {
+	if (!state.remote) return [];
+	const filter = state.filter.toLowerCase();
+	return filter
+		? state.remote.filter((id) => id.toLowerCase().includes(filter))
+		: state.remote;
+}
 
 // ─── Masked value ─────────────────────────────────────────────────────────────
 
@@ -336,9 +368,16 @@ interface DetailPanelProps {
 	schema: CredentialSchema | null;
 	onEdit: () => void;
 	onDelete: () => void;
+	onUpdated: () => void;
 }
 
-function DetailPanel({ credential, schema, onEdit, onDelete }: DetailPanelProps) {
+function DetailPanel({
+	credential,
+	schema,
+	onEdit,
+	onDelete,
+	onUpdated,
+}: DetailPanelProps) {
 	const { t } = useTranslation();
 	const [models, setModels] = useState<ModelCard[]>([]);
 	const [ttsModels, setTtsModels] = useState<TTSModelCard[]>([]);
@@ -381,6 +420,177 @@ function DetailPanel({ credential, schema, onEdit, onDelete }: DetailPanelProps)
 		}
 	}, [credential.id]);
 
+	// Enabled-model manager — fetch the endpoint's live list, let the user
+	// check the models this credential should offer, and persist the
+	// selection on the credential itself.
+	const enabledModels =
+		(credential.data.enabled_models as string[] | undefined) ?? [];
+	const [manage, setManage] = useState<ManageState | null>(null);
+	useEffect(() => setManage(null), [credential.id]);
+
+	const fetchModelList = useCallback(async () => {
+		// Refreshing while the panel is open keeps the unsaved selection;
+		// only a fresh open starts from the credential's enabled models.
+		const prev = manage;
+		const keep = prev ? [...prev.checked] : null;
+		setManage({
+			remote: null,
+			checked: new Set(keep ?? enabledModels),
+			filter: '',
+			saving: false,
+		});
+		try {
+			const res = await credentialApi.remoteModels(credential.id, {
+				silent: true,
+			});
+			setManage({
+				remote: res.models,
+				checked: new Set(
+					(keep ?? enabledModels).filter((m) => res.models.includes(m)),
+				),
+				filter: '',
+				saving: false,
+			});
+		} catch {
+			setManage(keep === null ? null : prev);
+		}
+	}, [credential.id, enabledModels, manage]);
+
+	const saveEnabled = useCallback(async () => {
+		if (!manage?.remote) return;
+		setManage((s) => (s ? { ...s, saving: true } : s));
+		try {
+			await credentialApi.update(credential.id, {
+				data: {
+					...credential.data,
+					enabled_models: [...manage.checked].sort(),
+				},
+			});
+			setManage(null);
+			onUpdated();
+		} finally {
+			setManage((s) => (s ? { ...s, saving: false } : s));
+		}
+	}, [manage, credential, onUpdated]);
+
+	const toggleModel = useCallback((id: string) => {
+		setManage((s) => {
+			if (!s) return s;
+			const checked = new Set(s.checked);
+			if (checked.has(id)) checked.delete(id);
+			else checked.add(id);
+			return { ...s, checked };
+		});
+	}, []);
+
+	// Per-model liveness probe — one tiny real request, binary answer.
+	const [probeStatus, setProbeStatus] = useState<
+		Record<string, 'checking' | 'ok' | 'fail'>
+	>({});
+	useEffect(() => setProbeStatus({}), [credential.id]);
+
+	const probeModel = useCallback(
+		async (id: string) => {
+			setProbeStatus((s) => ({ ...s, [id]: 'checking' }));
+			// One retry: a transient 429/timeout must not read as a dead model.
+			for (let attempt = 0; ; attempt++) {
+				if (attempt > 0) {
+					await new Promise((resolve) => setTimeout(resolve, 1500));
+					setProbeStatus((s) => ({ ...s, [id]: 'checking' }));
+				}
+				try {
+					const res = await credentialApi.verifyModel(credential.id, id, {
+						silent: true,
+					});
+					setProbeStatus((s) => ({
+						...s,
+						[id]: res.ok ? 'ok' : 'fail',
+					}));
+					return;
+				} catch {
+					if (attempt > 0) {
+						setProbeStatus((s) => ({ ...s, [id]: 'fail' }));
+						return;
+					}
+				}
+			}
+		},
+		[credential.id],
+	);
+
+	const probeChecked = useCallback(async () => {
+		if (!manage?.remote) return;
+		const ids = visibleModelIds(manage).filter((id) =>
+			manage.checked.has(id),
+		);
+		let cursor = 0;
+		const workers = Array.from(
+			{ length: Math.min(4, ids.length) },
+			async () => {
+				while (cursor < ids.length) {
+					const id = ids[cursor++];
+					await probeModel(id);
+				}
+			},
+		);
+		await Promise.all(workers);
+	}, [manage, probeModel]);
+
+	// Bulk picker actions. ``probeStatus`` outlives the picker panel (it
+	// resets only on credential switch), so a probe result stays usable for
+	// the keep-available action across picker close/open within a credential.
+	const anyProbing = Object.values(probeStatus).some(
+		(st) => st === 'checking',
+	);
+	const anyProbed = Object.values(probeStatus).some((st) => st !== 'checking');
+	const visible = manage?.remote ? visibleModelIds(manage) : [];
+	const allVisibleSelected =
+		!!manage && visible.length > 0 && visible.every((id) => manage.checked.has(id));
+	const probeableCount = manage
+		? visible.filter((id) => manage.checked.has(id)).length
+		: 0;
+	const keepAvailableTitle = anyProbing
+		? t('credential.modelManage.probing')
+		: anyProbed
+			? undefined
+			: t('credential.modelManage.keepAvailableHint');
+
+	// Bulk actions are scoped to the rows in view: with a filter active,
+	// select-all toggles only the visible models in and out of the
+	// selection, leaving hidden rows untouched.
+	const selectAllModels = useCallback(() => {
+		setManage((s) => {
+			if (!s?.remote) return s;
+			const ids = visibleModelIds(s);
+			const checked = new Set(s.checked);
+			const allIn = ids.every((id) => checked.has(id));
+			for (const id of ids) {
+				if (allIn) checked.delete(id);
+				else checked.add(id);
+			}
+			return { ...s, checked };
+		});
+	}, []);
+
+	// Drop only the checked models a probe has proven dead, within the
+	// rows in view; models never probed stay selected.
+	const dropFailedModels = useCallback(() => {
+		if (!manage?.remote) return;
+		const failed = visibleModelIds(manage).filter(
+			(id) => manage.checked.has(id) && probeStatus[id] === 'fail',
+		);
+		if (failed.length === 0) {
+			toast.info(t('credential.modelManage.keepAvailableNone'));
+			return;
+		}
+		const checked = new Set(manage.checked);
+		for (const id of failed) checked.delete(id);
+		setManage({ ...manage, checked });
+		toast.success(
+			t('credential.modelManage.keepAvailableDone', { count: failed.length }),
+		);
+	}, [manage, probeStatus, t]);
+
 	useEffect(() => {
 		if (!type) return;
 		setModelsLoading(true);
@@ -407,12 +617,17 @@ function DetailPanel({ credential, schema, onEdit, onDelete }: DetailPanelProps)
 	}, [credential.id, type]);
 
 	// Fields to display: use schema properties order, skip id/type/const fields
+	// (enabled_models is curated through the model-list picker, not hand-edited)
 	const displayFields = schema
 		? Object.entries(schema.properties).filter(
-				([key, prop]) => key !== 'id' && key !== 'type' && prop.const === undefined,
+				([key, prop]) =>
+					key !== 'id' &&
+					key !== 'type' &&
+					key !== 'enabled_models' &&
+					prop.const === undefined,
 			)
 		: Object.entries(credential.data)
-				.filter(([key]) => key !== 'id' && key !== 'type')
+				.filter(([key]) => key !== 'id' && key !== 'type' && key !== 'enabled_models')
 				.map(
 					([key]) =>
 						[key, { title: key, writeOnly: false }] as [
@@ -522,6 +737,193 @@ function DetailPanel({ credential, schema, onEdit, onDelete }: DetailPanelProps)
 								check={endpointCheck}
 								catalog={models.map((m) => m.name)}
 							/>
+						)}
+					</div>
+
+					{/* Enabled models — fetch the endpoint's live list, check
+					    the ones this credential should offer, and persist the
+					    selection on the credential itself. */}
+					<div className="mt-4 px-[18px]">
+						<div className="flex items-center justify-between rounded-[12px] border border-border px-3 py-2">
+							<span className="flex items-center gap-x-1.5 text-[11px] text-text-secondary">
+								{t('credential.modelManage.title')}
+								<span className="font-mono text-[10px] text-text-data">
+									{enabledModels.length}
+								</span>
+							</span>
+							<Button
+								size="sm"
+								variant="ghost"
+								className="h-7 gap-x-1.5 text-[11.5px] text-text-secondary hover:text-foreground"
+								onClick={fetchModelList}
+								disabled={manage?.saving === true}
+							>
+								<ListChecks />
+								{t('credential.modelManage.fetch')}
+							</Button>
+						</div>
+						{manage && (
+							<div className="mt-2 rounded-[12px] border border-border p-3">
+								{manage.remote === null ? (
+									<p className="text-[11px] text-text-tertiary">
+										{t('credential.modelManage.fetching')}
+									</p>
+								) : manage.remote.length === 0 ? (
+									<p className="text-[11px] text-text-tertiary">
+										{t('credential.modelManage.none')}
+									</p>
+								) : (
+									<>
+										{enabledModels.some(
+											(m) => !manage.remote!.includes(m),
+										) && (
+											<p className="mb-2 text-[10.5px] break-all text-destructive">
+												{t('credential.modelManage.notInRemote', {
+													names: enabledModels
+														.filter((m) => !manage.remote!.includes(m))
+														.join(', '),
+												})}
+											</p>
+										)}
+										<div className="flex items-center gap-x-2">
+											<input
+												value={manage.filter}
+												onChange={(e) =>
+													setManage((s) =>
+														s ? { ...s, filter: e.target.value } : s,
+													)
+												}
+												placeholder={t('credential.modelManage.filter')}
+												className="min-w-0 flex-1 rounded border border-border bg-transparent px-2 py-1 font-mono text-[11px] text-foreground outline-none placeholder:text-text-tertiary"
+											/>
+											<Button
+												size="sm"
+												variant="ghost"
+												className="h-7 shrink-0 gap-x-1.5 text-[11px] text-text-secondary hover:text-foreground"
+												onClick={selectAllModels}
+												disabled={manage.saving}
+											>
+												<SquareCheck />
+												{allVisibleSelected
+													? t('credential.modelManage.selectNone')
+													: t('credential.modelManage.selectAll')}
+											</Button>
+											<Button
+												size="sm"
+												variant="ghost"
+												className="h-7 shrink-0 gap-x-1.5 text-[11px] text-text-secondary hover:text-foreground"
+												onClick={dropFailedModels}
+												disabled={manage.saving || anyProbing || !anyProbed}
+												title={keepAvailableTitle}
+											>
+												<CheckCheck />
+												{t('credential.modelManage.keepAvailable')}
+											</Button>
+											<Button
+												size="sm"
+												variant="ghost"
+												className="h-7 shrink-0 gap-x-1.5 text-[11px] text-text-secondary hover:text-foreground"
+												onClick={probeChecked}
+												disabled={
+													probeableCount === 0 ||
+													manage.saving ||
+													anyProbing
+												}
+											>
+												<Zap />
+												{t('credential.modelManage.probeAll')}
+											</Button>
+										</div>
+										<div className="mt-2 flex max-h-56 flex-col gap-y-0.5 overflow-y-auto">
+											{manage.remote
+												.filter((id) =>
+													id
+														.toLowerCase()
+														.includes(manage.filter.toLowerCase()),
+												)
+												.map((id) => (
+													<label
+														key={id}
+														className="flex cursor-pointer items-center gap-x-2 rounded px-1 py-0.5 hover:bg-row-hover"
+													>
+														<input
+															type="checkbox"
+															className="accent-foreground"
+															checked={manage.checked.has(id)}
+															onChange={() => toggleModel(id)}
+														/>
+														<span className="min-w-0 flex-1 truncate font-mono text-[11px] text-foreground">
+															{id}
+														</span>
+														{(() => {
+															const st = probeStatus[id];
+															if (st === 'checking') {
+																return (
+																	<span className="ml-auto shrink-0 text-[10px] text-text-tertiary">
+																		{t('credential.modelManage.probing')}
+																	</span>
+																);
+															}
+											if (st === 'ok' || st === 'fail') {
+												return (
+													<button
+														type="button"
+														title={t('credential.modelManage.reprobe')}
+														className={cn(
+															'ml-auto shrink-0 rounded px-1 text-[11px] hover:bg-row-hover',
+															st === 'ok'
+																? 'text-emerald-600'
+																: 'text-destructive',
+														)}
+														onClick={(e) => {
+															e.preventDefault();
+															e.stopPropagation();
+															probeModel(id);
+														}}
+													>
+														{st === 'ok' ? '✓' : '✗'}
+													</button>
+												);
+											}
+															return (
+																<button
+																	type="button"
+																	className="ml-auto shrink-0 rounded px-1 text-[10px] text-text-tertiary hover:text-foreground"
+																	onClick={(e) => {
+																		e.preventDefault();
+																		e.stopPropagation();
+																		probeModel(id);
+																	}}
+																>
+																	{t('credential.modelManage.probe')}
+																</button>
+															);
+														})()}
+													</label>
+												))}
+										</div>
+										<div className="mt-2 flex items-center justify-end gap-x-2">
+											<Button
+												size="sm"
+												variant="ghost"
+												onClick={() => setManage(null)}
+												disabled={manage.saving}
+											>
+												{t('credential.modelManage.cancel')}
+											</Button>
+											<Button
+												size="sm"
+												onClick={saveEnabled}
+												disabled={manage.saving}
+											>
+												{manage.saving
+													? t('credential.modelManage.saving')
+													: t('credential.modelManage.save')}
+											</Button>
+										</div>
+									</>
+								)}
+							</div>
 						)}
 					</div>
 
@@ -783,6 +1185,7 @@ export const CredentialPage = () => {
 						schema={selectedSchema}
 						onEdit={() => setEditOpen(true)}
 						onDelete={() => setDeleteOpen(true)}
+						onUpdated={() => refetch()}
 					/>
 				) : (
 					<div className="flex h-full items-center justify-center">

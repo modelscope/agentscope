@@ -79,6 +79,18 @@ class CredentialBase(BaseModel):
         description="User-facing display name for this credential.",
     )
 
+    enabled_models: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Model IDs this credential explicitly offers, curated by the "
+            "user (e.g. checked from the endpoint's live model list in the "
+            "web UI). These are merged into the credential type's model "
+            "catalog; IDs without a built-in card render with default "
+            "metadata and remain callable."
+        ),
+    )
+    """User-curated model IDs offered by this credential."""
+
     @classmethod
     def get_chat_model_class(cls) -> Type["ChatModelBase"]:
         """Return the :class:`ChatModelBase` subclass that consumes this
