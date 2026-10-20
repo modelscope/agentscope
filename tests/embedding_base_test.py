@@ -62,8 +62,8 @@ class EmbeddingModelBaseTest(TestCase):
             },
         )
 
-    def test_merge_live_api_batches_reports_api(self) -> None:
-        """Preserve vector order and sum tokens and time across API calls."""
+    def test_merge_live_api_batches_uses_max_time(self) -> None:
+        """Preserve vector order, sum tokens, and take the maximum time."""
         merged = EmbeddingModelBase._merge_responses(
             [
                 _resp("api", 1.0, tokens=7, time=0.25),
@@ -78,7 +78,7 @@ class EmbeddingModelBaseTest(TestCase):
                 "id": AnyString(),
                 "created_at": AnyString(),
                 "type": "embedding",
-                "usage": {"tokens": 12, "time": 0.75, "type": "embedding"},
+                "usage": {"tokens": 12, "time": 0.5, "type": "embedding"},
                 "source": "api",
             },
         )
@@ -102,6 +102,22 @@ class EmbeddingModelBaseTest(TestCase):
                 "usage": {"tokens": 7, "time": 0.5, "type": "embedding"},
                 "source": "api",
             },
+        )
+
+    def test_merge_empty_responses_reports_api(self) -> None:
+        """An empty response list must not count as a cache hit."""
+        merged = EmbeddingModelBase._merge_responses([])
+
+        self.assertEqual(
+            asdict(merged),
+            asdict(
+                EmbeddingResponse(
+                    embeddings=[],
+                    id=AnyString(),
+                    created_at=AnyString(),
+                    usage=EmbeddingUsage(tokens=0, time=0.0),
+                ),
+            ),
         )
 
 
@@ -162,5 +178,5 @@ class EmbeddingMergeUsageTest(TestCase):
                     ],
                 )
                 self.assertEqual(result.usage.tokens, expected)
-                self.assertEqual(result.usage.time, 0.5)
+                self.assertEqual(result.usage.time, 0.25)
                 self.assertEqual(result.embeddings, [[0.0], [1.0]])
