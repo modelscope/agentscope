@@ -348,8 +348,27 @@ class MCPTool(ToolBase):
             )
 
         # Convert MCP result to AgentScope blocks
+        content = self._convert_mcp_content_to_blocks(result.content)
+
+        # A server that declares an ``outputSchema`` may return the result
+        # only in ``structuredContent``, leaving ``content`` empty. Keep the
+        # JSON so the model does not receive an empty tool result. When a
+        # text block is already present the server serialized the result
+        # itself, so appending it again would duplicate the payload.
+        if result.structured_content is not None and not any(
+            isinstance(block, TextBlock) for block in content
+        ):
+            content.append(
+                TextBlock(
+                    text=json.dumps(
+                        result.structured_content,
+                        ensure_ascii=False,
+                    ),
+                ),
+            )
+
         return ToolChunk(
-            content=self._convert_mcp_content_to_blocks(result.content),
+            content=content,
             state=ToolResultState.ERROR
             if result.is_error
             else ToolResultState.RUNNING,
