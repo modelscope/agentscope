@@ -257,15 +257,14 @@ class GeminiChatFormatter(_GeminiFormatterBase):
                             ),
                         },
                     }
-                    thought_signature = getattr(
-                        block,
-                        "thought_signature",
-                        None,
-                    )
-                    if thought_signature:
+                    # Ordinary IDs may also be valid Base64. Only decode
+                    # IDs explicitly marked by the Gemini model parser.
+                    if block.id.startswith("gemini_ts:"):
                         function_call_part[
                             "thought_signature"
-                        ] = base64.b64decode(thought_signature)
+                        ] = base64.b64decode(
+                            block.id.removeprefix("gemini_ts:"),
+                        )
                     parts.append(function_call_part)
 
                 elif isinstance(block, ToolResultBlock):

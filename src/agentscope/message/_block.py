@@ -136,14 +136,9 @@ class ToolCallState(StrEnum):
 
 
 class ToolCallBlock(BaseModel):
-    """The tool call block.
+    """The tool call block."""
 
-    Allows extra provider-specific fields (e.g. Gemini's
-    ``thought_signature``) via ``extra="allow"`` so model implementations can
-    preserve metadata that must be returned with conversation history.
-    """
-
-    model_config = ConfigDict(use_enum_values=True, extra="allow")
+    model_config = ConfigDict(use_enum_values=True)
 
     type: Literal["tool_call"] = "tool_call"
     """The type of the tool call block, which is always 'tool_call'."""

@@ -397,12 +397,13 @@ class GeminiChatModel(ChatModelBase):
 
                     # Tool call
                     if part.function_call:
-                        thought_signature: str | None = None
                         if part.thought_signature:
-                            thought_signature = base64.b64encode(
+                            # Mark signature IDs for the history formatter.
+                            call_id = "gemini_ts:" + base64.b64encode(
                                 part.thought_signature,
                             ).decode("utf-8")
-                        call_id = part.function_call.id or _generate_id()
+                        else:
+                            call_id = part.function_call.id or _generate_id()
 
                         delta_res.append_tool_call(
                             block_id=call_id,
@@ -411,7 +412,6 @@ class GeminiChatModel(ChatModelBase):
                                 part.function_call.args or {},
                                 ensure_ascii=False,
                             ),
-                            thought_signature=thought_signature,
                         )
 
             usage = self._extract_usage(chunk.usage_metadata, start_datetime)
@@ -455,25 +455,18 @@ class GeminiChatModel(ChatModelBase):
 
                 if part.function_call:
                     keyword_args = part.function_call.args or {}
-                    thought_signature: str | None = None
                     if part.thought_signature:
-                        thought_signature = base64.b64encode(
+                        # Mark signature IDs for the history formatter.
+                        call_id = "gemini_ts:" + base64.b64encode(
                             part.thought_signature,
                         ).decode("utf-8")
-                    call_id = part.function_call.id or _generate_id()
+                    else:
+                        call_id = part.function_call.id or _generate_id()
                     content_blocks.append(
                         ToolCallBlock(
                             id=call_id,
                             name=part.function_call.name,
-                            input=json.dumps(
-                                keyword_args,
-                                ensure_ascii=False,
-                            ),
-                            **(
-                                {"thought_signature": thought_signature}
-                                if thought_signature
-                                else {}
-                            ),
+                            input=json.dumps(keyword_args, ensure_ascii=False),
                         ),
                     )
 
