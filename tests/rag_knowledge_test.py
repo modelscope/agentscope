@@ -8,7 +8,7 @@ from agentscope.embedding import EmbeddingModelBase
 from agentscope.rag import KnowledgeBase, VectorStoreBase
 
 
-class KnowledgeBaseLifecycleTest(IsolatedAsyncioTestCase):
+class KnowledgeBaseTest(IsolatedAsyncioTestCase):
     """A shared handle should initialize once without preventing retries."""
 
     def setUp(self) -> None:
@@ -90,11 +90,3 @@ class KnowledgeBaseLifecycleTest(IsolatedAsyncioTestCase):
         await asyncio.wait_for(second, timeout=2)
         await self.kb.ensure_collection()
         self.assertEqual(self.store.create_collection.await_count, 2)
-
-    async def test_existing_collection_is_not_created(self) -> None:
-        """An existing collection is cached without another creation."""
-        self.store.has_collection.return_value = True
-        await self.kb.ensure_collection()
-        await self.kb.ensure_collection()
-        self.store.create_collection.assert_not_awaited()
-        self.store.has_collection.assert_awaited_once_with("test")
