@@ -5,9 +5,10 @@ from __future__ import annotations
 
 import math
 from contextlib import AsyncExitStack
+from types import SimpleNamespace
 from typing import Any
 from unittest.async_case import IsolatedAsyncioTestCase
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 from utils import AnyString
 
@@ -477,6 +478,34 @@ class MongoDBStoreTest(IsolatedAsyncioTestCase):
                 },
             ],
         )
+
+    async def test_mongodb_delete_filter(self) -> None:
+        """MongoDB combines the source document with metadata equality."""
+        store = self.store
+        collection = SimpleNamespace(delete_many=AsyncMock())
+        with patch.object(store, "_col", return_value=collection):
+            await store.delete(
+                "shared",
+                "doc",
+                metadata_filter={"tenant": "alpha", "project": 2},
+            )
+        collection.delete_many.assert_awaited_once_with(
+            {
+                "document_id": "doc",
+                "$and": [
+                    {"chunk.metadata.tenant": {"$eq": "alpha"}},
+                    {"chunk.metadata.project": {"$eq": 2}},
+                ],
+            },
+        )
+        for scope in (None, {}):
+            with self.subTest(scope=scope):
+                collection.delete_many.reset_mock()
+                with patch.object(store, "_col", return_value=collection):
+                    await store.delete("shared", "doc", metadata_filter=scope)
+                collection.delete_many.assert_awaited_once_with(
+                    {"document_id": "doc"},
+                )
 
     async def test_search_candidate_limits(self) -> None:
         """Search caps candidates while preserving the requested limit."""
