@@ -327,13 +327,16 @@ class MongoDBStore(VectorStoreBase):
     ) -> list[VectorSearchResult]:
         """Find the most similar records to a query vector.
 
+        The search considers at least 100 candidates and targets 20 times
+        ``top_k``, capped at MongoDB's 10,000-candidate limit.
+
         Args:
             collection (`str`):
                 The collection to search.
             query_vector (`list[float]`):
                 The query embedding vector.
             top_k (`int`, defaults to ``5``):
-                Maximum number of results to return.
+                Maximum number of results to return. Cannot exceed 10,000.
             metadata_filter (`dict[str, Any] | None`, optional):
                 If provided, restrict the search to records whose
                 ``chunk.metadata`` matches every ``key == value`` pair
@@ -344,7 +347,13 @@ class MongoDBStore(VectorStoreBase):
         Returns:
             `list[VectorSearchResult]`:
                 Results ordered by descending similarity score.
+
+        Raises:
+            `ValueError`:
+                If ``top_k`` exceeds MongoDB's 10,000-candidate ANN limit.
         """
+        if top_k > 10_000:
+            raise ValueError("top_k cannot exceed MongoDB's 10000 ANN limit")
         await self._ensure_index_ready(collection)
         col = self._col(collection)
 
@@ -352,7 +361,7 @@ class MongoDBStore(VectorStoreBase):
             "index": self._index_name,
             "path": "vector",
             "queryVector": query_vector,
-            "numCandidates": max(100, top_k * 20),
+            "numCandidates": min(10_000, max(100, top_k * 20)),
             "limit": top_k,
         }
         filter_expr = self._build_metadata_filter(metadata_filter)
