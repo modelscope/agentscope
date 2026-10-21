@@ -1,18 +1,12 @@
 # -*- coding: utf-8 -*-
 """Tests for keeping the MCP tool result content that carries the payload."""
 import base64
-import json
 from typing import Any
 from unittest.async_case import IsolatedAsyncioTestCase
 
 import mcp.types
+from utils import AnyString
 
-from agentscope.message import (
-    Base64Source,
-    DataBlock,
-    TextBlock,
-    ToolResultState,
-)
 from agentscope.tool import MCPTool
 
 
@@ -79,13 +73,27 @@ class MCPStructuredResultTest(IsolatedAsyncioTestCase):
             ),
         ).call(city="Paris")
 
-        self.assertEqual(len(chunk.content), 1)
-        block = chunk.content[0]
-        self.assertIsInstance(block, TextBlock)
-        self.assertEqual(json.loads(block.text), structured)
+        self.assertEqual(
+            chunk.model_dump(),
+            {
+                "content": [
+                    {
+                        "type": "text",
+                        "text": '{"city": "Paris", "temperature_c": 21.5}',
+                        "id": AnyString(),
+                        "created_at": AnyString(),
+                        "finished_at": None,
+                    },
+                ],
+                "state": "running",
+                "is_last": True,
+                "metadata": {},
+                "id": AnyString(),
+            },
+        )
 
-    async def test_structured_result_is_not_duplicated(self) -> None:
-        """A server that serialized the result itself is left untouched."""
+    async def test_existing_text_content_is_preserved(self) -> None:
+        """Existing text is preserved without appending structured JSON."""
         chunk = await _tool(
             mcp.types.CallToolResult(
                 content=[
@@ -95,8 +103,24 @@ class MCPStructuredResultTest(IsolatedAsyncioTestCase):
             ),
         ).call(city="Paris")
 
-        self.assertEqual(len(chunk.content), 1)
-        self.assertEqual(chunk.content[0].text, "21.5C in Paris")
+        self.assertEqual(
+            chunk.model_dump(),
+            {
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "21.5C in Paris",
+                        "id": AnyString(),
+                        "created_at": AnyString(),
+                        "finished_at": None,
+                    },
+                ],
+                "state": "running",
+                "is_last": True,
+                "metadata": {},
+                "id": AnyString(),
+            },
+        )
 
     async def test_structured_result_is_kept_next_to_media(self) -> None:
         """Media-only content keeps the structured payload as well."""
@@ -114,13 +138,36 @@ class MCPStructuredResultTest(IsolatedAsyncioTestCase):
             ),
         ).call(city="Paris")
 
-        self.assertEqual(len(chunk.content), 2)
-        self.assertIsInstance(chunk.content[0], DataBlock)
-        source = chunk.content[0].source
-        self.assertIsInstance(source, Base64Source)
-        self.assertEqual(source.media_type, "image/png")
-        self.assertIsInstance(chunk.content[1], TextBlock)
-        self.assertEqual(json.loads(chunk.content[1].text), structured)
+        self.assertEqual(
+            chunk.model_dump(),
+            {
+                "content": [
+                    {
+                        "type": "data",
+                        "source": {
+                            "type": "base64",
+                            "data": _PNG_BASE64,
+                            "media_type": "image/png",
+                        },
+                        "name": None,
+                        "id": AnyString(),
+                        "created_at": AnyString(),
+                        "finished_at": None,
+                    },
+                    {
+                        "type": "text",
+                        "text": '{"city": "Paris", "temperature_c": 21.5}',
+                        "id": AnyString(),
+                        "created_at": AnyString(),
+                        "finished_at": None,
+                    },
+                ],
+                "state": "running",
+                "is_last": True,
+                "metadata": {},
+                "id": AnyString(),
+            },
+        )
 
     async def test_empty_result_without_structured_content_stays_empty(
         self,
@@ -130,7 +177,16 @@ class MCPStructuredResultTest(IsolatedAsyncioTestCase):
             mcp.types.CallToolResult(content=[]),
         ).call(city="Paris")
 
-        self.assertEqual(chunk.content, [])
+        self.assertEqual(
+            chunk.model_dump(),
+            {
+                "content": [],
+                "state": "running",
+                "is_last": True,
+                "metadata": {},
+                "id": AnyString(),
+            },
+        )
 
     async def test_error_result_keeps_state_and_payload(self) -> None:
         """An error result keeps its state and still carries the payload."""
@@ -143,5 +199,21 @@ class MCPStructuredResultTest(IsolatedAsyncioTestCase):
             ),
         ).call(city="Atlantis")
 
-        self.assertEqual(chunk.state, ToolResultState.ERROR)
-        self.assertEqual(json.loads(chunk.content[0].text), structured)
+        self.assertEqual(
+            chunk.model_dump(),
+            {
+                "content": [
+                    {
+                        "type": "text",
+                        "text": '{"error": "unknown city"}',
+                        "id": AnyString(),
+                        "created_at": AnyString(),
+                        "finished_at": None,
+                    },
+                ],
+                "state": "error",
+                "is_last": True,
+                "metadata": {},
+                "id": AnyString(),
+            },
+        )
