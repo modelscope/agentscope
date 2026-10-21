@@ -244,21 +244,28 @@ class GeminiChatFormatter(_GeminiFormatterBase):
                         parts.append(formatted)
 
                 elif isinstance(block, ToolCallBlock):
-                    parts.append(
-                        {
-                            "function_call": {
-                                "id": block.id,
-                                "name": block.name,
-                                # Use the repair helper so a truncated input
-                                # (from interrupted streaming or context
-                                # compression) degrades to {} instead of
-                                # raising JSONDecodeError.
-                                "args": _json_loads_with_repair(
-                                    block.input or "{}",
-                                ),
-                            },
+                    function_call_part: dict[str, Any] = {
+                        "function_call": {
+                            "id": block.id,
+                            "name": block.name,
+                            # Use the repair helper so a truncated input
+                            # (from interrupted streaming or context
+                            # compression) degrades to {} instead of raising
+                            # JSONDecodeError.
+                            "args": _json_loads_with_repair(
+                                block.input or "{}",
+                            ),
                         },
-                    )
+                    }
+                    # Ordinary IDs may also be valid Base64. Only decode
+                    # IDs explicitly marked by the Gemini model parser.
+                    if block.id.startswith("gemini_ts:"):
+                        function_call_part[
+                            "thought_signature"
+                        ] = base64.b64decode(
+                            block.id.removeprefix("gemini_ts:"),
+                        )
+                    parts.append(function_call_part)
 
                 elif isinstance(block, ToolResultBlock):
                     if parts:
