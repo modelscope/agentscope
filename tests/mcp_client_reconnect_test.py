@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 """Tests for reconnecting stateful MCP clients."""
 import asyncio
+from contextlib import asynccontextmanager
 from types import TracebackType
-from typing import Any
+from typing import Any, AsyncGenerator
 from unittest.async_case import IsolatedAsyncioTestCase
 from unittest.mock import patch
 
 import anyio
+from mcp import ClientSession
 
 from agentscope.mcp import HttpMCPConfig, MCPClient, StdioMCPConfig
 
@@ -63,6 +65,128 @@ class _FakeSession:
 
 class MCPClientReconnectTest(IsolatedAsyncioTestCase):
     """Stateful MCP transports must be recreated for every connection."""
+
+    async def _check_scoped_cleanup(self, failure: str) -> None:
+        """Exercise real session scopes and cancellation checkpoints."""
+        # pylint: disable=protected-access
+        owner = asyncio.current_task()
+        assert owner is not None
+        events: list[tuple[str, bool]] = []
+        attempts = 0
+        original_error = ValueError("initialization failed")
+
+        @asynccontextmanager
+        async def transport(
+            _parameters: Any,
+        ) -> AsyncGenerator[tuple[Any, Any], None]:
+            """Keep transport and session scopes nested as in the SDK."""
+            incoming, read = anyio.create_memory_object_stream(1)
+            write, outgoing = anyio.create_memory_object_stream(1)
+            async with anyio.create_task_group():
+                async with incoming, read, write, outgoing:
+                    events.append(
+                        ("transport enter", owner is asyncio.current_task()),
+                    )
+                    try:
+                        yield read, write
+                    finally:
+                        await anyio.sleep(0)
+            events.append(("transport exit", owner is asyncio.current_task()))
+
+        class Session(ClientSession):
+            """Keep real session scopes with controlled initialization."""
+
+            async def initialize(self) -> Any:
+                """Fail the first attempt and allow a subsequent retry."""
+                nonlocal attempts
+                attempts += 1
+                if attempts == 1:
+                    if failure == "error":
+                        raise original_error
+                    if failure == "task":
+                        owner.cancel()
+                    else:
+                        outer.cancel()
+                    await anyio.sleep(0)
+                return None
+
+            async def __aexit__(
+                self,
+                exc_type: type[BaseException] | None,
+                exc: BaseException | None,
+                traceback: TracebackType | None,
+            ) -> bool | None:
+                result = await super().__aexit__(exc_type, exc, traceback)
+                events.append(
+                    ("session exit", owner is asyncio.current_task()),
+                )
+                return result
+
+        with (
+            patch(
+                "agentscope.mcp._mcp_client.stdio_client",
+                transport,
+            ),
+            patch("agentscope.mcp._mcp_client.ClientSession", Session),
+        ):
+            client = MCPClient(
+                name="scoped_cleanup",
+                is_stateful=True,
+                mcp_config=StdioMCPConfig(command="unused"),
+            )
+            expected = (
+                ValueError if failure == "error" else asyncio.CancelledError
+            )
+            with anyio.CancelScope() as outer:
+                with self.assertRaises(expected) as caught:
+                    await client.connect()
+            if failure == "error":
+                self.assertIs(caught.exception, original_error)
+            elif failure == "task":
+                owner.uncancel()
+
+            self.assertEqual(
+                (
+                    client.is_connected,
+                    client._client,
+                    client._session,
+                    client._stack,
+                ),
+                (False, None, None, None),
+            )
+            self.assertEqual(
+                events,
+                [
+                    ("transport enter", True),
+                    ("session exit", True),
+                    ("transport exit", True),
+                ],
+            )
+            await client.connect()
+            await client.close(ignore_errors=False)
+            await anyio.sleep(0)
+
+        self.assertEqual(
+            events,
+            [
+                ("transport enter", True),
+                ("session exit", True),
+                ("transport exit", True),
+            ]
+            * 2,
+        )
+
+    async def test_failed_connect_closes_real_session_scopes(self) -> None:
+        """An initialization error must survive cleanup in the owner task."""
+        await self._check_scoped_cleanup("error")
+
+    async def test_task_cancel_closes_real_session_scopes(self) -> None:
+        """Native task cancellation must unwind the real session scopes."""
+        await self._check_scoped_cleanup("task")
+
+    async def test_anyio_cancel_closes_real_session_scopes(self) -> None:
+        """Outer cancellation must not interrupt the transport teardown."""
+        await self._check_scoped_cleanup("scope")
 
     async def test_stdio_client_can_reconnect_after_close(self) -> None:
         """A stdio client must get a new transport after close()."""

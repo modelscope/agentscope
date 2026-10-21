@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """Unified MCP client implementation for AgentScope."""
-import asyncio
 import re
 from contextlib import (
     AbstractAsyncContextManager,
@@ -10,6 +9,7 @@ from contextlib import (
 from typing import Any, AsyncGenerator, ClassVar, TYPE_CHECKING
 from urllib.parse import urlsplit
 
+import anyio
 import httpx2
 import mcp.types
 from mcp import ClientSession, stdio_client, StdioServerParameters
@@ -348,6 +348,9 @@ class MCPClient(BaseModel):
         assert self._client is not None
         stack = AsyncExitStack()
         self._stack = stack
+        # Enter before the SDK scopes to shield outer AnyIO cancellation
+        # without changing tasks or violating their LIFO exit order.
+        cleanup_scope = stack.enter_context(anyio.CancelScope())
 
         try:
             context = await stack.enter_async_context(self._client)
@@ -359,13 +362,12 @@ class MCPClient(BaseModel):
             self._is_connected = True
             logger.info("MCP connected: %s", self.name)
         except BaseException:
-            # asyncio.CancelledError inherits BaseException, so a cancelled
-            # initialization must close every context entered so far. The
-            # close is shielded because an anyio cancel scope (a cancelled
-            # FastAPI request, for one) keeps cancelling every await inside
-            # it, which would otherwise abandon a live stdio subprocess.
+            # Shield cancellation from enclosing AnyIO scopes while unwinding
+            # in the original task. Native task.cancel() can still interrupt
+            # cleanup, including a second cancellation during teardown.
+            cleanup_scope.shield = True
             try:
-                await asyncio.shield(stack.aclose())
+                await stack.aclose()
             finally:
                 self._client = None
                 self._stack = None
@@ -377,6 +379,9 @@ class MCPClient(BaseModel):
         """Close the MCP connection (for stateful connections only).
 
         For stateless connections, this method does nothing.
+
+        Call this in the same task and enclosing cancel scopes as connect().
+        Close multiple stateful clients in reverse connection order.
 
         Args:
             ignore_errors: Whether to ignore errors during cleanup.
