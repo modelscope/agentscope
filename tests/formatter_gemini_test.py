@@ -952,23 +952,51 @@ class GeminiMultiAgentSystemMessageTest(IsolatedAsyncioTestCase):
     """A system message must never emit a ``text: None`` part."""
 
     async def test_empty_system_message_emits_a_string(self) -> None:
-        """Gemini rejects a null text part, so coerce it to an empty string."""
+        """An empty system message emits an empty string and keeps history."""
         res = await GeminiMultiAgentFormatter().format(
             [SystemMsg("sys", []), UserMsg("u", "hi")],
         )
-        for message in res:
-            for part in message.get("parts", []):
-                self.assertIsInstance(part.get("text", ""), str)
+        self.assertEqual(
+            res,
+            [
+                {"role": "user", "parts": [{"text": ""}]},
+                {
+                    "role": "user",
+                    "parts": [
+                        {
+                            "text": (
+                                "# Conversation History\n"
+                                "The content between <history></history> tags "
+                                "contains your conversation history\n"
+                                "<history>\nu: hi\n</history>"
+                            ),
+                        },
+                    ],
+                },
+            ],
+        )
 
     async def test_non_empty_system_message_is_unchanged(self) -> None:
         """A normal system prompt still comes through verbatim."""
         res = await GeminiMultiAgentFormatter().format(
             [SystemMsg("sys", "be brief"), UserMsg("u", "hi")],
         )
-        texts = [
-            part["text"]
-            for message in res
-            for part in message.get("parts", [])
-            if "text" in part
-        ]
-        self.assertIn("be brief", texts)
+        self.assertEqual(
+            res,
+            [
+                {"role": "user", "parts": [{"text": "be brief"}]},
+                {
+                    "role": "user",
+                    "parts": [
+                        {
+                            "text": (
+                                "# Conversation History\n"
+                                "The content between <history></history> tags "
+                                "contains your conversation history\n"
+                                "<history>\nu: hi\n</history>"
+                            ),
+                        },
+                    ],
+                },
+            ],
+        )
