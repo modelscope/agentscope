@@ -284,33 +284,11 @@ class OpenAIClassifierModelTest(IsolatedAsyncioTestCase):
         with self.assertRaisesRegex(ImportError, "openai>=3.26.0"):
             classifier.OpenAIClassifierModel(self.credential)
 
-
-class OpenAIClassifierPerCallOptionsTest(IsolatedAsyncioTestCase):
-    """A per-call option must win over the instance default it shares a
-    name with, instead of reaching the SDK twice."""
-
-    def setUp(self) -> None:
-        """Replace the OpenAI client with an asynchronous stub."""
-        client_patch = patch("openai.AsyncOpenAI")
-        self.client_cls = client_patch.start()
-        self.addCleanup(client_patch.stop)
-        self.client = self.client_cls.return_value
-        self.client.decisions.create = AsyncMock(
-            return_value=SimpleNamespace(
-                model="gpt-6-luna",
-                answers=[],
-                usage=SimpleNamespace(input_tokens=12, output_tokens=0),
-            ),
-        )
-        self.model = classifier.OpenAIClassifierModel(
-            OpenAICredential(api_key="secret"),
-            model="gpt-6-luna",
-        )
-        self.questions = {"urgent": BinaryQuestion(instructions="Urgent?")}
-
     async def test_per_call_model_replaces_the_default(self) -> None:
         """``model=`` is forwarded once, with the caller's value."""
-        await self.model("I was charged twice.", self.questions, model="x")
+        model = classifier.OpenAIClassifierModel(self.credential)
+        questions = {"urgent": BinaryQuestion(instructions="Urgent?")}
+        await model("I was charged twice.", questions, model="x")
 
         self.assertDictEqual(
             self.client.decisions.create.await_args.kwargs,
@@ -329,7 +307,9 @@ class OpenAIClassifierPerCallOptionsTest(IsolatedAsyncioTestCase):
 
     async def test_per_call_input_replaces_the_state(self) -> None:
         """``input=`` is forwarded once, with the caller's value."""
-        await self.model("I was charged twice.", self.questions, input="raw")
+        model = classifier.OpenAIClassifierModel(self.credential)
+        questions = {"urgent": BinaryQuestion(instructions="Urgent?")}
+        await model("I was charged twice.", questions, input="raw")
 
         self.assertDictEqual(
             self.client.decisions.create.await_args.kwargs,
