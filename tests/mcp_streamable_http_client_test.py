@@ -4,7 +4,7 @@ import asyncio
 from multiprocessing import Process
 from unittest.async_case import IsolatedAsyncioTestCase
 
-from mcp.server import FastMCP
+from mcp.server import MCPServer
 from mcp.types import EmbeddedResource, ResourceLink, TextResourceContents
 
 from utils import AnyString
@@ -33,7 +33,7 @@ async def tool_2() -> list:
             type="resource",
             resource=TextResourceContents(
                 uri="file://tmp.txt",
-                mimeType="text/plain",
+                mime_type="text/plain",
                 text="test content",
             ),
         ),
@@ -49,7 +49,7 @@ async def tool_3() -> list:
             type="resource_link",
             uri="https://example.com/report.pdf",
             name="quarterly report",
-            mimeType="application/pdf",
+            mime_type="application/pdf",
             size=20480,
         ),
         ResourceLink(
@@ -62,15 +62,15 @@ async def tool_3() -> list:
 
 def setup_server() -> None:
     """Set up the streamable HTTP MCP server."""
-    sse_server = FastMCP("StreamableHTTP", port=8002)
-    sse_server.tool(description="A test tool function.")(tool_1)
-    sse_server.tool(
+    server = MCPServer("StreamableHTTP")
+    server.tool(description="A test tool function.")(tool_1)
+    server.tool(
         description="A test tool function with embedded resource.",
     )(tool_2)
-    sse_server.tool(
+    server.tool(
         description="A test tool function with resource links.",
     )(tool_3)
-    sse_server.run(transport="streamable-http")
+    server.run(transport="streamable-http", port=8002)
 
 
 class StreamableHttpMCPClientTest(IsolatedAsyncioTestCase):
@@ -163,8 +163,8 @@ class StreamableHttpMCPClientTest(IsolatedAsyncioTestCase):
         self.assertEqual(
             res.content[0].text,
             """{
-  "uri": "file://tmp.txt/",
-  "mimeType": "text/plain",
+  "uri": "file://tmp.txt",
+  "mime_type": "text/plain",
   "meta": null,
   "text": "test content"
 }""",
