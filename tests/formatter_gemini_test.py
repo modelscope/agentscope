@@ -1193,3 +1193,57 @@ class TestGeminiFormatter(IsolatedAsyncioTestCase):
             if "function_call" in part
         ][0]["function_call"]
         self.assertIsInstance(function_call["args"], dict)
+
+
+class GeminiMultiAgentSystemMessageTest(IsolatedAsyncioTestCase):
+    """A system message must never emit a ``text: None`` part."""
+
+    async def test_empty_system_message_emits_a_string(self) -> None:
+        """An empty system message emits an empty string and keeps history."""
+        res = await GeminiMultiAgentFormatter().format(
+            [SystemMsg("sys", []), UserMsg("u", "hi")],
+        )
+        self.assertEqual(
+            res,
+            [
+                {"role": "user", "parts": [{"text": ""}]},
+                {
+                    "role": "user",
+                    "parts": [
+                        {
+                            "text": (
+                                "# Conversation History\n"
+                                "The content between <history></history> tags "
+                                "contains your conversation history\n"
+                                "<history>\nu: hi\n</history>"
+                            ),
+                        },
+                    ],
+                },
+            ],
+        )
+
+    async def test_non_empty_system_message_is_unchanged(self) -> None:
+        """A normal system prompt still comes through verbatim."""
+        res = await GeminiMultiAgentFormatter().format(
+            [SystemMsg("sys", "be brief"), UserMsg("u", "hi")],
+        )
+        self.assertEqual(
+            res,
+            [
+                {"role": "user", "parts": [{"text": "be brief"}]},
+                {
+                    "role": "user",
+                    "parts": [
+                        {
+                            "text": (
+                                "# Conversation History\n"
+                                "The content between <history></history> tags "
+                                "contains your conversation history\n"
+                                "<history>\nu: hi\n</history>"
+                            ),
+                        },
+                    ],
+                },
+            ],
+        )
