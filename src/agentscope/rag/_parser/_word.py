@@ -16,7 +16,8 @@ from __future__ import annotations
 
 import base64
 import io
-from typing import Literal, TYPE_CHECKING
+from collections.abc import Iterator
+from typing import Any, Literal, TYPE_CHECKING
 
 from ..._logging import logger
 from ...message import Base64Source, DataBlock, TextBlock
@@ -33,42 +34,75 @@ if TYPE_CHECKING:
     from docx.text.paragraph import Paragraph as DocxParagraph
 
 _VML_NS = "{urn:schemas-microsoft-com:vml}"
+_MC_ALTERNATE_CONTENT = (
+    "{http://schemas.openxmlformats.org/markup-compatibility/2006}"
+    "AlternateContent"
+)
 
 
 def _extract_text_from_paragraph(para: DocxParagraph) -> str:
-    """Extract text from a paragraph, including text in text boxes and
-    VML shapes.
+    """Extract text from a paragraph, including any text box anchored to it.
 
-    Tries three methods in order:
-    1. All ``w:t`` elements in the paragraph XML (covers revisions,
-       hyperlinks, etc.).
-    2. The standard ``para.text`` property.
-    3. Text inside ``w:txbxContent`` and VML ``v:textbox`` elements.
+    The paragraph's own runs come first, then each text box once, as its own
+    line. Reading every ``w:t`` under the paragraph in one pass would splice a
+    text box into the middle of the surrounding sentence, and would read the
+    ``mc:Fallback`` copy of a text box as a second occurrence of the same text.
+    Each ``mc:AlternateContent`` containing a text box uses the first branch
+    with readable Word text, retaining the fallback when its choices cannot
+    supply any text. Other paragraph content keeps its original behavior.
+
+    Args:
+        para (`DocxParagraph`):
+            The python-docx paragraph to read.
+
+    Returns:
+        `str`:
+            The paragraph's text, with each text box on its own line.
     """
     from docx.oxml.ns import qn
 
-    text = ""
-    for t_elem in para._element.findall(".//" + qn("w:t")):
-        if t_elem.text:
-            text += t_elem.text
+    text_tag = qn("w:t")
+    text_box_tag = qn("w:txbxContent")
+    root = para._element
 
-    if not text:
-        text = para.text.strip()
+    def iter_text(element: Any) -> Iterator[Any]:
+        """Visit text in one readable branch of each AlternateContent."""
+        if element.tag == text_tag:
+            yield element
+        elif (
+            element.tag == _MC_ALTERNATE_CONTENT
+            and element.find(".//" + text_box_tag) is not None
+        ):
+            texts: list[Any] = []
+            for branch in element:
+                texts = list(iter_text(branch))
+                if any(t.text and t.text.strip() for t in texts):
+                    break
+            yield from texts
+        else:
+            for child in element:
+                yield from iter_text(child)
 
-    if not text:
-        for txbx in para._element.findall(".//" + qn("w:txbxContent")):
-            for p_elem in txbx.findall(".//" + qn("w:p")):
-                for t_elem in p_elem.findall(".//" + qn("w:t")):
-                    if t_elem.text:
-                        text += t_elem.text
+    own_parts: list[str] = []
+    text_boxes: dict[Any, list[str]] = {}
+    for text in iter_text(root):
+        if not text.text:
+            continue
+        parts = own_parts
+        for ancestor in text.iterancestors():
+            if ancestor is root:
+                break
+            if ancestor.tag == text_box_tag:
+                parts = text_boxes.setdefault(ancestor, [])
+                break
+        parts.append(text.text)
 
-        for vml_tb in para._element.findall(".//" + _VML_NS + "textbox"):
-            for p_elem in vml_tb.findall(".//" + qn("w:p")):
-                for t_elem in p_elem.findall(".//" + qn("w:t")):
-                    if t_elem.text:
-                        text += t_elem.text
-
-    return text.strip()
+    own_text = "".join(own_parts)
+    if not own_text and not text_boxes:
+        # python-docx also reads characters such as w:noBreakHyphen.
+        own_text = para.text
+    blocks = [own_text, *("".join(parts) for parts in text_boxes.values())]
+    return "\n".join(block.strip() for block in blocks if block.strip())
 
 
 def _extract_table_data(table: DocxTable) -> list[list[str]]:
