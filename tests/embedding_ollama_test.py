@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=protected-access
 """Unit tests for OllamaEmbeddingModel."""
+import json
 import os
 from dataclasses import asdict
+from importlib.util import find_spec
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 from typing import Any
-from unittest import IsolatedAsyncioTestCase
+from unittest import IsolatedAsyncioTestCase, skipUnless
 from unittest.mock import AsyncMock, patch
+
+import httpx
 
 from utils import AnyValue
 
@@ -108,6 +112,102 @@ class OllamaEmbeddingCallTest(IsolatedAsyncioTestCase):
             },
         )
         self.assertEqual(call_count, 2)
+
+
+@skipUnless(find_spec("ollama"), "Ollama SDK is not installed")
+class OllamaEmbeddingUsageTest(IsolatedAsyncioTestCase):
+    """Preserve provider usage through the real SDK and model wrapper."""
+
+    async def _check_usage(
+        self,
+        fields: dict[str, Any],
+        expected: int | None,
+        *,
+        batched: bool = False,
+        cached: bool = False,
+    ) -> None:
+        """Replace only HTTP transport, retaining SDK parsing and file I/O."""
+        import ollama
+
+        requests = []
+
+        def respond(request: httpx.Request) -> httpx.Response:
+            self.assertEqual(request.method, "POST")
+            self.assertEqual(request.url.path, "/api/embed")
+            payload = json.loads(request.content)
+            self.assertEqual(payload["model"], "embeddinggemma")
+            self.assertEqual(payload["dimensions"], 2)
+            requests.append(payload["input"])
+            return httpx.Response(
+                200,
+                json={
+                    "model": "embeddinggemma",
+                    "embeddings": [[0.25, 0.5] for _ in payload["input"]],
+                    **fields,
+                },
+            )
+
+        client = ollama.AsyncClient(
+            host="http://offline.invalid:11434",
+            transport=httpx.MockTransport(respond),
+            trust_env=False,
+        )
+        self.addAsyncCleanup(client._client.aclose)
+        with TemporaryDirectory() as directory:
+            cache = FileEmbeddingCache(cache_dir=directory) if cached else None
+            with patch("ollama.AsyncClient", return_value=client):
+                model = OllamaEmbeddingModel(
+                    credential=OllamaCredential(
+                        host="http://offline.invalid:11434",
+                    ),
+                    model="embeddinggemma",
+                    dimensions=2,
+                    embedding_cache=cache,
+                    max_retries=0,
+                )
+            inputs = ["one"] * (model.batch_size + 1 if batched else 1)
+            response = await model(inputs)
+            self.assertEqual(response.embeddings, [[0.25, 0.5]] * len(inputs))
+            self.assertEqual(response.source, "api")
+            self.assertEqual(
+                sorted(map(len, requests)),
+                [1, 512] if batched else [1],
+            )
+            if cached:
+                cache_response = await model(inputs)
+                self.assertEqual(
+                    cache_response.embeddings,
+                    response.embeddings,
+                )
+                self.assertEqual(cache_response.source, "cache")
+                self.assertEqual(cache_response.usage.tokens, 0)
+                self.assertEqual(cache_response.usage.time, 0)
+                self.assertEqual(len(requests), 1)
+            self.assertEqual(response.usage.tokens, expected)
+
+    async def test_positive_token_count(self) -> None:
+        """Reported positive input tokens remain available."""
+        await self._check_usage({"prompt_eval_count": 8}, 8)
+
+    async def test_zero_token_count(self) -> None:
+        """An explicit zero is a known count."""
+        await self._check_usage({"prompt_eval_count": 0}, 0)
+
+    async def test_null_token_count(self) -> None:
+        """A provider's null count remains unknown."""
+        await self._check_usage({"prompt_eval_count": None}, None)
+
+    async def test_omitted_token_count(self) -> None:
+        """Older responses without token usage remain supported."""
+        await self._check_usage({}, None)
+
+    async def test_native_batch_token_count(self) -> None:
+        """Two native batches each reporting eight tokens total sixteen."""
+        await self._check_usage({"prompt_eval_count": 8}, 16, batched=True)
+
+    async def test_api_usage_and_file_cache_zero(self) -> None:
+        """Preserve API tokens while a real cache hit reports zero."""
+        await self._check_usage({"prompt_eval_count": 8}, 8, cached=True)
 
 
 class OllamaEmbeddingCacheHostTest(IsolatedAsyncioTestCase):

@@ -30,7 +30,7 @@ class OllamaEmbeddingModel(EmbeddingModelBase[str | TextBlock]):
         credential: CredentialBase,
         model: str,
         dimensions: int | None,
-        parameters: "OllamaEmbeddingModel.Parameters | None" = None,
+        parameters: EmbeddingModelBase.Parameters | None = None,
         embedding_cache: EmbeddingCacheBase | None = None,
         context_size: int = 8192,
         max_retries: int = 3,
@@ -139,5 +139,8 @@ class OllamaEmbeddingModel(EmbeddingModelBase[str | TextBlock]):
 
         return EmbeddingResponse(
             embeddings=response.embeddings,
-            usage=EmbeddingUsage(time=time),
+            usage=EmbeddingUsage(
+                tokens=getattr(response, "prompt_eval_count", None),
+                time=time,
+            ),
         )
