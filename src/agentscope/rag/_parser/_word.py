@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import base64
 import io
+from collections.abc import Iterator
 from typing import Any, Literal, TYPE_CHECKING
 
 from ..._logging import logger
@@ -33,11 +34,9 @@ if TYPE_CHECKING:
     from docx.text.paragraph import Paragraph as DocxParagraph
 
 _VML_NS = "{urn:schemas-microsoft-com:vml}"
-# Word writes a text box twice inside ``mc:AlternateContent``: a
-# ``wps:txbx`` under ``mc:Choice`` and the same text as a VML text box
-# under ``mc:Fallback``. Both hold a ``w:txbxContent``.
-_MC_FALLBACK = (
-    "{http://schemas.openxmlformats.org/markup-compatibility/2006}Fallback"
+_MC_ALTERNATE_CONTENT = (
+    "{http://schemas.openxmlformats.org/markup-compatibility/2006}"
+    "AlternateContent"
 )
 
 
@@ -48,6 +47,9 @@ def _extract_text_from_paragraph(para: DocxParagraph) -> str:
     line. Reading every ``w:t`` under the paragraph in one pass would splice a
     text box into the middle of the surrounding sentence, and would read the
     ``mc:Fallback`` copy of a text box as a second occurrence of the same text.
+    Each ``mc:AlternateContent`` containing a text box uses the first branch
+    with readable Word text, retaining the fallback when its choices cannot
+    supply any text. Other paragraph content keeps its original behavior.
 
     Args:
         para (`DocxParagraph`):
@@ -63,36 +65,44 @@ def _extract_text_from_paragraph(para: DocxParagraph) -> str:
     text_box_tag = qn("w:txbxContent")
     root = para._element
 
-    def in_text_box(element: Any) -> bool:
-        """Whether ``element`` sits inside a text box under this paragraph."""
-        for ancestor in element.iterancestors():
-            if ancestor is root:
-                return False
-            if ancestor.tag == text_box_tag:
-                return True
-        return False
+    def iter_text(element: Any) -> Iterator[Any]:
+        """Visit text in one readable branch of each AlternateContent."""
+        if element.tag == text_tag:
+            yield element
+        elif (
+            element.tag == _MC_ALTERNATE_CONTENT
+            and element.find(".//" + text_box_tag) is not None
+        ):
+            texts: list[Any] = []
+            for branch in element:
+                texts = list(iter_text(branch))
+                if any(t.text and t.text.strip() for t in texts):
+                    break
+            yield from texts
+        else:
+            for child in element:
+                yield from iter_text(child)
 
-    def joined(elements: Any) -> str:
-        return "".join(t.text for t in elements if t.text)
-
-    blocks: list[str] = []
-
-    own_text = joined(
-        t for t in root.findall(".//" + text_tag) if not in_text_box(t)
-    )
-    if own_text.strip():
-        blocks.append(own_text.strip())
-
-    # A VML text box holds a ``w:txbxContent`` too, so this covers both the
-    # modern and the legacy shape without reading either of them twice.
-    for text_box in root.findall(".//" + text_box_tag):
-        if any(a.tag == _MC_FALLBACK for a in text_box.iterancestors()):
+    own_parts: list[str] = []
+    text_boxes: dict[Any, list[str]] = {}
+    for text in iter_text(root):
+        if not text.text:
             continue
-        box_text = joined(text_box.findall(".//" + text_tag))
-        if box_text.strip():
-            blocks.append(box_text.strip())
+        parts = own_parts
+        for ancestor in text.iterancestors():
+            if ancestor is root:
+                break
+            if ancestor.tag == text_box_tag:
+                parts = text_boxes.setdefault(ancestor, [])
+                break
+        parts.append(text.text)
 
-    return "\n".join(blocks)
+    own_text = "".join(own_parts)
+    if not own_text and not text_boxes:
+        # python-docx also reads characters such as w:noBreakHyphen.
+        own_text = para.text
+    blocks = [own_text, *("".join(parts) for parts in text_boxes.values())]
+    return "\n".join(block.strip() for block in blocks if block.strip())
 
 
 def _extract_table_data(table: DocxTable) -> list[list[str]]:

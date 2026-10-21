@@ -8,6 +8,7 @@ run anywhere ``agentscope[rag]`` is installed.
 import base64
 import io
 import os
+from copy import deepcopy
 from unittest.async_case import IsolatedAsyncioTestCase
 
 from utils import AnyString
@@ -244,6 +245,15 @@ _DOCX_TEXT_BOX_WITH_VML_FALLBACK = """
       </v:textbox></v:shape>
     </w:pict></mc:Fallback>
   </mc:AlternateContent></w:r>
+</w:p>
+"""
+
+_DOCX_LEGACY_TEXT_BOX = """
+<w:p {ns}>
+  <w:r><w:t>{before}</w:t></w:r>
+  <w:r><w:pict><v:shape><v:textbox><w:txbxContent>
+    <w:p><w:r><w:t>{inside}</w:t></w:r></w:p>
+  </w:txbxContent></v:textbox></v:shape></w:pict></w:r>
 </w:p>
 """
 
@@ -1602,15 +1612,40 @@ class WordParserTest(IsolatedAsyncioTestCase):
 
     async def test_text_box_is_not_spliced_into_the_paragraph(self) -> None:
         """A text box is its own block, not a continuation of the sentence."""
-        docx_bytes = _make_docx_with_text_box(_DOCX_MODERN_TEXT_BOX)
-        parser = WordParser(include_image=False)
-        sections = await parser.parse(docx_bytes, "demo.docx")
+        for shape, template in (
+            ("modern", _DOCX_MODERN_TEXT_BOX),
+            ("legacy", _DOCX_LEGACY_TEXT_BOX),
+        ):
+            for before, expected_text in (
+                ("Paragraph text", "Paragraph text\nCallout\nAfter"),
+                ("", "Callout\nAfter"),
+            ):
+                with self.subTest(shape=shape, before=before):
+                    docx_bytes = _make_docx_with_text_box(
+                        template,
+                        before=before,
+                    )
+                    sections = await WordParser(include_image=False).parse(
+                        docx_bytes,
+                        "demo.docx",
+                    )
 
-        text = "\n".join(s.content.text for s in sections)
-        # "Paragraph text" + "Callout" concatenated would read "textCallout".
-        self.assertNotIn("textCallout", text.replace(" ", ""))
-        self.assertIn("Paragraph text", text)
-        self.assertIn("Callout", text)
+                    self.assertEqual(
+                        [section.model_dump() for section in sections],
+                        [
+                            {
+                                "content": {
+                                    "type": "text",
+                                    "text": expected_text,
+                                    "id": AnyString(),
+                                    "created_at": AnyString(),
+                                    "finished_at": None,
+                                },
+                                "source": "demo.docx",
+                                "metadata": {},
+                            },
+                        ],
+                    )
 
     async def test_text_box_with_vml_fallback_is_read_once(self) -> None:
         """The same text is written under Choice and again under Fallback."""
@@ -1620,16 +1655,247 @@ class WordParserTest(IsolatedAsyncioTestCase):
         parser = WordParser(include_image=False)
         sections = await parser.parse(docx_bytes, "demo.docx")
 
-        text = "\n".join(s.content.text for s in sections)
-        self.assertEqual(text.count("Callout"), 1)
+        self.assertEqual(
+            [section.model_dump() for section in sections],
+            [
+                {
+                    "content": {
+                        "type": "text",
+                        "text": "Paragraph text\nCallout\nAfter",
+                        "id": AnyString(),
+                        "created_at": AnyString(),
+                        "finished_at": None,
+                    },
+                    "source": "demo.docx",
+                    "metadata": {},
+                },
+            ],
+        )
 
-    async def test_paragraph_without_a_text_box_is_unchanged(self) -> None:
-        """A document with no text box produces the same string as before."""
-        docx_bytes = _make_docx_simple(["Hello", "World"])
-        parser = WordParser(include_image=False)
-        sections = await parser.parse(docx_bytes, "demo.docx")
+    async def test_text_box_fallback_is_used_without_readable_choice(
+        self,
+    ) -> None:
+        """Keep fallback text when Choice has no readable Word text."""
+        for choice_xml in ("", "<w:t/>", "<w:t>   </w:t>"):
+            with self.subTest(choice_xml=choice_xml):
+                template = _DOCX_TEXT_BOX_WITH_VML_FALLBACK.replace(
+                    "<w:t>{inside}</w:t>",
+                    choice_xml,
+                    1,
+                )
+                docx_bytes = _make_docx_with_text_box(template)
+                sections = await WordParser(include_image=False).parse(
+                    docx_bytes,
+                    "demo.docx",
+                )
+
+                self.assertEqual(
+                    [section.model_dump() for section in sections],
+                    [
+                        {
+                            "content": {
+                                "type": "text",
+                                "text": "Paragraph text\nCallout\nAfter",
+                                "id": AnyString(),
+                                "created_at": AnyString(),
+                                "finished_at": None,
+                            },
+                            "source": "demo.docx",
+                            "metadata": {},
+                        },
+                    ],
+                )
+
+    async def test_text_box_uses_only_the_first_readable_choice(self) -> None:
+        """Alternative representations are selected, not merged."""
+        template = _DOCX_TEXT_BOX_WITH_VML_FALLBACK.replace(
+            "</mc:Choice>",
+            """</mc:Choice>
+            <mc:Choice Requires="v"><w:pict><v:shape><v:textbox>
+              <w:txbxContent><w:p><w:r><w:t>Other choice</w:t></w:r></w:p>
+              </w:txbxContent>
+            </v:textbox></v:shape></w:pict></mc:Choice>""",
+        )
+        docx_bytes = _make_docx_with_text_box(template)
+        sections = await WordParser(include_image=False).parse(
+            docx_bytes,
+            "demo.docx",
+        )
 
         self.assertEqual(
-            [s.content.text for s in sections],
-            ["Hello\nWorld"],
+            [section.model_dump() for section in sections],
+            [
+                {
+                    "content": {
+                        "type": "text",
+                        "text": "Paragraph text\nCallout\nAfter",
+                        "id": AnyString(),
+                        "created_at": AnyString(),
+                        "finished_at": None,
+                    },
+                    "source": "demo.docx",
+                    "metadata": {},
+                },
+            ],
         )
+
+    async def test_distinct_text_boxes_with_identical_text_are_kept(
+        self,
+    ) -> None:
+        """Deduplicate alternate representations, not equal text boxes."""
+        from docx import Document as DocxDocument
+
+        document = DocxDocument(
+            io.BytesIO(
+                _make_docx_with_text_box(_DOCX_TEXT_BOX_WITH_VML_FALLBACK),
+            ),
+        )
+        # pylint: disable-next=protected-access
+        paragraph = document.paragraphs[0]._element
+        paragraph.append(deepcopy(paragraph[-1]))
+        buffer = io.BytesIO()
+        document.save(buffer)
+        sections = await WordParser(include_image=False).parse(
+            buffer.getvalue(),
+            "demo.docx",
+        )
+
+        self.assertEqual(
+            [section.model_dump() for section in sections],
+            [
+                {
+                    "content": {
+                        "type": "text",
+                        "text": "Paragraph text\nCallout\nCallout\nAfter",
+                        "id": AnyString(),
+                        "created_at": AnyString(),
+                        "finished_at": None,
+                    },
+                    "source": "demo.docx",
+                    "metadata": {},
+                },
+            ],
+        )
+
+    async def test_paragraph_with_only_nonbreaking_hyphens_is_kept(
+        self,
+    ) -> None:
+        """The paragraph text fallback preserves non-w:t characters."""
+        from docx import Document as DocxDocument
+        from docx.oxml import OxmlElement
+
+        document = DocxDocument()
+        document.add_paragraph("Before")
+        run = document.add_paragraph().add_run()
+        for _ in range(3):
+            # pylint: disable-next=protected-access
+            run._r.append(OxmlElement("w:noBreakHyphen"))
+        document.add_paragraph("After")
+        buffer = io.BytesIO()
+        document.save(buffer)
+        sections = await WordParser(include_image=False).parse(
+            buffer.getvalue(),
+            "demo.docx",
+        )
+
+        self.assertEqual(
+            [section.model_dump() for section in sections],
+            [
+                {
+                    "content": {
+                        "type": "text",
+                        "text": "Before\n---\nAfter",
+                        "id": AnyString(),
+                        "created_at": AnyString(),
+                        "finished_at": None,
+                    },
+                    "source": "demo.docx",
+                    "metadata": {},
+                },
+            ],
+        )
+
+
+class WordParserCompatibilityTest(IsolatedAsyncioTestCase):
+    """Preserve paragraph behavior outside the text-box fix."""
+
+    async def test_paragraph_content_without_text_boxes(self) -> None:
+        """Non-textbox XML retains the existing complete Section output."""
+        from docx import Document as DocxDocument
+        from docx.oxml import parse_xml
+
+        cases = (
+            (
+                "unicode",
+                "<w:r><w:t>中文 &amp; English</w:t></w:r>",
+                "中文 & English",
+            ),
+            (
+                "hyperlink",
+                "<w:hyperlink><w:r><w:t>Link</w:t></w:r></w:hyperlink>",
+                "Link",
+            ),
+            (
+                "revision",
+                "<w:ins><w:r><w:t>Added</w:t></w:r></w:ins>",
+                "Added",
+            ),
+            (
+                "field",
+                "<w:fldSimple><w:r><w:t>Field</w:t></w:r></w:fldSimple>",
+                "Field",
+            ),
+            (
+                "content_control",
+                "<w:sdt><w:sdtContent><w:r><w:t>Control</w:t></w:r>"
+                "</w:sdtContent></w:sdt>",
+                "Control",
+            ),
+            (
+                "non_textbox_alternatives",
+                '<w:r><mc:AlternateContent><mc:Choice Requires="wps">'
+                "<w:t>Choice</w:t></mc:Choice>"
+                "<mc:Fallback><w:t>Fallback</w:t></mc:Fallback>"
+                "</mc:AlternateContent></w:r>",
+                "ChoiceFallback",
+            ),
+            (
+                "alternate_whitespace",
+                "<w:r><w:t>A</w:t><mc:AlternateContent>"
+                '<mc:Choice Requires="wps"><w:t> </w:t></mc:Choice>'
+                "</mc:AlternateContent><w:t>B</w:t></w:r>",
+                "A B",
+            ),
+        )
+        for name, content, expected_text in cases:
+            with self.subTest(name=name):
+                document = DocxDocument()
+                document.add_paragraph("Before")
+                document.element.body.insert(
+                    1,
+                    parse_xml(f"<w:p {_DOCX_TEXT_BOX_NS}>{content}</w:p>"),
+                )
+                document.add_paragraph("After")
+                buffer = io.BytesIO()
+                document.save(buffer)
+                sections = await WordParser(include_image=False).parse(
+                    buffer.getvalue(),
+                    "demo.docx",
+                )
+
+                self.assertEqual(
+                    [section.model_dump() for section in sections],
+                    [
+                        {
+                            "content": {
+                                "type": "text",
+                                "text": f"Before\n{expected_text}\nAfter",
+                                "id": AnyString(),
+                                "created_at": AnyString(),
+                                "finished_at": None,
+                            },
+                            "source": "demo.docx",
+                            "metadata": {},
+                        },
+                    ],
+                )
