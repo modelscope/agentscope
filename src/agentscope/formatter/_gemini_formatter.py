@@ -173,14 +173,8 @@ class GeminiChatFormatter(_GeminiFormatterBase):
         while i < len(msgs):
             msg = msgs[i]
             parts: list = []
-            # Gemini requires the function responses that answer one model
-            # turn to live in a single `user` content: when the counts
-            # differ it rejects the request with 400 ("Please ensure that
-            # the number of function response parts is equal to the number
-            # of function call parts of the function call turn"). So
-            # accumulate a run of tool results instead of emitting one
-            # `user` turn each, and keep the media promoted out of those
-            # results in a single turn after them.
+            # Group consecutive tool results into one user turn, followed by
+            # any media promoted from those results.
             tool_result_parts: list = []
             promoted_parts: list = []
 
