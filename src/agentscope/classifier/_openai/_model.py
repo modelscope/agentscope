@@ -202,9 +202,7 @@ class OpenAIClassifierModel(ClassifierModelBase):
                 Answers and refusals keyed by question name, with usage.
         """
         start_time = perf_counter()
-        # Merge instead of passing ``model=``/``input=`` alongside
-        # ``**kwargs``: a per-call option with either name would otherwise
-        # reach the SDK twice and raise TypeError. The caller's value wins.
+        # Per-call options override defaults.
         response = await self.client.decisions.create(
             **{
                 "model": self.model,
