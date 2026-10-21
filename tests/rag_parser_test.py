@@ -1618,6 +1618,10 @@ class WordParserTest(IsolatedAsyncioTestCase):
         with self.assertRaises(ValueError):
             WordParser(table_format="csv")  # type: ignore[arg-type]
 
+
+class WordParserParagraphTest(IsolatedAsyncioTestCase):
+    """Regression coverage for paragraph and text-box extraction."""
+
     async def test_text_boxes_are_separate_and_read_once(self) -> None:
         """Read modern text boxes once, with or without a VML fallback."""
         for name, template in (
