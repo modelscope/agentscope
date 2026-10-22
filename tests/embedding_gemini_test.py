@@ -159,11 +159,12 @@ class GeminiTextCallTest(IsolatedAsyncioTestCase):
         """Configured text options reach the SDK; call options win."""
         model = self._make_configured_model("RETRIEVAL_QUERY")
         sdk = model.client.aio.models.embed_content
-        for overrides, task_type in (
-            ({}, "RETRIEVAL_QUERY"),
-            ({"task_type": "RETRIEVAL_DOCUMENT"}, "RETRIEVAL_DOCUMENT"),
+        for overrides, task_type, dimensions in (
+            ({}, "RETRIEVAL_QUERY", 2),
+            ({"task_type": "RETRIEVAL_DOCUMENT"}, "RETRIEVAL_DOCUMENT", 2),
+            ({"output_dimensionality": 4}, "RETRIEVAL_QUERY", 4),
         ):
-            with self.subTest(task_type=task_type):
+            with self.subTest(task_type=task_type, dimensions=dimensions):
                 await model(["hello"], **overrides)
                 request = sdk.call_args.kwargs
                 self.assertEqual(
@@ -178,7 +179,7 @@ class GeminiTextCallTest(IsolatedAsyncioTestCase):
                         "contents": ["hello"],
                         "config": {
                             "task_type": task_type,
-                            "output_dimensionality": 2,
+                            "output_dimensionality": dimensions,
                         },
                     },
                 )
@@ -186,7 +187,7 @@ class GeminiTextCallTest(IsolatedAsyncioTestCase):
                     model.parameters.model_dump(),
                     {"task_type": "RETRIEVAL_QUERY"},
                 )
-        self.assertEqual(sdk.await_count, 2)
+        self.assertEqual(sdk.await_count, 3)
 
     async def test_file_cache_uses_effective_parameters(self) -> None:
         """Cache by effective task and dimensions, reusing matching vectors."""
@@ -300,6 +301,34 @@ class GeminiMultimodalCallTest(IsolatedAsyncioTestCase):
                 "type": "embedding",
                 "usage": {"tokens": 2, "time": 0.01, "type": "embedding"},
                 "source": "api",
+            },
+        )
+
+    async def test_multimodal_call_accepts_per_call_dimensions(self) -> None:
+        """Multimodal mode forwards the override into the request config."""
+        model = self._make_multimodal_model()
+        model.client = MagicMock()
+        model.client.aio.models.embed_content = AsyncMock(
+            return_value=MagicMock(
+                embeddings=[MagicMock(values=[0.1, 0.2, 0.3, 0.4])],
+            ),
+        )
+        await model(["hello"], output_dimensionality=4)
+
+        request = model.client.aio.models.embed_content.call_args.kwargs
+        self.assertEqual(
+            {
+                **request,
+                "contents": [
+                    item.model_dump(exclude_none=True)
+                    for item in request["contents"]
+                ],
+                "config": request["config"].model_dump(exclude_none=True),
+            },
+            {
+                "model": "gemini-embedding-2",
+                "contents": [{"parts": [{"text": "hello"}]}],
+                "config": {"output_dimensionality": 4},
             },
         )
 
