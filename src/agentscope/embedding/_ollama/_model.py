@@ -30,7 +30,7 @@ class OllamaEmbeddingModel(EmbeddingModelBase[str | TextBlock]):
         credential: CredentialBase,
         model: str,
         dimensions: int | None,
-        parameters: EmbeddingModelBase.Parameters | None = None,
+        parameters: "OllamaEmbeddingModel.Parameters | None" = None,
         embedding_cache: EmbeddingCacheBase | None = None,
         context_size: int = 8192,
         max_retries: int = 3,
