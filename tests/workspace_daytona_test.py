@@ -41,7 +41,7 @@ from agentscope.app.storage import (
     SessionConfig,
     SessionRecord,
 )
-from agentscope.mcp import MCPClient, StdioMCPConfig
+from agentscope.mcp import HttpMCPConfig, MCPClient, StdioMCPConfig
 from agentscope.message import (
     Base64Source,
     DataBlock,
@@ -442,22 +442,35 @@ class _FakeGateway:
         """Always healthy."""
         return True
 
-    async def list_mcps(self) -> list[MCPClient]:
-        """Read persisted MCP specs from the fake sandbox."""
+    async def list_mcps(
+        self,
+        agent_id: str = "",
+        session_id: str = "",
+    ) -> list[MCPClient]:
+        """Read the persisted specs for one agent/session."""
         path = self.backend.join_path(self.backend._workdir, ".mcp")
         try:
             raw = await self.backend.read_file(path)
         except FileNotFoundError:
             return []
-        specs = json.loads(raw.decode("utf-8"))
+        data = json.loads(raw.decode("utf-8"))
+        specs = data["mcps"].get(agent_id, {}).get(session_id, [])
         return [MCPClient.model_validate(spec) for spec in specs]
 
     async def aclose(self) -> None:
         """Mark closed."""
         self.closed = True
 
-    def make_client(self, spec: dict[str, object]) -> MCPClient:
+    def make_client(
+        self,
+        spec: dict[str, object],
+        *,
+        agent_id: str = "",
+        session_id: str = "",
+        connected: bool = False,
+    ) -> MCPClient:
         """Build a regular MCP client from spec for add_mcp tests."""
+        del agent_id, session_id, connected
         return _FakeGatewayMCPClient(spec)
 
 
@@ -467,8 +480,14 @@ class _FakeGatewayMCPClient:
     def __init__(self, spec: dict[str, object]) -> None:
         self._spec = spec
         self.name = str(spec["name"])
+        self.is_stateful = bool(spec.get("is_stateful"))
         self.connected = False
         self.closed = False
+
+    @property
+    def is_connected(self) -> bool:
+        """Whether :meth:`connect` has run and :meth:`close` has not."""
+        return self.connected and not self.closed
 
     def model_dump(self, mode: str = "python") -> dict[str, object]:
         """Return the original MCP spec for persistence."""
@@ -479,8 +498,9 @@ class _FakeGatewayMCPClient:
         """Mark connected."""
         self.connected = True
 
-    async def close(self) -> None:
+    async def close(self, ignore_errors: bool = True) -> None:
         """Mark closed."""
+        del ignore_errors
         self.closed = True
 
 
@@ -848,7 +868,7 @@ class TestDaytonaWorkspaceMock(_DaytonaWorkspaceMockBase):
         """The persisted ``.mcp`` file is rooted at the SDK workdir."""
         workspace = DaytonaWorkspace(workspace_id="wid-9")
         await workspace.initialize()
-        workspace._mcps = [
+        workspace._mcp_specs[("agent-a", "sess-1")] = [
             MCPClient(
                 name="demo",
                 mcp_config=StdioMCPConfig(command="node", args=["server.js"]),
@@ -860,7 +880,10 @@ class TestDaytonaWorkspaceMock(_DaytonaWorkspaceMockBase):
 
         raw = await workspace._backend.read_file("/home/daytona/.mcp")
         data = json.loads(raw.decode("utf-8"))
-        self.assertEqual(data[0]["name"], "demo")
+        self.assertEqual(
+            data["mcps"]["agent-a"]["sess-1"][0]["name"],
+            "demo",
+        )
 
     async def test_missing_mcp_file_seeds_default_mcps(self) -> None:
         """Missing persisted MCP config falls back to configured defaults."""
@@ -876,9 +899,10 @@ class TestDaytonaWorkspaceMock(_DaytonaWorkspaceMockBase):
 
         await workspace.initialize()
 
-        self.assertEqual([m.name for m in workspace._mcps], ["default"])
-        raw = await workspace._backend.read_file("/home/daytona/.mcp")
-        self.assertEqual(json.loads(raw.decode("utf-8"))[0]["name"], "default")
+        self.assertEqual(
+            [m.name for m in workspace._declared_specs("a", "s")],
+            ["default"],
+        )
 
     async def test_invalid_mcp_file_falls_back_to_default_mcps(self) -> None:
         """Invalid persisted MCP JSON falls back to configured defaults."""
@@ -898,11 +922,9 @@ class TestDaytonaWorkspaceMock(_DaytonaWorkspaceMockBase):
 
         await workspace.initialize()
 
-        self.assertEqual([m.name for m in workspace._mcps], ["fallback"])
-        raw = await workspace._backend.read_file("/home/daytona/.mcp")
         self.assertEqual(
-            json.loads(raw.decode("utf-8"))[0]["name"],
-            "fallback",
+            [m.name for m in workspace._declared_specs("a", "s")],
+            ["fallback"],
         )
 
     async def test_initialize_bootstrap_error_includes_command_and_output(
@@ -1089,34 +1111,86 @@ class TestDaytonaWorkspaceBuiltinToolsMock(IsolatedAsyncioTestCase):
         )
         self.assertIn("/home/daytona/src/app.py", glob_text)
 
-    async def test_mcp_add_remove_persists_mcp_file(self) -> None:
-        """Dynamic MCP changes are reflected in the sandbox ``.mcp`` file."""
+    async def test_mcp_add_returns_proxy_and_persists_mcp_file(self) -> None:
+        """Adding an MCP returns the stored gateway proxy and persists it."""
         mcp = MCPClient(
             name="demo",
             mcp_config=StdioMCPConfig(command="node", args=["server.js"]),
             is_stateful=True,
         )
 
-        await self.workspace.add_mcp(mcp)
+        registered = await self.workspace.add_mcp(
+            mcp,
+            agent_id="a",
+            session_id="s",
+        )
 
-        self.assertIn("demo", [m.name for m in self.workspace._mcps])
+        live = self.workspace._mcp_instances[("a", "s")]
+        self.assertIs(registered, live["demo"])
+        self.assertIsNot(registered, mcp)
         raw = await self.workspace._backend.read_file("/home/daytona/.mcp")
-        self.assertEqual(json.loads(raw.decode("utf-8"))[0]["name"], "demo")
+        data = json.loads(raw.decode("utf-8"))
+        self.assertEqual(data["mcps"]["a"]["s"][0]["name"], "demo")
 
-        gw_client = next(m for m in self.workspace._mcps if m.name == "demo")
-        await self.workspace.remove_mcp("demo")
+        gw_client = live["demo"]
+        await self.workspace.remove_mcp("demo", agent_id="a", session_id="s")
 
         self.assertTrue(gw_client.closed)
-        self.assertNotIn("demo", [m.name for m in self.workspace._mcps])
+        self.assertNotIn("demo", self.workspace._mcp_instances[("a", "s")])
         raw = await self.workspace._backend.read_file("/home/daytona/.mcp")
-        self.assertEqual(json.loads(raw.decode("utf-8")), [])
+        data = json.loads(raw.decode("utf-8"))
+        self.assertEqual(data["mcps"]["a"]["s"], [])
+
+    async def test_stateless_mcp_remove_then_readd(self) -> None:
+        """Removing a stateless MCP deregisters it from the gateway."""
+        mcp = MCPClient(
+            name="demo",
+            mcp_config=HttpMCPConfig(url="http://mcp.example/mcp"),
+            is_stateful=False,
+        )
+        await self.workspace.add_mcp(mcp, agent_id="a", session_id="s")
+        first = self.workspace._mcp_instances[("a", "s")]["demo"]
+
+        await self.workspace.remove_mcp("demo", agent_id="a", session_id="s")
+        await self.workspace.add_mcp(mcp, agent_id="a", session_id="s")
+
+        self.assertTrue(first.closed)
+        live = self.workspace._mcp_instances[("a", "s")]
+        self.assertListEqual(list(live), ["demo"])
+        self.assertIsNot(live["demo"], first)
+        raw = await self.workspace._backend.read_file("/home/daytona/.mcp")
+        self.assertDictEqual(
+            json.loads(raw.decode("utf-8")),
+            {
+                "version": 2,
+                "mcps": {
+                    "a": {
+                        "s": [
+                            {
+                                "name": "demo",
+                                "mcp_config": {
+                                    "type": "http_mcp",
+                                    "url": "http://mcp.example/mcp",
+                                    "headers": None,
+                                    "timeout": 30.0,
+                                },
+                                "is_stateful": False,
+                                "enable_tools": None,
+                                "disable_tools": None,
+                                "execution_timeout": None,
+                            },
+                        ],
+                    },
+                },
+            },
+        )
 
     async def test_remove_missing_mcp_is_noop(self) -> None:
         """Removing an unknown MCP leaves persisted config unchanged."""
-        await self.workspace.remove_mcp("missing")
+        await self.workspace.remove_mcp("missing", agent_id="a")
 
-        raw = await self.workspace._backend.read_file("/home/daytona/.mcp")
-        self.assertEqual(json.loads(raw.decode("utf-8")), [])
+        # Unknown name: nothing is declared, so nothing is persisted.
+        self.assertEqual(self.workspace._mcp_specs, {})
 
     @unittest.skipIf(
         os.name == "nt",
@@ -1145,7 +1219,7 @@ class TestDaytonaWorkspaceBuiltinToolsMock(IsolatedAsyncioTestCase):
         self.assertEqual([skill.name for skill in skills], ["demo-skill"])
         self.assertEqual(
             skills[0].dir,
-            "/home/daytona/skills/local-skill",
+            "/home/daytona/skills/default/local-skill",
         )
 
         await self.workspace.remove_skill("demo-skill")
@@ -1183,6 +1257,10 @@ class TestDaytonaWorkspaceBuiltinToolsMock(IsolatedAsyncioTestCase):
         with self.assertRaisesRegex(ValueError, "already exists"):
             await self.workspace.add_skill(skill_dir)
 
+    @unittest.skipIf(
+        shutil.which("test") is None,
+        "host-backed Daytona fake relies on POSIX sandbox commands",
+    )
     async def test_offload_context_tool_result_and_reset(self) -> None:
         """Offload writes sessions/data and reset clears persistent state."""
         data_block = DataBlock(
@@ -1245,15 +1323,17 @@ class TestDaytonaWorkspaceBuiltinToolsMock(IsolatedAsyncioTestCase):
         self.assertFalse(
             await self.workspace._backend.file_exists("/home/daytona/data"),
         )
-        raw = await self.workspace._backend.read_file("/home/daytona/.mcp")
-        self.assertEqual(json.loads(raw.decode("utf-8")), [])
+        # ``reset`` drops ``.mcp`` so default_mcps are seeded again.
+        self.assertFalse(
+            await self.workspace._backend.file_exists("/home/daytona/.mcp"),
+        )
 
 
 def _mcp_server_script() -> bytes:
-    """Minimal FastMCP stdio server used by live reattach tests."""
-    return b"""from mcp.server import FastMCP
+    """Minimal MCPServer stdio server used by live reattach tests."""
+    return b"""from mcp.server import MCPServer
 
-mcp = FastMCP("Persist")
+mcp = MCPServer("Persist")
 
 
 @mcp.tool()
@@ -1464,8 +1544,8 @@ class TestDaytonaWorkspaceLive(IsolatedAsyncioTestCase):
                 self.assertEqual(
                     [skill.dir for skill in seeded],
                     [
-                        f"{workspace.workdir}/skills/live_seed_one",
-                        f"{workspace.workdir}/skills/live_seed_two",
+                        f"{workspace.workdir}/skills/default/live_seed_one",
+                        f"{workspace.workdir}/skills/default/live_seed_two",
                     ],
                 )
 
@@ -1657,6 +1737,9 @@ class TestDaytonaWorkspaceLive(IsolatedAsyncioTestCase):
                 scheduler_manager=SchedulerManager(
                     storage=_NoOpStorage(),  # type: ignore[arg-type]
                     message_bus=_NullBus(),  # type: ignore[arg-type]
+                    workspace_manager=(
+                        _NoOpWorkspaceManager()  # type: ignore[arg-type]
+                    ),
                 ),
                 background_task_manager=BackgroundTaskManager(
                     message_bus=_NullBus(),  # type: ignore[arg-type]

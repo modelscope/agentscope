@@ -2,8 +2,10 @@
 """Test cases for installing a skill from an archive stream."""
 import io
 import os
+import shutil
 import tarfile
 import tempfile
+import unittest
 import zipfile
 from typing import AsyncIterator
 from unittest.async_case import IsolatedAsyncioTestCase
@@ -121,10 +123,9 @@ class AddSkillArchiveLocalTest(IsolatedAsyncioTestCase):
             "zip",
             "pack",
         )
-        self.assertEqual(
-            sorted(os.listdir(self.tmp)),
-            [".mcp", "skills"],
-        )
+        # No ``.mcp``: it is only written once an agent/session
+        # diverges from ``default_mcps``.
+        self.assertEqual(sorted(os.listdir(self.tmp)), ["skills"])
 
 
 class AddSkillArchiveSandboxedTest(IsolatedAsyncioTestCase):
@@ -142,8 +143,12 @@ class AddSkillArchiveSandboxedTest(IsolatedAsyncioTestCase):
         self.tmp = self.enterContext(tempfile.TemporaryDirectory())
         self.workspace = LocalWorkspace(workdir=self.tmp)
         await self.workspace.initialize()
-        self.skills_dir = os.path.join(self.tmp, "skills")
+        self.skills_dir = os.path.join(self.tmp, "skills", "default")
 
+    @unittest.skipIf(
+        shutil.which("mv") is None,
+        "base add_skill_archive shells out to POSIX mv/mkdir",
+    )
     async def test_directory_name_is_suffixed_when_taken(self) -> None:
         """A repeated name gets a numeric suffix rather than an error."""
         for index in range(3):
@@ -158,6 +163,10 @@ class AddSkillArchiveSandboxedTest(IsolatedAsyncioTestCase):
             ["pack", "pack-1", "pack-2"],
         )
 
+    @unittest.skipIf(
+        shutil.which("mv") is None,
+        "base add_skill_archive shells out to POSIX mv/mkdir",
+    )
     async def test_flat_archive_is_accepted(self) -> None:
         """SKILL.md at the archive root needs no wrapping folder."""
         await WorkspaceBase.add_skill_archive(

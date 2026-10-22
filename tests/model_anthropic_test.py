@@ -7,15 +7,23 @@ Anthropic uses event-based streaming (message_start, content_block_start,
 content_block_delta, message_delta events).
 """
 import json
+from datetime import datetime, timedelta
 from typing import Any
 import unittest
 from unittest import IsolatedAsyncioTestCase
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
+
+from anthropic import types as anthropic_types
 
 from utils import AnyString
 
-from agentscope.message import TextBlock, ToolCallBlock, ThinkingBlock
-from agentscope.model import AnthropicChatModel
+from agentscope.message import (
+    AssistantMsg,
+    TextBlock,
+    ToolCallBlock,
+    ThinkingBlock,
+)
+from agentscope.model import AnthropicChatModel, ChatUsage
 from agentscope.credential import AnthropicCredential
 from agentscope.tool import ToolChoice
 
@@ -84,12 +92,106 @@ def _make_event(event_type: str, **kwargs: Any) -> MagicMock:
     return event
 
 
+def _completion_events(completion: anthropic_types.Message) -> list:
+    """Split a completion into SDK events with multiple deltas per block."""
+    events: list = [
+        anthropic_types.RawMessageStartEvent(
+            type="message_start",
+            message=completion.model_copy(
+                update={
+                    "content": [],
+                    "stop_reason": None,
+                    "usage": completion.usage.model_copy(
+                        update={"output_tokens": 0},
+                    ),
+                },
+            ),
+        ),
+    ]
+    for index, block in enumerate(completion.content):
+        start = block.model_dump()
+        deltas = []
+        if block.type in ("text", "thinking"):
+            value = start[block.type]
+            start[block.type] = ""
+            if value:
+                midpoint = len(value) // 2
+                deltas.extend(
+                    {"type": f"{block.type}_delta", block.type: part}
+                    for part in (value[:midpoint], value[midpoint:])
+                )
+            if block.type == "thinking":
+                start["signature"] = ""
+                deltas.append(
+                    {"type": "signature_delta", "signature": block.signature},
+                )
+        elif block.type == "tool_use":
+            start["input"] = {}
+            deltas.append(
+                {
+                    "type": "input_json_delta",
+                    "partial_json": json.dumps(block.input),
+                },
+            )
+
+        events.append(
+            anthropic_types.RawContentBlockStartEvent.model_validate(
+                {
+                    "type": "content_block_start",
+                    "index": index,
+                    "content_block": start,
+                },
+            ),
+        )
+        events.extend(
+            anthropic_types.RawContentBlockDeltaEvent.model_validate(
+                {
+                    "type": "content_block_delta",
+                    "index": index,
+                    "delta": delta,
+                },
+            )
+            for delta in deltas
+        )
+        events.append(
+            anthropic_types.RawContentBlockStopEvent(
+                type="content_block_stop",
+                index=index,
+            ),
+        )
+    events.extend(
+        [
+            anthropic_types.RawMessageDeltaEvent.model_validate(
+                {
+                    "type": "message_delta",
+                    "delta": {
+                        "stop_reason": completion.stop_reason,
+                        "stop_sequence": None,
+                    },
+                    "usage": {
+                        "output_tokens": completion.usage.output_tokens,
+                    },
+                },
+            ),
+            anthropic_types.RawMessageStopEvent(type="message_stop"),
+        ],
+    )
+    return events
+
+
 class _MockAsyncEventStream:
     """Mock async iterator over Anthropic events."""
 
     def __init__(self, events: list) -> None:
         self._events = events
         self._index = 0
+        self.exited = False
+
+    async def __aenter__(self) -> "_MockAsyncEventStream":
+        return self
+
+    async def __aexit__(self, *args: Any) -> None:
+        self.exited = True
 
     def __aiter__(self) -> "_MockAsyncEventStream":
         return self
@@ -563,13 +665,14 @@ class TestAnthropicStream(IsolatedAsyncioTestCase):
             ),
             _make_event("content_block_delta", index=1, delta=text_delta),
         ]
-        mock_create = AsyncMock(
-            return_value=_MockAsyncEventStream(events),
-        )
+        stream = _MockAsyncEventStream(events)
+        mock_create = AsyncMock(return_value=stream)
         self.mock_client.messages.create = mock_create
 
         gen = await self.model([])
         responses = [r async for r in gen]
+
+        self.assertTrue(stream.exited)
 
         self.assertListEqual(
             [(r.is_last, r.content) for r in responses],
@@ -622,6 +725,50 @@ class TestAnthropicStream(IsolatedAsyncioTestCase):
                     ],
                 ),
             ],
+        )
+
+    async def test_stream_final_usage_reports_full_generation_time(
+        self,
+    ) -> None:
+        """The final response reports the full generation time."""
+        completion = anthropic_types.Message.model_validate(
+            {
+                "id": "msg-t",
+                "type": "message",
+                "role": "assistant",
+                "model": self.model.model,
+                "content": [{"type": "text", "text": "Hi"}],
+                "stop_reason": "end_turn",
+                "stop_sequence": None,
+                "usage": {
+                    "input_tokens": 10,
+                    "output_tokens": 5,
+                    "cache_creation_input_tokens": 0,
+                    "cache_read_input_tokens": 0,
+                },
+            },
+        )
+        self.mock_client.messages.create = AsyncMock(
+            return_value=_MockAsyncEventStream(_completion_events(completion)),
+        )
+
+        start = datetime(2026, 10, 1, 10, 0, 0)
+        first_event_at = start + timedelta(milliseconds=300)
+        last_event_at = start + timedelta(seconds=20)
+        with patch(
+            "agentscope.model._anthropic._model.datetime",
+        ) as mock_datetime:
+            mock_datetime.now.side_effect = [
+                start,
+                first_event_at,
+                last_event_at,
+            ]
+            responses = [r async for r in await self.model([])]
+
+        self.assertTrue(responses[-1].is_last)
+        self.assertEqual(
+            responses[-1].usage,
+            ChatUsage(input_tokens=10, output_tokens=5, time=20.0),
         )
 
     async def test_stream_redacted_thinking(self) -> None:
@@ -813,6 +960,167 @@ class TestAnthropicStream(IsolatedAsyncioTestCase):
                 ),
             ],
         )
+
+    async def test_stream_preserves_content_blocks(self) -> None:
+        """Streaming preserves block boundaries and the replayed message."""
+        thinking_a = {
+            "type": "thinking",
+            "thinking": "First thought.",
+            "signature": "sig_A",
+        }
+        thinking_b = {
+            "type": "thinking",
+            "thinking": "Second thought.",
+            "signature": "sig_B",
+        }
+        tool = {
+            "type": "tool_use",
+            "id": "toolu_1",
+            "name": "get_weather",
+            "input": {"city": "Beijing"},
+        }
+        cases = {
+            "multiple_thinking": [thinking_a, thinking_b, tool],
+            "signature_only": [
+                {**thinking_a, "thinking": ""},
+                {**thinking_b, "thinking": ""},
+                tool,
+            ],
+            "text_around_tool": [
+                {"type": "text", "text": "Before the tool."},
+                tool,
+                {"type": "text", "text": "After the tool."},
+            ],
+            "thinking_around_redacted": [
+                thinking_a,
+                {"type": "redacted_thinking", "data": "encrypted_data"},
+                thinking_b,
+                tool,
+            ],
+        }
+        non_stream_model = _make_model(stream=False)
+        non_stream_model.client = self.mock_client
+
+        for name, content in cases.items():
+            with self.subTest(name=name):
+                completion = anthropic_types.Message.model_validate(
+                    {
+                        "id": "msg-blocks",
+                        "type": "message",
+                        "role": "assistant",
+                        "model": self.model.model,
+                        "content": content,
+                        "stop_reason": "tool_use",
+                        "stop_sequence": None,
+                        "usage": {"input_tokens": 10, "output_tokens": 20},
+                    },
+                )
+                stream = _MockAsyncEventStream(_completion_events(completion))
+                self.mock_client.messages.create = AsyncMock(
+                    side_effect=[stream, completion],
+                )
+
+                responses = [r async for r in await self.model([])]
+                final = responses[-1]
+                non_stream = await non_stream_model([])
+
+                self.assertTrue(stream.exited)
+                self.assertTrue(final.is_last)
+                self.assertEqual(final.id, completion.id)
+                self.assertEqual(
+                    len({block.id for block in final.content}),
+                    len(content),
+                )
+                # Compare the accumulated blocks before formatting, so a
+                # formatter cannot hide a missing or accidentally split block.
+                normalized = []
+                for response in (final, non_stream):
+                    normalized.append(
+                        [
+                            block.model_dump(
+                                exclude={"created_at", "finished_at"}
+                                | (
+                                    set()
+                                    if block.type == "tool_call"
+                                    else {"id"}
+                                ),
+                            )
+                            for block in response.content
+                        ],
+                    )
+                self.assertEqual(normalized[0], normalized[1])
+
+                replay = await self.model.formatter.format(
+                    [AssistantMsg(name="assistant", content=final.content)],
+                )
+                self.assertEqual(
+                    replay,
+                    [{"role": "assistant", "content": content}],
+                )
+
+    async def test_stream_tool_call_without_arguments(self) -> None:
+        """A tool call without arguments streams as ``{}``, as without
+        streaming."""
+        completion = anthropic_types.Message.model_validate(
+            {
+                "id": "msg-no-args",
+                "type": "message",
+                "role": "assistant",
+                "model": self.model.model,
+                "content": [
+                    {
+                        "type": "tool_use",
+                        "id": "toolu_1",
+                        "name": "list_tasks",
+                        "input": {},
+                    },
+                ],
+                "stop_reason": "tool_use",
+                "stop_sequence": None,
+                "usage": {"input_tokens": 10, "output_tokens": 20},
+            },
+        )
+        events = _completion_events(completion)
+        tool_delta = next(_ for _ in events if _.type == "content_block_delta")
+        non_stream_model = _make_model(stream=False)
+        non_stream_model.client = self.mock_client
+
+        cases = {
+            "no_delta": [_ for _ in events if _ is not tool_delta],
+            "empty_delta": [
+                (
+                    _.model_copy(
+                        update={
+                            "delta": _.delta.model_copy(
+                                update={"partial_json": ""},
+                            ),
+                        },
+                    )
+                    if _ is tool_delta
+                    else _
+                )
+                for _ in events
+            ],
+        }
+        for name, case_events in cases.items():
+            with self.subTest(name=name):
+                self.mock_client.messages.create = AsyncMock(
+                    side_effect=[
+                        _MockAsyncEventStream(case_events),
+                        completion,
+                    ],
+                )
+
+                final = [r async for r in await self.model([])][-1]
+                non_stream = await non_stream_model([])
+
+                self.assertListEqual(
+                    [
+                        (_.id, _.name, _.input)
+                        for _ in (final.content[0], non_stream.content[0])
+                    ],
+                    [("toolu_1", "list_tasks", "{}")] * 2,
+                )
 
 
 # ---------------------------------------------------------------------------

@@ -126,10 +126,27 @@ class MessageBusKeys:  # pylint: disable=too-many-public-methods
     SESSION_REPLAY_MAX_LEN = 1000
     """Replay log length cap; older events are trimmed on append."""
 
+    _SESSION_EVENT_CHECKPOINT = "agentscope:session:event_checkpoint:{sid}"
+    _SESSION_EVENT_CHECKPOINT_LOCK = (
+        "agentscope:session:event_checkpoint:lock:{sid}"
+    )
+    SESSION_EVENT_CURSOR_FIELD: Final = "cursor"
+    SESSION_EVENT_CHECKPOINT_LOCK_TTL_SECS = 30
+
     @classmethod
     def session_events(cls, session_id: str) -> str:
         """Replay log + live pub/sub channel key for a session."""
         return cls._SESSION_EVENTS.format(sid=session_id)
+
+    @classmethod
+    def session_event_checkpoint(cls, session_id: str) -> str:
+        """Registry namespace for the persisted replay cursor."""
+        return cls._SESSION_EVENT_CHECKPOINT.format(sid=session_id)
+
+    @classmethod
+    def session_event_checkpoint_lock(cls, session_id: str) -> str:
+        """Lock pairing a persisted message snapshot with its cursor."""
+        return cls._SESSION_EVENT_CHECKPOINT_LOCK.format(sid=session_id)
 
     # ------------------------------------------------------------------
     # Session run lock
@@ -146,15 +163,86 @@ class MessageBusKeys:  # pylint: disable=too-many-public-methods
         return cls._SESSION_LOCK.format(sid=session_id)
 
     # ------------------------------------------------------------------
+    # SOP run lock
+    # ------------------------------------------------------------------
+
+    _SOP_LOCK = "agentscope:sop:lock:{sid}"
+
+    @classmethod
+    def sop_lock(cls, sop_id: str) -> str:
+        """Per-procedure lock, held while a run is opened or the procedure
+        deleted. Outermost of the three: procedure, run, session."""
+        return cls._SOP_LOCK.format(sid=sop_id)
+
+    _SOP_RUN_LOCK = "agentscope:sop_run:lock:{rid}"
+
+    SOP_RUN_TTL_SECS = 600
+    """Lock lease for a SOP run (10 minutes), renewed while held."""
+
+    _SOP_DISPATCH_NS = "agentscope:sop:dispatch:{sid}"
+
+    SOP_DISPATCH_FIELD = "step"
+    """The only field a dispatch namespace holds."""
+
+    @classmethod
+    def sop_dispatch(cls, session_id: str) -> str:
+        """Registry namespace holding ``"<run id>:<step index>"`` while a
+        step's turn is parked in this session. Per session and unleased,
+        since a park can wait on a person indefinitely."""
+        return cls._SOP_DISPATCH_NS.format(sid=session_id)
+
+    @classmethod
+    def sop_run_lock(cls, sop_run_id: str) -> str:
+        """Per-run lock, taken after the procedure's and before any
+        session's."""
+        return cls._SOP_RUN_LOCK.format(rid=sop_run_id)
+
+    # ------------------------------------------------------------------
     # Session inbox
     # ------------------------------------------------------------------
 
     _INBOX = "agentscope:inbox:{sid}"
+    _INBOX_LOCK = "agentscope:inbox:lock:{sid}"
+    _INBOX_CONSUMER = "agentscope:inbox:consumer:{sid}"
+
+    INBOX_LOCK_TTL_SECS = 30
+    """Lease for the inbox hand-off lock. The critical sections it
+    guards are a single queue op plus a single registry op, so a lease
+    this short only ever matters when a process dies inside one."""
+
+    INBOX_CONSUMER_FIELD = "running"
+    """Field name inside the per-session inbox-consumer registry."""
 
     @classmethod
     def inbox(cls, session_id: str) -> str:
         """Per-session inbox drain-queue key."""
         return cls._INBOX.format(sid=session_id)
+
+    @classmethod
+    def inbox_lock(cls, session_id: str) -> str:
+        """Per-session lock serialising inbox hand-off.
+
+        Held only around two tiny critical sections — the producer's
+        "push then read consumer flag" and the consumer's "drain then
+        clear consumer flag". Making those two mutually exclusive is
+        what stops an entry pushed just as a run finishes from being
+        both missed by that run and skipped by the producer's wake-up
+        decision.
+        """
+        return cls._INBOX_LOCK.format(sid=session_id)
+
+    @classmethod
+    def inbox_consumer(cls, session_id: str) -> str:
+        """Per-session registry recording whether a run is currently
+        consuming this inbox.
+
+        Deliberately **not** derived from
+        :meth:`session_lock` — the lock is still held while a finished
+        run persists its state, and during that window no further drain
+        will happen, so producers must already treat the session as
+        having no consumer.
+        """
+        return cls._INBOX_CONSUMER.format(sid=session_id)
 
     # ------------------------------------------------------------------
     # Run trigger queue (wakeup / resume)
@@ -252,31 +340,44 @@ class MessageBusKeys:  # pylint: disable=too-many-public-methods
         return cls._INDEX_TASKS_SIGNAL
 
     # ------------------------------------------------------------------
-    # Channel output forwarding — a durable queue of "a channel session
-    # is producing output" signals. Each node running channel adapters
-    # drains it; the node that pops a signal (and hosts that channel)
-    # subscribes to the session's event stream and forwards the reply
-    # back to the platform chat. Queue + atomic pop → exactly one node
-    # forwards, even though every node runs the adapter.
+    # Schedules. Only the node that owns the timers reconciles them;
+    # every node publishes here after writing a schedule to storage.
     # ------------------------------------------------------------------
 
-    _CHANNEL_OUTBOUND_QUEUE = "agentscope:channel:outbound"
-    _CHANNEL_OUTBOUND_SIGNAL = "agentscope:channel:outbound:wake"
+    _SCHEDULE_LIFECYCLE = "agentscope:schedule:lifecycle"
+
+    @classmethod
+    def schedule_lifecycle(cls) -> str:
+        """Pub/sub channel that nudges the timer-owning node to
+        reconcile its schedule jobs against storage."""
+        return cls._SCHEDULE_LIFECYCLE
+
+    # ------------------------------------------------------------------
+    # Channels. A reply never travels through the bus: delivery is plain
+    # REST, so the node running the agent sends it directly. What does
+    # cross nodes is coordination — reconcile nudges, the status
+    # heartbeat that lets a connection-free replica answer, and the
+    # per-chat buffers.
+    # ------------------------------------------------------------------
+
+    _CHANNEL_CREDENTIAL_BINDING = "agentscope:channel:binding"
+
+    CREDENTIAL_BINDING_FIELD = "record"
+    """Field holding the serialised binding session."""
+
+    CREDENTIAL_BINDING_CLAIM_TTL_SECS = 300
+    """How long obtained credentials stay claimable. Short on purpose —
+    they sit here in the clear until the channel is created."""
+
+    @classmethod
+    def channel_credential_binding(cls, binding_id: str) -> str:
+        """Registry namespace holding one credential-binding session."""
+        return f"{cls._CHANNEL_CREDENTIAL_BINDING}:{binding_id}"
+
     _CHANNEL_LIFECYCLE = "agentscope:channel:lifecycle"
     _CHANNEL_LIVENESS = "agentscope:channel:liveness:{cid}"
     _CHANNEL_MEDIA = "agentscope:channel:media:{cid}:{chat}:{uid}"
-    _CHANNEL_FORWARD = "agentscope:channel:forward:{sid}"
     _CHANNEL_SEEN_CHATS = "agentscope:channel:seen_chats:{cid}"
-
-    @classmethod
-    def channel_outbound_queue(cls) -> str:
-        """Durable queue of channel output-forward signals."""
-        return cls._CHANNEL_OUTBOUND_QUEUE
-
-    @classmethod
-    def channel_outbound_signal(cls) -> str:
-        """Pub/sub nudge for channel output-forward consumers."""
-        return cls._CHANNEL_OUTBOUND_SIGNAL
 
     @classmethod
     def channel_lifecycle(cls) -> str:
@@ -302,11 +403,6 @@ class MessageBusKeys:  # pylint: disable=too-many-public-methods
             chat=chat_id,
             uid=user_id,
         )
-
-    @classmethod
-    def channel_forward_lease(cls, session_id: str) -> str:
-        """Per-run lock so exactly one node forwards a reply."""
-        return cls._CHANNEL_FORWARD.format(sid=session_id)
 
     @classmethod
     def channel_seen_chats(cls, channel_id: str) -> str:

@@ -324,13 +324,13 @@ information that will be useful in future conversations.
 When looking for past context:
 1. Search topic files in your memory directory:
 ```
-Grep with pattern="<search>" path="{memory_dir}" glob="*.md"</search>
+Grep with pattern="<search>" path="{memory_dir}" glob="*.md"
 # or Bash command:
 grep -rn "<search term>" {memory_dir} --include="*.md"
 ```
 Use narrow search terms (error messages, file paths, function names) rather \
 than broad keywords.
-"""  # noqa:
+"""
 
 DEFAULT_RETRIEVAL_INSTRUCTIONS = (
     "You are selecting memory files that will be useful as context for "
@@ -762,9 +762,11 @@ class AgenticMemoryMiddleware(MiddlewareBase):
             structured_model=_MemorySelection,
         )
 
-        # 3. Validate: discard hallucinated filenames.
+        # 3. Discard hallucinated filenames and count each memory only once.
         raw_selected: list[str] = res.content.get("selected_files", [])
-        selected = [f for f in raw_selected if f in valid_filenames][:5]
+        selected = list(
+            dict.fromkeys(f for f in raw_selected if f in valid_filenames),
+        )[:5]
         if not selected:
             return None
 
@@ -867,8 +869,11 @@ class AgenticMemoryMiddleware(MiddlewareBase):
             errors="replace",
         )
 
+    # ``$`` covers a fence that ends the string. The discovery scan only
+    # reads a byte-capped prefix, so the newline after ``---`` is often
+    # outside that prefix; requiring it drops every field.
     _FRONTMATTER_RE = re.compile(
-        r"^\s*---\s*\n(?P<body>.*?)\n---\s*\n",
+        r"^\s*---\s*\n(?P<body>.*?)\n---\s*(?:\n|$)",
         re.DOTALL,
     )
     _FIELD_RE = re.compile(r"^(?P<key>\w+)\s*:\s*(?P<value>.+)$", re.MULTILINE)
@@ -877,7 +882,8 @@ class AgenticMemoryMiddleware(MiddlewareBase):
     def _parse_frontmatter_fields(cls, content: str) -> dict[str, str]:
         """Return a dict of YAML-like key/value pairs from the first
         frontmatter block.  Only scalar ``key: value`` lines are parsed;
-        nested structures are intentionally ignored.
+        nested structures are intentionally ignored.  The closing fence
+        may end the string.
 
         Args:
             content (`str`):

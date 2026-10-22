@@ -4,6 +4,7 @@ import base64
 import fnmatch
 from abc import ABC
 from typing import Any
+from urllib.request import url2pathname
 
 import requests
 from pydantic import Field
@@ -85,7 +86,7 @@ class _OllamaFormatterBase(FormatterBase, ABC):
             url = str(source.url)
             if url.startswith("file://"):
                 # Local file - read and convert to base64
-                file_path = url.removeprefix("file://")
+                file_path = url2pathname(url.removeprefix("file://"))
                 with open(file_path, "rb") as f:
                     data = base64.b64encode(f.read()).decode("utf-8")
                 return data
@@ -113,6 +114,7 @@ class OllamaChatFormatter(_OllamaFormatterBase):
         ),
     )
 
+    # pylint: disable=too-many-branches
     async def format(
         self,
         msgs: list[Msg],
@@ -133,8 +135,14 @@ class OllamaChatFormatter(_OllamaFormatterBase):
         for msg in msgs:
             content_parts = []
             images = []
+            # Hold the promoted media until this turn's tool messages are out.
+            pending_media: list[dict] = []
 
             for block in msg.get_content_blocks():
+                if pending_media and not isinstance(block, ToolResultBlock):
+                    messages.extend(pending_media)
+                    pending_media = []
+
                 if isinstance(block, TextBlock):
                     content_parts.append(block.text)
 
@@ -187,28 +195,12 @@ class OllamaChatFormatter(_OllamaFormatterBase):
 
                 elif isinstance(block, ToolCallBlock):
                     messages.append(
-                        {
-                            "role": msg.role,
-                            "content": "\n".join(content_parts)
-                            if content_parts
-                            else "",
-                            "tool_calls": [
-                                {
-                                    "function": {
-                                        "name": block.name,
-                                        # Ollama SDK expects a dict, not a
-                                        # JSON string. Use the repair helper
-                                        # so a truncated input (from
-                                        # interrupted streaming or context
-                                        # compression) degrades to {} instead
-                                        # of raising JSONDecodeError.
-                                        "arguments": _json_loads_with_repair(
-                                            block.input or "{}",
-                                        ),
-                                    },
-                                },
-                            ],
-                        },
+                        self._format_tool_call_message(
+                            msg.role,
+                            content_parts,
+                            images,
+                            block,
+                        ),
                     )
                     content_parts = []
                     images = []
@@ -269,13 +261,15 @@ class OllamaChatFormatter(_OllamaFormatterBase):
                         }
                         if user_images:
                             user_msg["images"] = user_images
-                        messages.append(user_msg)
+                        pending_media.append(user_msg)
 
                 else:
                     logger.warning(
                         "Unsupported block type %s in the message, skipped.",
                         type(block),
                     )
+
+            messages.extend(pending_media)
 
             # Add the message if there's content or images
             if content_parts or images:
@@ -290,6 +284,59 @@ class OllamaChatFormatter(_OllamaFormatterBase):
                 messages.append(msg_ollama)
 
         return messages
+
+    def _format_tool_call_message(
+        self,
+        role: str,
+        content_parts: list[str],
+        images: list[str],
+        block: ToolCallBlock,
+    ) -> dict[str, Any]:
+        """Format a tool call block as one assistant message, keeping
+        pending text and images on the same message.
+
+        Ollama merges consecutive same-role messages server-side by
+        appending only content to the first one, so a separate images or
+        tool_calls message would be discarded. Images therefore stay on
+        the tool call message itself.
+
+        Args:
+            role (`str`):
+                The role of the message.
+            content_parts (`list[str]`):
+                Pending text blocks accumulated for this message.
+            images (`list[str]`):
+                Pending formatted images accumulated for this message.
+            block (`ToolCallBlock`):
+                The tool call block to format.
+
+        Returns:
+            `dict[str, Any]`:
+                A single assistant message carrying content, images and
+                the tool call.
+        """
+        tool_call_msg: dict[str, Any] = {
+            "role": role,
+            "content": "\n".join(content_parts) if content_parts else "",
+            "tool_calls": [
+                {
+                    "function": {
+                        "name": block.name,
+                        # Ollama SDK expects a dict, not a JSON string. Use
+                        # the repair helper so a truncated input (from
+                        # interrupted streaming or context compression)
+                        # degrades to {} instead of raising
+                        # JSONDecodeError.
+                        "arguments": _json_loads_with_repair(
+                            block.input or "{}",
+                        ),
+                    },
+                },
+            ],
+        }
+        if images:
+            tool_call_msg["images"] = images
+        return tool_call_msg
 
 
 class OllamaMultiAgentFormatter(_OllamaFormatterBase):
@@ -336,13 +383,13 @@ class OllamaMultiAgentFormatter(_OllamaFormatterBase):
                         await self._format_tool_sequence(group),
                     )
                 case "agent_message":
-                    formatted_msgs.extend(
-                        await self._format_agent_message(
-                            group,
-                            is_first_agent_message,
-                        ),
+                    formatted_group = await self._format_agent_message(
+                        group,
+                        is_first_agent_message,
                     )
-                    is_first_agent_message = False
+                    formatted_msgs.extend(formatted_group)
+                    if formatted_group:
+                        is_first_agent_message = False
 
         return formatted_msgs
 

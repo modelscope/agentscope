@@ -7,8 +7,10 @@ from pydantic import BaseModel, Field
 from .._utils._common import _generate_id
 
 if TYPE_CHECKING:
+    from ..asr import ASRModelBase, ASRModelCard
     from ..embedding import EmbeddingModelBase
     from ..model import ChatModelBase, ModelCard
+    from ..realtime import RealtimeModelBase, RealtimeModelCard
     from ..tts import TTSModelBase
     from ..tts._tts_model_card import TTSModelCard
 
@@ -55,6 +57,19 @@ class CredentialBase(BaseModel):
         return []
 
     @classmethod
+    def get_asr_model_classes(cls) -> list[Type["ASRModelBase"]]:
+        """Return supported speech recognition implementations."""
+        return []
+
+    @classmethod
+    def list_asr_models(cls) -> list["ASRModelCard"]:
+        """List candidate ASR models for this credential."""
+        cards: list["ASRModelCard"] = []
+        for asr_cls in cls.get_asr_model_classes():
+            cards.extend(asr_cls.list_models())
+        return cards
+
+    @classmethod
     def list_tts_models(cls) -> list["TTSModelCard"]:
         """List the candidate TTS models available under this credential.
 
@@ -65,6 +80,23 @@ class CredentialBase(BaseModel):
         cards: list["TTSModelCard"] = []
         for tts_cls in cls.get_tts_model_classes():
             cards.extend(tts_cls.list_models())
+        return cards
+
+    @classmethod
+    def get_realtime_model_classes(
+        cls,
+    ) -> list[Type["RealtimeModelBase"]]:
+        """Return the realtime model classes supported by this credential.
+        The default returns an empty list (provider does not support
+        realtime)."""
+        return []
+
+    @classmethod
+    def list_realtime_models(cls) -> list["RealtimeModelCard"]:
+        """List the candidate realtime models under this credential."""
+        cards: list["RealtimeModelCard"] = []
+        for rt_cls in cls.get_realtime_model_classes():
+            cards.extend(rt_cls.list_models())
         return cards
 
     @classmethod

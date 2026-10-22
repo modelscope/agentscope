@@ -18,10 +18,11 @@ import unittest
 import uuid
 from typing import Any
 from unittest.async_case import IsolatedAsyncioTestCase
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import aiofiles
 from fastapi.testclient import TestClient
+from mcp.types import Tool, ToolAnnotations
 
 from agentscope.app.workspace_manager import BubblewrapWorkspaceManager
 from agentscope.mcp import MCPClient, StdioMCPConfig
@@ -32,7 +33,7 @@ from agentscope.workspace._bubblewrap._constants import (
     BWRAP_SMOKE_PROBE_ARGV,
     SANDBOX_WORKDIR,
 )
-from agentscope.workspace._gateway_client import GatewayClient
+from agentscope.workspace._gateway_client import GatewayClient, GatewayMCPTool
 from agentscope.workspace._mcp_gateway._mcp_gateway_app import (
     _State,
     _build_app,
@@ -707,6 +708,24 @@ class TestBubblewrapWorkspaceCache(IsolatedAsyncioTestCase):
         self.assertFalse(os.path.exists(workdir))
 
 
+class TestGatewayMCPTool(unittest.TestCase):
+    """Tests for gateway-backed MCP tools."""
+
+    def test_preserves_read_only_hint(self) -> None:
+        """Gateway tools preserve MCP 2.x read-only annotations."""
+        tool = GatewayMCPTool(
+            mcp_name="gateway",
+            tool=Tool(
+                name="read_data",
+                input_schema={"type": "object"},
+                annotations=ToolAnnotations(read_only_hint=True),
+            ),
+            gateway=MagicMock(spec=GatewayClient),
+        )
+
+        self.assertTrue(tool.is_read_only)
+
+
 class TestGatewayAuth(unittest.TestCase):
     """Pure FastAPI tests for optional gateway authentication."""
 
@@ -920,7 +939,7 @@ class TestBubblewrapWorkspace(IsolatedAsyncioTestCase):
         )
         async with aiofiles.open(host_path, "r") as f:
             content = await f.read()
-        self.assertIn("file:///workspace/data/", content)
+        self.assertIn("workspace:///data/", content)
         self.assertTrue(
             os.path.isdir(os.path.join(self._shared_workdir.name, "data")),
         )
@@ -937,7 +956,10 @@ class TestBubblewrapWorkspace(IsolatedAsyncioTestCase):
         skills = await self.workspace.list_skills()
         self.assertEqual(len(skills), 1)
         self.assertEqual(skills[0].name, "greeter")
-        self.assertEqual(skills[0].dir, f"{SANDBOX_WORKDIR}/skills/greeter")
+        self.assertEqual(
+            skills[0].dir,
+            f"{SANDBOX_WORKDIR}/skills/default/greeter",
+        )
 
         await self.workspace.remove_skill("greeter")
         self.assertListEqual(await self.workspace.list_skills(), [])
@@ -1015,9 +1037,8 @@ class TestBubblewrapWorkspace(IsolatedAsyncioTestCase):
             is_stateful=True,
             mcp_config=StdioMCPConfig(
                 command="uvx",
-                # Constrained because the client is pinned to mcp<2:
-                # unpinned, uvx now resolves an mcp 2.x server, whose
-                # handshake this client cannot complete.
+                # mcp-server-time currently requires MCP 1.x and runs
+                # in an isolated uvx environment.
                 args=["--with", "mcp<2.0.0", "mcp-server-time"],
             ),
         )

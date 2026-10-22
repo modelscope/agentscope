@@ -3,6 +3,9 @@
 AnthropicMultiAgentFormatter, following the reference test style with exact
 ground-truth comparisons.
 """
+import base64
+import tempfile
+from pathlib import Path
 from unittest import IsolatedAsyncioTestCase
 
 from agentscope.formatter import (
@@ -19,12 +22,15 @@ from agentscope.message import (
     ToolResultBlock,
     ToolResultState,
     Base64Source,
+    URLSource,
     ThinkingBlock,
     HintBlock,
 )
 
 
-class TestAnthropicFormatter(IsolatedAsyncioTestCase):
+class TestAnthropicFormatter(  # pylint: disable=too-many-public-methods
+    IsolatedAsyncioTestCase,
+):
     """Comprehensive tests for Anthropic Chat and MultiAgent formatters."""
 
     async def asyncSetUp(self) -> None:
@@ -337,6 +343,89 @@ class TestAnthropicFormatter(IsolatedAsyncioTestCase):
             res,
         )
 
+    async def test_chat_formatter_percent_encoded_local_image(self) -> None:
+        """Local file:// image paths with spaces and '#' are decoded."""
+        image_bytes = b"spaced-name-bytes"
+        expected_b64 = base64.b64encode(image_bytes).decode("utf-8")
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "my file #1.png"
+            path.write_bytes(image_bytes)
+            fmt = AnthropicChatFormatter()
+            res = await fmt.format(
+                [
+                    UserMsg(
+                        name="user",
+                        content=[
+                            TextBlock(text="What's in this image?"),
+                            DataBlock(
+                                source=URLSource(
+                                    url=path.as_uri(),
+                                    media_type="image/png",
+                                ),
+                            ),
+                        ],
+                    ),
+                ],
+            )
+        self.assertListEqual(
+            [
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "What's in this image?"},
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "image/png",
+                                "data": expected_b64,
+                            },
+                        },
+                    ],
+                },
+            ],
+            res,
+        )
+
+    async def test_chat_formatter_base64_pdf(self) -> None:
+        """Base64-encoded PDF is formatted as an Anthropic document block."""
+        fmt = AnthropicChatFormatter()
+        msgs = [
+            UserMsg(
+                name="user",
+                content=[
+                    TextBlock(text="Summarize this."),
+                    DataBlock(
+                        source=Base64Source(
+                            data="JVBERi0xLjQgZmFrZQ==",
+                            media_type="application/pdf",
+                        ),
+                        name="report.pdf",
+                    ),
+                ],
+            ),
+        ]
+        res = await fmt.format(msgs)
+        self.assertListEqual(
+            [
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Summarize this."},
+                        {
+                            "type": "document",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "application/pdf",
+                                "data": "JVBERi0xLjQgZmFrZQ==",
+                            },
+                        },
+                    ],
+                },
+            ],
+            res,
+        )
+
     async def test_chat_formatter_thinking_preserved(self) -> None:
         """ThinkingBlock with a signature is passed back as a thinking
         content block."""
@@ -613,6 +702,61 @@ class TestAnthropicFormatter(IsolatedAsyncioTestCase):
         res = await fmt.format([])
         self.assertListEqual([], res)
 
+    async def test_multiagent_empty_group_keeps_first_history_marker(
+        self,
+    ) -> None:
+        """A skipped group must not consume the first-history marker."""
+        fmt = AnthropicMultiAgentFormatter()
+        res = await fmt.format(
+            [
+                AssistantMsg(
+                    name="assistant",
+                    content=[ThinkingBlock(thinking="unsigned")],
+                ),
+                AssistantMsg(
+                    name="assistant",
+                    content=[
+                        ToolCallBlock(
+                            id="call_1",
+                            name="get_capital",
+                            input='{"country": "Japan"}',
+                        ),
+                        ToolResultBlock(
+                            id="call_1",
+                            name="get_capital",
+                            output=[
+                                TextBlock(
+                                    text="The capital of Japan is Tokyo.",
+                                ),
+                            ],
+                            state=ToolResultState.SUCCESS,
+                        ),
+                    ],
+                ),
+                UserMsg(name="user", content=[TextBlock(text="hello")]),
+            ],
+        )
+
+        self.assertListEqual(
+            [
+                self._gt_tool_call,
+                self._gt_tool_result,
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": (
+                                fmt.conversation_history_prompt
+                                + "<history>\nuser: hello\n</history>"
+                            ),
+                        },
+                    ],
+                },
+            ],
+            res,
+        )
+
     async def test_chat_formatter_complex_multi_step(self) -> None:
         """Complex multi-step sequence with interleaved thinking, text,
         tool calls, and tool results."""
@@ -819,6 +963,53 @@ class TestAnthropicFormatter(IsolatedAsyncioTestCase):
                     "content": [
                         {"type": "text", "text": "Here is my answer."},
                     ],
+                },
+            ],
+            res,
+        )
+
+    async def test_chat_formatter_drops_empty_hint_text(self) -> None:
+        """Empty hint text is ignored without splitting adjacent content."""
+        fmt = AnthropicChatFormatter()
+        res = await fmt.format(
+            [
+                AssistantMsg(
+                    name="assistant",
+                    content=[
+                        TextBlock(text="before"),
+                        HintBlock(hint=""),
+                        TextBlock(text="after"),
+                        HintBlock(hint=[TextBlock(text="")]),
+                        HintBlock(
+                            hint=[
+                                TextBlock(text=""),
+                                TextBlock(text="valid hint"),
+                            ],
+                        ),
+                        TextBlock(text="done"),
+                    ],
+                ),
+            ],
+        )
+
+        self.assertListEqual(
+            [
+                {
+                    "role": "assistant",
+                    "content": [
+                        {"type": "text", "text": "before"},
+                        {"type": "text", "text": "after"},
+                    ],
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "valid hint"},
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [{"type": "text", "text": "done"}],
                 },
             ],
             res,

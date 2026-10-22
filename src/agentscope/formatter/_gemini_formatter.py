@@ -4,6 +4,7 @@ import base64
 import fnmatch
 from abc import ABC
 from typing import Any
+from urllib.request import url2pathname
 
 import requests
 from pydantic import Field
@@ -84,7 +85,7 @@ class _GeminiFormatterBase(FormatterBase, ABC):
             url = str(source.url)
             if url.startswith("file://"):
                 # Local file - read and convert to base64
-                file_path = url.removeprefix("file://")
+                file_path = url2pathname(url.removeprefix("file://"))
                 with open(file_path, "rb") as f:
                     data = base64.b64encode(f.read()).decode("utf-8")
                 return {
@@ -120,12 +121,37 @@ class GeminiChatFormatter(_GeminiFormatterBase):
             "image/*",
             "audio/*",
             "video/*",
+            "application/pdf",
         ],
         description=(
-            "The supported input types. "
-            'Defaults to ``["text/plain", "image/*", "audio/*", "video/*"]``.'
+            'The supported input types. Defaults to ``["text/plain", '
+            '"image/*", "audio/*", "video/*", "application/pdf"]``.'
         ),
     )
+
+    @staticmethod
+    def _flush_tool_results(
+        messages: list[dict],
+        tool_result_parts: list,
+        promoted_parts: list,
+    ) -> None:
+        """Append the gathered tool results as one `user` content, followed
+        by one content holding the media promoted out of them.
+
+        Args:
+            messages (`list[dict]`):
+                The formatted messages, appended to in place.
+            tool_result_parts (`list`):
+                The `function_response` parts gathered so far.
+            promoted_parts (`list`):
+                The media parts promoted out of those tool results.
+        """
+        if not tool_result_parts:
+            return
+
+        messages.append({"role": "user", "parts": tool_result_parts})
+        if promoted_parts:
+            messages.append({"role": "user", "parts": promoted_parts})
 
     async def format(
         self,
@@ -148,10 +174,27 @@ class GeminiChatFormatter(_GeminiFormatterBase):
         while i < len(msgs):
             msg = msgs[i]
             parts: list = []
+            # Group consecutive tool results into one user turn, followed by
+            # any media promoted from those results.
+            tool_result_parts: list = []
+            promoted_parts: list = []
 
             for block in msg.get_content_blocks():
+                if tool_result_parts and not isinstance(
+                    block,
+                    ToolResultBlock,
+                ):
+                    self._flush_tool_results(
+                        messages,
+                        tool_result_parts,
+                        promoted_parts,
+                    )
+                    tool_result_parts = []
+                    promoted_parts = []
+
                 if isinstance(block, TextBlock):
-                    parts.append({"text": block.text})
+                    if block.text:
+                        parts.append({"text": block.text})
 
                 elif isinstance(block, ThinkingBlock):
                     # Gemini API requires `thought: true` to mark a part as a
@@ -167,33 +210,33 @@ class GeminiChatFormatter(_GeminiFormatterBase):
                         )
 
                 elif isinstance(block, HintBlock):
-                    if parts:
-                        role = "model" if msg.role == "assistant" else "user"
-                        messages.append({"role": role, "parts": parts})
-                        parts = []
-
                     if isinstance(block.hint, str):
-                        messages.append(
-                            {
-                                "role": "user",
-                                "parts": [{"text": block.hint}],
-                            },
+                        hint_parts = (
+                            [{"text": block.hint}] if block.hint else []
                         )
                     else:
-                        hint_parts: list[dict] = []
+                        hint_parts = []
                         for sub in block.hint:
                             if isinstance(sub, TextBlock):
-                                hint_parts.append({"text": sub.text})
+                                if sub.text:
+                                    hint_parts.append({"text": sub.text})
                             elif isinstance(sub, DataBlock):
                                 formatted_sub = self._format_gemini_data_block(
                                     sub,
                                 )
                                 if formatted_sub:
                                     hint_parts.append(formatted_sub)
-                        if hint_parts:
-                            messages.append(
-                                {"role": "user", "parts": hint_parts},
+
+                    if hint_parts:
+                        if parts:
+                            role = (
+                                "model" if msg.role == "assistant" else "user"
                             )
+                            messages.append({"role": role, "parts": parts})
+                            parts = []
+                        messages.append(
+                            {"role": "user", "parts": hint_parts},
+                        )
 
                 elif isinstance(block, DataBlock):
                     formatted = self._format_gemini_data_block(block)
@@ -201,21 +244,28 @@ class GeminiChatFormatter(_GeminiFormatterBase):
                         parts.append(formatted)
 
                 elif isinstance(block, ToolCallBlock):
-                    parts.append(
-                        {
-                            "function_call": {
-                                "id": block.id,
-                                "name": block.name,
-                                # Use the repair helper so a truncated input
-                                # (from interrupted streaming or context
-                                # compression) degrades to {} instead of
-                                # raising JSONDecodeError.
-                                "args": _json_loads_with_repair(
-                                    block.input or "{}",
-                                ),
-                            },
+                    function_call_part: dict[str, Any] = {
+                        "function_call": {
+                            "id": block.id,
+                            "name": block.name,
+                            # Use the repair helper so a truncated input
+                            # (from interrupted streaming or context
+                            # compression) degrades to {} instead of raising
+                            # JSONDecodeError.
+                            "args": _json_loads_with_repair(
+                                block.input or "{}",
+                            ),
                         },
-                    )
+                    }
+                    # Ordinary IDs may also be valid Base64. Only decode
+                    # IDs explicitly marked by the Gemini model parser.
+                    if block.id.startswith("gemini_ts:"):
+                        function_call_part[
+                            "thought_signature"
+                        ] = base64.b64decode(
+                            block.id.removeprefix("gemini_ts:"),
+                        )
+                    parts.append(function_call_part)
 
                 elif isinstance(block, ToolResultBlock):
                     if parts:
@@ -228,38 +278,28 @@ class GeminiChatFormatter(_GeminiFormatterBase):
                         multimodal_data,
                     ) = self.convert_tool_result_to_string(block.output)
 
-                    messages.append(
+                    tool_result_parts.append(
                         {
-                            "role": "user",
-                            "parts": [
-                                {
-                                    "function_response": {
-                                        "id": block.id,
-                                        "name": block.name,
-                                        "response": {
-                                            "output": textual_output,
-                                        },
-                                    },
+                            "function_response": {
+                                "id": block.id,
+                                "name": block.name,
+                                "response": {
+                                    "output": textual_output,
                                 },
-                            ],
+                            },
                         },
                     )
 
                     if multimodal_data:
-                        promo_parts = []
                         for item in multimodal_data:
                             if isinstance(item, TextBlock):
-                                promo_parts.append({"text": item.text})
+                                promoted_parts.append({"text": item.text})
                             elif isinstance(item, DataBlock):
                                 fmt_item = self._format_gemini_data_block(
                                     item,
                                 )
                                 if fmt_item is not None:
-                                    promo_parts.append(fmt_item)
-                        if promo_parts:
-                            messages.append(
-                                {"role": "user", "parts": promo_parts},
-                            )
+                                    promoted_parts.append(fmt_item)
 
                 else:
                     logger.warning(
@@ -277,6 +317,12 @@ class GeminiChatFormatter(_GeminiFormatterBase):
                         "parts": parts,
                     },
                 )
+
+            self._flush_tool_results(
+                messages,
+                tool_result_parts,
+                promoted_parts,
+            )
 
             i += 1
 
@@ -317,10 +363,11 @@ class GeminiMultiAgentFormatter(_GeminiFormatterBase):
             "image/*",
             "audio/*",
             "video/*",
+            "application/pdf",
         ],
         description=(
-            "The supported input types. "
-            'Defaults to ``["text/plain", "image/*", "audio/*", "video/*"]``.'
+            'The supported input types. Defaults to ``["text/plain", '
+            '"image/*", "audio/*", "video/*", "application/pdf"]``.'
         ),
     )
 
@@ -345,13 +392,13 @@ class GeminiMultiAgentFormatter(_GeminiFormatterBase):
                         await self._format_tool_sequence(group),
                     )
                 case "agent_message":
-                    formatted_msgs.extend(
-                        await self._format_agent_message(
-                            group,
-                            is_first_agent_message,
-                        ),
+                    formatted_group = await self._format_agent_message(
+                        group,
+                        is_first_agent_message,
                     )
-                    is_first_agent_message = False
+                    formatted_msgs.extend(formatted_group)
+                    if formatted_group:
+                        is_first_agent_message = False
 
         return formatted_msgs
 
@@ -439,7 +486,7 @@ class GeminiMultiAgentFormatter(_GeminiFormatterBase):
             "role": "user",
             "parts": [
                 {
-                    "text": msg.get_text_content(),
+                    "text": msg.get_text_content() or "",
                 },
             ],
         }

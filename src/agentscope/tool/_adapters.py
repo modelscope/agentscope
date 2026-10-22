@@ -3,12 +3,12 @@
 import inspect
 import json
 import re
-from contextlib import _AsyncGeneratorContextManager
-from datetime import timedelta
+from contextlib import AbstractAsyncContextManager
 from typing import Callable, Any, AsyncGenerator, Generator
 
 from mcp import ClientSession
 import mcp
+from pydantic import BaseModel
 
 from ._types import Function
 from ._base import ToolBase, ToolMiddlewareBase
@@ -17,7 +17,13 @@ from ..permission import (
     PermissionDecision,
 )
 from ._response import ToolChunk
-from ._utils import _extract_func_description, _extract_input_schema
+from ._utils import (
+    _extract_func_description,
+    _extract_input_schema,
+    _get_callable_docstring,
+    _get_callable_name,
+    _remove_title_field,
+)
 from .._logging import logger
 from ..message import (
     TextBlock,
@@ -51,10 +57,12 @@ class FunctionTool(ToolBase):
         func: Function,
         name: str | None = None,
         description: str | None = None,
+        input_schema: dict | type[BaseModel] | None = None,
         is_concurrency_safe: bool = True,
         is_read_only: bool = False,
         is_state_injected: bool = False,
         middlewares: list[ToolMiddlewareBase] | None = None,
+        permission: PermissionDecision | None = None,
     ) -> None:
         """Initialize the FunctionTool.
 
@@ -65,6 +73,14 @@ class FunctionTool(ToolBase):
                 Custom tool name. If None, uses the function name.
             description (`str | None`, optional):
                 Custom tool description. If None, extracts from docstring.
+            input_schema (`dict | type[BaseModel] | None`, optional):
+                Custom input schema for the tool, either a JSON schema
+                dict or a pydantic ``BaseModel`` subclass (converted via
+                its ``model_json_schema()``). If None, generates the
+                schema from the function's type annotations and
+                docstring, where constraints (e.g. enums, value ranges)
+                can be expressed with ``typing.Literal`` and
+                ``typing.Annotated`` with ``pydantic.Field``.
             is_concurrency_safe (`bool`, optional):
                 Whether this tool is safe to call concurrently.
             is_read_only (`bool`, optional):
@@ -73,19 +89,30 @@ class FunctionTool(ToolBase):
                 Whether this tool requires agent state injection.
             middlewares (`list[ToolMiddlewareBase] | None`, optional):
                 Tool middlewares wrapping the tool execution.
+            permission (`PermissionDecision | None`, optional):
+                The permission decision of this tool. If not provided, the
+                user will be asked to confirm the tool call.
         """
         super().__init__(middlewares=middlewares)
-        self.name = name or func.__name__
+        self.name = name or _get_callable_name(func)
         self.description = description or _extract_func_description(
-            func.__doc__ or "",
+            _get_callable_docstring(func),
         )
-        self.input_schema = _extract_input_schema(func)
+        if isinstance(input_schema, type) and issubclass(
+            input_schema,
+            BaseModel,
+        ):
+            input_schema = _remove_title_field(
+                input_schema.model_json_schema(),
+            )
+        self.input_schema = input_schema or _extract_input_schema(func)
         self.is_concurrency_safe = is_concurrency_safe
         self.is_read_only = is_read_only
         self.is_state_injected = is_state_injected
         self.is_external_tool = False
         self.is_mcp = False
         self._func = func
+        self._permission = permission
 
     async def check_permissions(
         self,
@@ -94,12 +121,14 @@ class FunctionTool(ToolBase):
     ) -> PermissionDecision:
         """Check permissions for the tool usage.
 
-        Default implementation allows all operations.
-
         Returns:
             `PermissionDecision`:
-                Permission decision (default: allowed).
+                The permission decision given in the constructor, or asking
+                the user to confirm the tool call if not provided.
         """
+        if self._permission is not None:
+            return self._permission
+
         return PermissionDecision(
             behavior=PermissionBehavior.ASK,
             message="Custom function tools must be explicitly allowed "
@@ -116,10 +145,9 @@ class FunctionTool(ToolBase):
             `ToolChunk` or `AsyncGenerator[ToolChunk, None]`:
                 The normalized result of the function execution.
         """
-        if inspect.iscoroutinefunction(self._func):
-            result = await self._func(**kwargs)
-        else:
-            result = self._func(**kwargs)
+        result = self._func(**kwargs)
+        if inspect.isawaitable(result):
+            result = await result
 
         if isinstance(result, AsyncGenerator):
 
@@ -181,7 +209,7 @@ class MCPTool(ToolBase):
         self,
         mcp_name: str,
         tool: mcp.types.Tool,
-        client_gen: Callable[..., _AsyncGeneratorContextManager[Any]]
+        client_gen: Callable[..., AbstractAsyncContextManager[Any]]
         | None = None,
         session: Any | None = None,
         timeout: float | None = None,
@@ -194,7 +222,7 @@ class MCPTool(ToolBase):
                 The name of the MCP server instance.
             tool (`mcp.types.Tool`):
                 The MCP tool definition.
-            client_gen (`Callable[..., _AsyncGeneratorContextManager[Any]] \
+            client_gen (`Callable[..., AbstractAsyncContextManager[Any]] \
             | None`, optional):
                 The MCP client generator function for stateless clients.
                 Either this or ``session`` must be provided.
@@ -226,11 +254,11 @@ class MCPTool(ToolBase):
 
         self.description = tool.description or ""
 
-        # Preserve the full inputSchema (including $defs, anyOf, oneOf, etc.)
-        # rather than only copying "properties" and "required", which would
-        # silently drop any nested type definitions that the LLM needs to
-        # resolve $ref pointers.
-        _schema = dict(tool.inputSchema) if tool.inputSchema else {}
+        # Preserve the full input_schema (including $defs, anyOf, oneOf,
+        # etc.) rather than only copying "properties" and "required",
+        # which would silently drop any nested type definitions that the
+        # LLM needs to resolve $ref pointers.
+        _schema = dict(tool.input_schema) if tool.input_schema else {}
         _schema.setdefault("type", "object")
         _schema.setdefault("properties", {})
         _schema.setdefault("required", [])
@@ -242,8 +270,8 @@ class MCPTool(ToolBase):
 
         # Extract is_read_only from MCP tool annotations
         self.is_read_only = False
-        if tool.annotations and hasattr(tool.annotations, "readOnlyHint"):
-            self.is_read_only = tool.annotations.readOnlyHint or False
+        if tool.annotations:
+            self.is_read_only = tool.annotations.read_only_hint or False
 
         # Store MCP tool and connection info
         self._tool = tool
@@ -251,7 +279,7 @@ class MCPTool(ToolBase):
         self._session = session
 
         if timeout:
-            self._timeout = timedelta(seconds=timeout)
+            self._timeout = float(timeout)
         else:
             self._timeout = None
 
@@ -320,10 +348,26 @@ class MCPTool(ToolBase):
             )
 
         # Convert MCP result to AgentScope blocks
+        content = self._convert_mcp_content_to_blocks(result.content)
+
+        # Fall back to structured JSON when no text block is available.
+        # Preserve existing text content without appending JSON.
+        if result.structured_content is not None and not any(
+            isinstance(block, TextBlock) for block in content
+        ):
+            content.append(
+                TextBlock(
+                    text=json.dumps(
+                        result.structured_content,
+                        ensure_ascii=False,
+                    ),
+                ),
+            )
+
         return ToolChunk(
-            content=self._convert_mcp_content_to_blocks(result.content),
+            content=content,
             state=ToolResultState.ERROR
-            if result.isError
+            if result.is_error
             else ToolResultState.RUNNING,
         )
 
@@ -353,7 +397,7 @@ class MCPTool(ToolBase):
                     DataBlock(
                         source=Base64Source(
                             type="base64",
-                            media_type=content.mimeType,
+                            media_type=content.mime_type,
                             data=content.data,
                         ),
                     ),
@@ -380,7 +424,7 @@ class MCPTool(ToolBase):
                 as_content.append(
                     DataBlock(
                         source=URLSource(
-                            media_type=content.mimeType,
+                            media_type=content.mime_type,
                             url=content.uri,
                         ),
                     ),
