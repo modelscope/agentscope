@@ -512,9 +512,10 @@ class AppleContainerWorkspace(SandboxedWorkspaceBase):
             # 1. System deps + uv installer.
             "apt-get update -qq "
             "&& apt-get install -y --no-install-recommends "
-            "curl ripgrep "
+            "curl ca-certificates ripgrep "
+            "&& update-ca-certificates "
             "&& rm -rf /var/lib/apt/lists/*",
-            "curl -LsSf https://astral.sh/uv/install.sh "
+            "curl -LsSf https://astral.sh/uv/0.13.4/install.sh "
             "| env UV_INSTALL_DIR=/usr/local/bin "
             "INSTALLER_NO_MODIFY_PATH=1 sh",
             # 2. Gateway venv + base requirements + agentscope.

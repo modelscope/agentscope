@@ -110,6 +110,7 @@ jobs:
 
       - uses: astral-sh/setup-uv@v5
         with:
+          version: "0.13.4"
           python-version: '3.11'
           # There is no uv.lock, so without this the cache key never
           # changes and the cache is never invalidated.
@@ -120,7 +121,7 @@ jobs:
       - name: Prepare the environment the agent verifies against
         run: |
           uv venv --clear --python 3.11
-          uv pip install --python .venv/bin/python -e ".[dev]"
+          uv pip install --python .venv/bin/python "pip>=26.2.2" -e ".[dev]"
 
       # Written as files, never spliced into a shell command: an issue title is
       # attacker-controlled and `${{ }}` would interpolate it before bash runs.

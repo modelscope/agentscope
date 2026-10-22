@@ -377,10 +377,11 @@ class OpenSandboxWorkspace(SandboxedWorkspaceBase):
             "apt-get update -qq "
             "&& apt-get install -y --no-install-recommends curl "
             "ca-certificates ripgrep "
+            "&& update-ca-certificates "
             "&& rm -rf /var/lib/apt/lists/*",
             # Astral uv → /usr/local/bin (on PATH). INSTALLER_NO_MODIFY_PATH
             # suppresses shell rc edits.
-            "curl -LsSf https://astral.sh/uv/install.sh "
+            "curl -LsSf https://astral.sh/uv/0.13.4/install.sh "
             "| env UV_INSTALL_DIR=/usr/local/bin "
             "INSTALLER_NO_MODIFY_PATH=1 sh",
             # Gateway venv + base requirements + agentscope from PyPI.

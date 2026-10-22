@@ -604,8 +604,9 @@ class K8sWorkspace(SandboxedWorkspaceBase):
         return [
             f"apt-get update -qq "
             f"&& apt-get install -y --no-install-recommends {sys_deps} "
+            "&& update-ca-certificates "
             f"&& rm -rf /var/lib/apt/lists/*",
-            "curl -LsSf https://astral.sh/uv/install.sh "
+            "curl -LsSf https://astral.sh/uv/0.13.4/install.sh "
             "| env UV_INSTALL_DIR=/usr/local/bin "
             "INSTALLER_NO_MODIFY_PATH=1 sh",
             f"uv venv {self._gateway_venv}",

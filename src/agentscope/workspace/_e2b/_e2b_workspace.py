@@ -349,9 +349,11 @@ class E2BWorkspace(SandboxedWorkspaceBase):
             # at /usr/local/bin (on PATH — no absolute-path plumbing
             # needed downstream).
             "sudo apt-get update -qq "
-            "&& sudo apt-get install -y --no-install-recommends ripgrep "
+            "&& sudo apt-get install -y --no-install-recommends "
+            "curl ca-certificates ripgrep "
+            "&& sudo update-ca-certificates "
             "&& sudo rm -rf /var/lib/apt/lists/*",
-            "curl -LsSf https://astral.sh/uv/install.sh "
+            "curl -LsSf https://astral.sh/uv/0.13.4/install.sh "
             "| sudo env UV_INSTALL_DIR=/usr/local/bin "
             "INSTALLER_NO_MODIFY_PATH=1 sh",
             # 2. Gateway venv + base requirements + agentscope.

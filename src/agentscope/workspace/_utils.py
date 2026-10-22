@@ -106,6 +106,7 @@ DEFAULT_GLOB_HELPER_SCRIPT = "_glob_helper.py"
 #: The version on ``mcp`` mirrors ``pyproject.toml``, so the gateway
 #: speaks the same protocol version as the process driving it.
 _GATEWAY_BASE_REQUIREMENTS: tuple[str, ...] = (
+    "certifi>=2026.10.19",
     "mcp>=2.0.0",
     "uvicorn",
     "fastapi",

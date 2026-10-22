@@ -450,16 +450,18 @@ class DaytonaWorkspace(SandboxedWorkspaceBase):
         uv_install_dir = f"{self._user_home}/.local/bin"
 
         return [
-            # 1. Install ripgrep for the Grep builtin tool. Daytona
+            # 1. Refresh system CAs and install curl and ripgrep. Daytona
             #    snapshots may run as non-root users, so use sudo here
             #    and avoid assuming the SDK-selected OS user is root.
             "sudo apt-get update -qq "
-            "&& sudo apt-get install -y --no-install-recommends ripgrep "
+            "&& sudo apt-get install -y --no-install-recommends "
+            "curl ca-certificates ripgrep "
+            "&& sudo update-ca-certificates "
             "&& sudo rm -rf /var/lib/apt/lists/*",
             # 2. Astral uv — same shell installer as Docker/E2B. The
             #    SDK-reported user home is the install root so we do not
             #    assume /home/daytona or any fixed OS user.
-            f"curl -LsSf https://astral.sh/uv/install.sh "
+            f"curl -LsSf https://astral.sh/uv/0.13.4/install.sh "
             f"| env UV_INSTALL_DIR={shlex.quote(uv_install_dir)} "
             f"INSTALLER_NO_MODIFY_PATH=1 sh",
             # 3. Gateway venv + base requirements.

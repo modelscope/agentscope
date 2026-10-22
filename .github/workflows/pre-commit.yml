@@ -17,10 +17,11 @@ jobs:
     - name: Install uv
       uses: astral-sh/setup-uv@v5
       with:
+        version: "0.13.4"
         python-version: '3.11'
     - name: Install AgentScope
       run: |
-        uv pip install -q -e .[dev]
+        uv pip install -q "pip>=26.2.2" -e .[dev]
     - name: Install pre-commit
       run: |
         pre-commit install

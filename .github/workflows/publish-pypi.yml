@@ -26,12 +26,13 @@ jobs:
     - name: Install uv
       uses: astral-sh/setup-uv@v5
       with:
+        version: "0.13.4"
         python-version: '3.11'
     - name: Install dependencies
       run: |
-        uv pip install build
+        uv pip install "pip>=26.2.2" "certifi>=2026.10.19" build
     - name: Build package
-      run: python -m build
+      run: python -m build --installer=uv
     - name: Test installation
       run: |
         uv pip install dist/*.whl

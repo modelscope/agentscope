@@ -64,6 +64,7 @@ jobs:
       - uses: astral-sh/setup-uv@v5
         if: steps.gate.outputs.verdict == 'maybe'
         with:
+          version: "0.13.4"
           python-version: '3.11'
 
       - name: Ask whether the comment is really a claim
@@ -73,7 +74,7 @@ jobs:
           DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
         run: |
           uv venv --clear --python 3.11
-          uv pip install --python .venv/bin/python -e ".[dev]"
+          uv pip install --python .venv/bin/python "pip>=26.2.2" -e ".[dev]"
           result=$(.venv/bin/python scripts/claim_intent.py \
             --comment-file /tmp/claim/comment.md \
             --model "$TRIAGE_MODEL")
