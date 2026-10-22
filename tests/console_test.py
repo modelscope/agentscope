@@ -6,6 +6,7 @@ import asyncio
 import subprocess
 import sys
 from collections.abc import AsyncGenerator
+from importlib.util import find_spec
 from io import StringIO
 from typing import cast
 from unittest import IsolatedAsyncioTestCase, TestCase
@@ -273,4 +274,11 @@ class ConsoleReadlineTest(TestCase):
             text=True,
             check=True,
         )
-        self.assertIn("READLINE:True", result.stdout)
+        # readline is unavailable on some platforms (e.g. Windows), where
+        # the console import must still succeed via its ImportError guard.
+        expected = (
+            "READLINE:True"
+            if find_spec("readline") is not None
+            else "READLINE:False"
+        )
+        self.assertIn(expected, result.stdout)
