@@ -1151,7 +1151,8 @@ class TestOpenAIResponseFormatter(IsolatedAsyncioTestCase):
                         TextBlock(text="Listen to this."),
                         DataBlock(
                             source=Base64Source(
-                                data=b64, media_type="audio/wav"
+                                data=b64,
+                                media_type="audio/wav",
                             ),
                             name="clip.wav",
                         ),
