@@ -189,16 +189,34 @@ class GeminiTextCallTest(IsolatedAsyncioTestCase):
         self.assertEqual(sdk.await_count, 2)
 
     async def test_file_cache_uses_effective_parameters(self) -> None:
-        """Distinct task configurations cannot reuse each other's vectors."""
+        """Cache by effective task and dimensions, reusing matching vectors."""
         with TemporaryDirectory() as directory:
             cache = FileEmbeddingCache(cache_dir=directory)
             query = self._make_configured_model("RETRIEVAL_QUERY", cache)
             document = self._make_configured_model("RETRIEVAL_DOCUMENT", cache)
+            query.client.aio.models.embed_content.side_effect = [
+                MagicMock(embeddings=[MagicMock(values=[0.1, 0.2])]),
+                MagicMock(
+                    embeddings=[MagicMock(values=[0.1, 0.2, 0.3, 0.4])],
+                ),
+            ]
             document.client.aio.models.embed_content.return_value = MagicMock(
                 embeddings=[MagicMock(values=[0.3, 0.4])],
             )
             cases = (
                 (query, {}, "api", [[0.1, 0.2]]),
+                (
+                    query,
+                    {"output_dimensionality": 4},
+                    "api",
+                    [[0.1, 0.2, 0.3, 0.4]],
+                ),
+                (
+                    query,
+                    {"output_dimensionality": 4},
+                    "cache",
+                    [[0.1, 0.2, 0.3, 0.4]],
+                ),
                 (document, {}, "api", [[0.3, 0.4]]),
                 (
                     query,
@@ -207,6 +225,12 @@ class GeminiTextCallTest(IsolatedAsyncioTestCase):
                     [[0.3, 0.4]],
                 ),
                 (query, {}, "cache", [[0.1, 0.2]]),
+                (
+                    query,
+                    {"output_dimensionality": 2},
+                    "cache",
+                    [[0.1, 0.2]],
+                ),
             )
             for index, (model, overrides, source, embeddings) in enumerate(
                 cases,
@@ -228,7 +252,10 @@ class GeminiTextCallTest(IsolatedAsyncioTestCase):
                             "source": source,
                         },
                     )
-            query.client.aio.models.embed_content.assert_awaited_once()
+            self.assertEqual(
+                query.client.aio.models.embed_content.await_count,
+                2,
+            )
             document.client.aio.models.embed_content.assert_awaited_once()
 
 
