@@ -6,6 +6,7 @@ import unittest
 from collections.abc import AsyncIterator
 from unittest.mock import AsyncMock, MagicMock, patch
 
+from agentscope.workspace._utils import UV_VERSION
 from agentscope.workspace._docker._docker_workspace import DockerWorkspace
 
 from agentscope.workspace._docker._make_dockerfile import (
@@ -44,7 +45,10 @@ class DockerGatewayInstallTest(unittest.TestCase):
             requirements = (ctx_dir / "requirements.txt").read_text()
             dockerfile = (ctx_dir / "Dockerfile").read_text()
             self.assertIn("certifi>=2026.10.19\n", requirements)
-            self.assertIn("https://astral.sh/uv/0.13.4/install.sh", dockerfile)
+            self.assertIn(
+                f"https://astral.sh/uv/{UV_VERSION}/install.sh",
+                dockerfile,
+            )
             self.assertNotIn("uv pip install --system", dockerfile)
             self.assertNotIn("--break-system-packages", dockerfile)
             self.assertIn("update-ca-certificates", dockerfile)

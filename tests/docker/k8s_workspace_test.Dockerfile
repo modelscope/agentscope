@@ -31,6 +31,7 @@ RUN apt-get update -qq \
  && rm -rf /var/lib/apt/lists/*
 
 # uv — matches the bootstrap command exactly.
+# Keep in sync with agentscope.workspace._utils.UV_VERSION.
 RUN curl -LsSf -o /tmp/uv-installer.sh \
         https://astral.sh/uv/0.13.4/install.sh \
  && env UV_INSTALL_DIR=/usr/local/bin INSTALLER_NO_MODIFY_PATH=1 \
