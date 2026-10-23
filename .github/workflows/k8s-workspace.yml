@@ -55,7 +55,7 @@ jobs:
 
       - name: Install project
         run: |
-          uv pip install -q "pip>=26.2.2" -e .[dev]
+          uv pip install -q -e .[dev]
           uv pip install pytest
 
       - name: Run K8s workspace tests

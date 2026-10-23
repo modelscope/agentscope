@@ -251,8 +251,6 @@ class DockerWorkspace(SandboxedWorkspaceBase):
                 tag=tag,
                 stream=True,
                 rm=True,
-                pull=True,
-                nocache=True,
             )
             # Buffer recent stream lines so that a failing RUN step's
             # stderr is included in the RuntimeError below — the

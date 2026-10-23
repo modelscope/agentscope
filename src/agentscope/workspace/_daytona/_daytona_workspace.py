@@ -50,7 +50,11 @@ from typing import Any
 from ..._logging import logger
 from ...mcp import MCPClient
 from .._sandboxed_base import SandboxedWorkspaceBase
-from .._utils import _GATEWAY_BASE_REQUIREMENTS, DEFAULT_WORKSPACE_INSTRUCTIONS
+from .._utils import (
+    UV_VERSION,
+    _GATEWAY_BASE_REQUIREMENTS,
+    DEFAULT_WORKSPACE_INSTRUCTIONS,
+)
 from ._constants import (
     DEFAULT_GATEWAY_PORT,
     DEFAULT_TIMEOUT,
@@ -461,7 +465,7 @@ class DaytonaWorkspace(SandboxedWorkspaceBase):
             # 2. Astral uv — same shell installer as Docker/E2B. The
             #    SDK-reported user home is the install root so we do not
             #    assume /home/daytona or any fixed OS user.
-            f"curl -LsSf https://astral.sh/uv/0.13.4/install.sh "
+            f"curl -LsSf https://astral.sh/uv/{UV_VERSION}/install.sh "
             f"| env UV_INSTALL_DIR={shlex.quote(uv_install_dir)} "
             f"INSTALLER_NO_MODIFY_PATH=1 sh",
             # 3. Gateway venv + base requirements.

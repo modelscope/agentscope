@@ -30,8 +30,9 @@ jobs:
         python-version: '3.11'
     - name: Install dependencies
       run: |
-        uv pip install "pip>=26.2.2" "certifi>=2026.10.19" build
+        uv pip install build
     - name: Build package
+      # Use patched uv instead of pip seeded into the isolated build env.
       run: python -m build --installer=uv
     - name: Test installation
       run: |

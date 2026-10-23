@@ -44,7 +44,11 @@ from typing import Any
 from ..._logging import logger
 from ...mcp import MCPClient
 from .._sandboxed_base import SandboxedWorkspaceBase
-from .._utils import _GATEWAY_BASE_REQUIREMENTS, DEFAULT_WORKSPACE_INSTRUCTIONS
+from .._utils import (
+    UV_VERSION,
+    _GATEWAY_BASE_REQUIREMENTS,
+    DEFAULT_WORKSPACE_INSTRUCTIONS,
+)
 from ._constants import (
     DEFAULT_GATEWAY_PORT,
     DEFAULT_TEMPLATE,
@@ -353,7 +357,7 @@ class E2BWorkspace(SandboxedWorkspaceBase):
             "curl ca-certificates ripgrep "
             "&& sudo update-ca-certificates "
             "&& sudo rm -rf /var/lib/apt/lists/*",
-            "curl -LsSf https://astral.sh/uv/0.13.4/install.sh "
+            f"curl -LsSf https://astral.sh/uv/{UV_VERSION}/install.sh "
             "| sudo env UV_INSTALL_DIR=/usr/local/bin "
             "INSTALLER_NO_MODIFY_PATH=1 sh",
             # 2. Gateway venv + base requirements + agentscope.

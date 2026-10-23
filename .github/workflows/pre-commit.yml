@@ -12,6 +12,10 @@ jobs:
     env:
       OS: ${{ matrix.os }}
       PYTHON: '3.11'
+      # Hooks use separate virtualenvs; upgrading only the outer pip is not enough.
+      VIRTUALENV_PIP: "26.2.2"
+      VIRTUALENV_EXTRA_SEARCH_DIR: ${{ runner.temp }}/precommit-seed
+      VIRTUALENV_NO_PERIODIC_UPDATE: "1"
     steps:
     - uses: actions/checkout@master
     - name: Install uv
@@ -22,6 +26,9 @@ jobs:
     - name: Install AgentScope
       run: |
         uv pip install -q "pip>=26.2.2" -e .[dev]
+        # Fetch the hook seed wheel with patched pip, not virtualenv's bundled pip.
+        python -m pip download --no-deps --only-binary=:all: \
+          --dest "$VIRTUALENV_EXTRA_SEARCH_DIR" "pip==26.2.2"
     - name: Install pre-commit
       run: |
         pre-commit install

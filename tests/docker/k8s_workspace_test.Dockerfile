@@ -35,8 +35,7 @@ RUN curl -LsSf -o /tmp/uv-installer.sh \
         https://astral.sh/uv/0.13.4/install.sh \
  && env UV_INSTALL_DIR=/usr/local/bin INSTALLER_NO_MODIFY_PATH=1 \
         sh /tmp/uv-installer.sh \
- && rm /tmp/uv-installer.sh \
- && uv pip install --system "pip>=26.2.2" "certifi>=2026.10.19"
+ && rm /tmp/uv-installer.sh
 
 # Keep in sync with agentscope.workspace._k8s._k8s_bootstrap.GATEWAY_HOME
 ENV GATEWAY_HOME=/root/.agentscope

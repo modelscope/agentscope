@@ -14,6 +14,9 @@ import importlib.resources as _res
 
 # ── shared constants ───────────────────────────────────────────────
 
+#: Pinned installer version shared by sandbox bootstraps and Docker.
+UV_VERSION = "0.13.4"
+
 #: Standard prompt injected to the system prompt
 DEFAULT_WORKSPACE_INSTRUCTIONS = """<workspace>You have access to a {backend} \
 workspace at {workdir} with the following structure:

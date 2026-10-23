@@ -25,6 +25,7 @@ import tempfile
 from pathlib import Path
 
 from .._utils import (
+    UV_VERSION,
     _GATEWAY_BASE_REQUIREMENTS,
     _read_gateway_script_bytes,
     _read_glob_helper_bytes,
@@ -99,6 +100,7 @@ def render_dockerfile(
         node_copy_block = ""
 
     return _read_template(_DOCKERFILE_TEMPLATE).format(
+        uv_version=UV_VERSION,
         base_image=base_image,
         gateway_home=gateway_home,
         container_workdir=container_workdir,

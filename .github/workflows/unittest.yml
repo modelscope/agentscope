@@ -26,7 +26,7 @@ jobs:
         sudo apt-get install -y bubblewrap
     - name: Install Dev Dependencies
       run: |
-        uv pip install -q "pip>=26.2.2" -e .[dev]
+        uv pip install -q -e .[dev]
         uv pip install coverage pytest
     - name: Run tests with coverage
       env:
