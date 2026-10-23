@@ -361,12 +361,13 @@ class MCPProgressTest(unittest.IsolatedAsyncioTestCase):
         class _Metadata(ToolMiddlewareBase):
             """Add ordinary metadata without changing progress delivery."""
 
-            async def on_tool_call(
+            async def on_tool_call(  # pylint: disable=unused-argument
                 self,
                 tool: Any,
                 input_kwargs: dict,
                 next_handler: Any,
             ) -> Any:
+                """Attach metadata while forwarding the tool's chunks."""
                 async for chunk in next_handler(**input_kwargs):
                     chunk.metadata["trace_id"] = "trace"
                     if chunk.is_last:
@@ -510,7 +511,8 @@ class MCPProgressTest(unittest.IsolatedAsyncioTestCase):
                     results = [
                         block
                         for msg in agent.state.context
-                        for block in msg.get_content_blocks("tool_result")
+                        for block in msg.content
+                        if block.type == "tool_result"
                     ]
                     self.assertEqual(
                         [block.model_dump() for block in results],
@@ -665,12 +667,13 @@ class MCPProgressTest(unittest.IsolatedAsyncioTestCase):
         class _Block(ToolMiddlewareBase):
             """Return a result without calling the upstream tool."""
 
-            async def on_tool_call(
+            async def on_tool_call(  # pylint: disable=unused-argument
                 self,
                 tool: Any,
                 input_kwargs: Any,
                 next_handler: Any,
             ) -> Any:
+                """Short-circuit execution with the prepared result."""
                 yield expected
 
         sdk = _ProgressClient()
