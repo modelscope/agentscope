@@ -72,6 +72,7 @@ class GatewayMCPTool(ToolBase):
         gateway: "GatewayClient",
         agent_id: str = "",
         session_id: str = "",
+        stream_progress: bool = False,
     ) -> None:
         """Build a gateway-backed MCP tool.
 
@@ -94,8 +95,11 @@ class GatewayMCPTool(ToolBase):
                 The agent whose gateway-side session to run against.
             session_id (`str`, defaults to ``""``):
                 The session whose gateway-side session to run against.
+            stream_progress (`bool`, defaults to `False`):
+                Return a progress/result stream instead of the final chunk.
         """
         self.mcp_name = mcp_name
+        self.stream_progress = stream_progress
         self._agent_id = agent_id
         self._session_id = session_id
         self.name = f"mcp__{mcp_name}__{tool.name}"
@@ -138,8 +142,8 @@ class GatewayMCPTool(ToolBase):
     async def call(
         self,
         **kwargs: Any,
-    ) -> AsyncGenerator[ToolChunk, None]:
-        """Start a gateway call and return its progress/result stream.
+    ) -> ToolChunk | AsyncGenerator[ToolChunk, None]:
+        """Return the final result, or stream when ``stream_progress=True``.
 
         Progress is best-effort snapshot delivery, not a lossless event log.
         The gateway retains at most 1024 unacknowledged events; overflow
@@ -147,7 +151,17 @@ class GatewayMCPTool(ToolBase):
         count. Consumers must not depend on receiving every update. Buffer
         overflow does not discard the final result.
         """
-        return self._stream_call(kwargs)
+        if self.stream_progress:
+            return self._stream_call(kwargs)
+        final_chunk: ToolChunk | None = None
+        async for chunk in self._stream_call(kwargs):
+            if chunk.is_last:
+                final_chunk = chunk
+        if final_chunk is None:
+            raise RuntimeError(
+                f"Gateway MCP tool {self.name!r} returned no final chunk.",
+            )
+        return final_chunk
 
     async def _stream_call(
         self,
@@ -273,21 +287,6 @@ class GatewayMCPTool(ToolBase):
                 logger.debug(  # pylint: disable=logging-fstring-interpolation
                     f"Failed to clean up gateway tool call {call_id}.",
                 )
-
-    async def call_final(self, **kwargs: Any) -> ToolChunk:
-        """Invoke the gateway MCP tool and return its final result chunk."""
-        final_chunk: ToolChunk | None = None
-        result = await self(**kwargs)
-        if isinstance(result, ToolChunk):
-            return result
-        async for chunk in result:
-            if chunk.is_last:
-                final_chunk = chunk
-        if final_chunk is None:
-            raise RuntimeError(
-                f"Gateway MCP tool {self.name!r} returned no final chunk.",
-            )
-        return final_chunk
 
 
 # ── pseudo MCP client ──────────────────────────────────────────────
@@ -572,6 +571,7 @@ class GatewayMCPClient(MCPClient):
             gateway=self._gateway,
             agent_id=self._agent_id,
             session_id=self._session_id,
+            stream_progress=self.stream_progress,
         )
 
 

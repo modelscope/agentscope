@@ -121,6 +121,14 @@ class MCPClient(BaseModel):
     execution_timeout: float | None = None
     """The execution timeout in seconds for calling the tools from this MCP."""
 
+    stream_progress: bool = Field(
+        default=False,
+        description=(
+            "Whether tools return a progress/result stream instead of the "
+            "final ToolChunk. Enable to expose MCP progress to the agent."
+        ),
+    )
+
     # Private attributes
     _client: SDKClient | None = PrivateAttr(default=None)
     _lifecycle_task: asyncio.Task[None] | None = PrivateAttr(default=None)
@@ -591,8 +599,9 @@ class MCPClient(BaseModel):
         """Get a tool by name from the MCP server.
 
         The returned MCPTool object implements ToolProtocol and can be:
-        - Streamed directly: `async for chunk in await tool(arg1=val1)`
-        - Called for its final result: `await tool.call_final(arg1=val1)`
+        - Called directly for its final result: `await tool(arg1=val1)`
+        - Streamed when `stream_progress=True`:
+          `async for chunk in await tool(arg1=val1)`
         - Registered to toolkit: `toolkit.register_tool(tool)`
 
         Args:
@@ -618,6 +627,7 @@ class MCPClient(BaseModel):
                 tool=target_tool,
                 client_gen=self._get_client_gen,
                 timeout=self.execution_timeout,
+                stream_progress=self.stream_progress,
             )
         else:
             # Stateful: pass session
@@ -627,6 +637,7 @@ class MCPClient(BaseModel):
                 tool=target_tool,
                 session=self._client,
                 timeout=self.execution_timeout,
+                stream_progress=self.stream_progress,
             )
 
     def _validate_connection(self) -> None:

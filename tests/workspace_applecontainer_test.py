@@ -508,7 +508,7 @@ class TestAppleContainerWorkspaceLive(CheckoutWheelTestCase):
 
             # Call the echo tool through the gateway.
             echo_tool = await echo_client.get_tool("echo")
-            result = await echo_tool.call_final(message="hello_mcp")
+            result = await echo_tool(message="hello_mcp")
             texts = []
             for block in result.content:
                 if hasattr(block, "text") and block.text:

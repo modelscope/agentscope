@@ -1052,7 +1052,7 @@ class TestBubblewrapWorkspace(CheckoutWheelTestCase):
         tools = await mcps[0].list_raw_tools()
         self.assertGreater(len(tools), 0)
         tool = await mcps[0].get_tool("get_current_time")
-        result = await tool.call_final(timezone="Asia/Tokyo")
+        result = await tool(timezone="Asia/Tokyo")
         self.assertTrue(result.is_last)
         self.assertGreater(len(result.content), 0)
 

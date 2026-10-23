@@ -513,6 +513,8 @@ export interface HttpMCPConfig {
 export interface MCPClient {
 	name: string;
 	is_stateful: boolean;
+	/** Opt in to tool progress streaming; omitted means false. */
+	stream_progress?: boolean;
 	mcp_config: StdioMCPConfig | HttpMCPConfig;
 }
 

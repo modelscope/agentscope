@@ -72,7 +72,7 @@ class MCPStructuredResultTest(IsolatedAsyncioTestCase):
                 content=[],
                 structured_content=structured,
             ),
-        ).call_final(city="Paris")
+        )(city="Paris")
 
         self.assertEqual(
             chunk.model_dump(),
@@ -102,7 +102,7 @@ class MCPStructuredResultTest(IsolatedAsyncioTestCase):
                 ],
                 structured_content={"city": "Paris", "temperature_c": 21.5},
             ),
-        ).call_final(city="Paris")
+        ).call(city="Paris")
 
         self.assertEqual(
             chunk.model_dump(),
@@ -137,7 +137,7 @@ class MCPStructuredResultTest(IsolatedAsyncioTestCase):
                 ],
                 structured_content=structured,
             ),
-        ).call_final(city="Paris")
+        ).call(city="Paris")
 
         self.assertEqual(
             chunk.model_dump(),
@@ -176,7 +176,7 @@ class MCPStructuredResultTest(IsolatedAsyncioTestCase):
         """Nothing is invented when the server returned no result at all."""
         chunk = await _tool(
             mcp.types.CallToolResult(content=[]),
-        ).call_final(city="Paris")
+        ).call(city="Paris")
 
         self.assertEqual(
             chunk.model_dump(),
@@ -198,7 +198,7 @@ class MCPStructuredResultTest(IsolatedAsyncioTestCase):
                 structured_content=structured,
                 is_error=True,
             ),
-        ).call_final(city="Atlantis")
+        ).call(city="Atlantis")
 
         self.assertEqual(
             chunk.model_dump(),

@@ -25,7 +25,7 @@ from ._utils import (
     _remove_title_field,
 )
 from .._logging import logger
-from ..mcp._content import _convert_mcp_content
+from ..mcp._content import _convert_mcp_result
 from ..message import (
     TextBlock,
     DataBlock,
@@ -213,6 +213,7 @@ class MCPTool(ToolBase):
         session: Any | None = None,
         timeout: float | None = None,
         middlewares: list[ToolMiddlewareBase] | None = None,
+        stream_progress: bool = False,
     ) -> None:
         """Initialize the MCPTool.
 
@@ -232,9 +233,12 @@ class MCPTool(ToolBase):
                 The timeout in seconds for tool execution.
             middlewares (`list[ToolMiddlewareBase] | None`, optional):
                 Tool middlewares wrapping the tool execution.
+            stream_progress (`bool`, defaults to `False`):
+                Return a progress/result stream instead of the final chunk.
         """
         super().__init__(middlewares=middlewares)
         self.mcp_name = mcp_name
+        self.stream_progress = stream_progress
 
         # LLM providers enforce ^[a-zA-Z0-9_-]+$ on tool names.
         # mcp_name is validated in MCPClient.model_post_init;
@@ -316,8 +320,8 @@ class MCPTool(ToolBase):
     async def call(
         self,
         **kwargs: Any,
-    ) -> AsyncGenerator[ToolChunk, None]:
-        """Invoke the MCP tool and return its progress/result stream.
+    ) -> ToolChunk | AsyncGenerator[ToolChunk, None]:
+        """Return the final result, or stream when ``stream_progress=True``.
 
         Progress is best-effort snapshot delivery, not a lossless event log.
         At most 1024 pending progress updates are retained; overflow drops
@@ -329,10 +333,21 @@ class MCPTool(ToolBase):
             **kwargs: Arguments to pass to the MCP tool.
 
         Returns:
-            `AsyncGenerator[ToolChunk, None]`:
-                Progress chunks followed by the converted tool result.
+            `ToolChunk | AsyncGenerator[ToolChunk, None]`:
+                The final result by default. When streaming is enabled,
+                progress chunks followed by the converted tool result.
         """
-        return self._stream_call(kwargs)
+        if self.stream_progress:
+            return self._stream_call(kwargs)
+        final_chunk: ToolChunk | None = None
+        async for chunk in self._stream_call(kwargs):
+            if chunk.is_last:
+                final_chunk = chunk
+        if final_chunk is None:
+            raise RuntimeError(
+                f"MCP tool {self.name!r} returned no final chunk.",
+            )
+        return final_chunk
 
     async def _stream_call(
         self,
@@ -407,24 +422,8 @@ class MCPTool(ToolBase):
                 yield progress_queue.get_nowait()
             result = await call_task
 
-            content = self._convert_mcp_content_to_blocks(result.content)
-
-            # Fall back to structured JSON when no text block is available.
-            # Preserve existing text content without appending JSON.
-            if result.structured_content is not None and not any(
-                isinstance(block, TextBlock) for block in content
-            ):
-                content.append(
-                    TextBlock(
-                        text=json.dumps(
-                            result.structured_content,
-                            ensure_ascii=False,
-                        ),
-                    ),
-                )
-
             yield ToolChunk(
-                content=content,
+                content=self._convert_mcp_result_to_blocks(result),
                 state=(
                     ToolResultState.ERROR
                     if result.is_error
@@ -447,29 +446,14 @@ class MCPTool(ToolBase):
                 except asyncio.CancelledError:
                     pass
 
-    async def call_final(self, **kwargs: Any) -> ToolChunk:
-        """Invoke the MCP tool and return only its final result chunk."""
-        final_chunk: ToolChunk | None = None
-        result = await self(**kwargs)
-        if isinstance(result, ToolChunk):
-            return result
-        async for chunk in result:
-            if chunk.is_last:
-                final_chunk = chunk
-        if final_chunk is None:
-            raise RuntimeError(
-                f"MCP tool {self.name!r} returned no final chunk.",
-            )
-        return final_chunk
-
     @staticmethod
-    def _convert_mcp_content_to_blocks(
-        mcp_content_blocks: list,
+    def _convert_mcp_result_to_blocks(
+        result: mcp.types.CallToolResult,
     ) -> list[TextBlock | DataBlock]:
         """Convert MCP content through the shared lightweight converter."""
         return [
             TextBlock.model_validate(block)
             if block["type"] == "text"
             else DataBlock.model_validate(block)
-            for block in _convert_mcp_content(mcp_content_blocks)
+            for block in _convert_mcp_result(result)
         ]

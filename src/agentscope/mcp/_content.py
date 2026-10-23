@@ -1,11 +1,32 @@
 # -*- coding: utf-8 -*-
 """MCP content conversion shared by local tools and standalone gateways."""
+import json
 from typing import Any
 
 import mcp.types
 from pydantic import AnyUrl, ValidationError
 
 from .._logging import logger
+
+
+def _convert_mcp_result(
+    result: mcp.types.CallToolResult,
+) -> list[dict[str, Any]]:
+    """Convert a tool result, retaining structured data when text is absent."""
+    blocks = _convert_mcp_content(result.content)
+    if result.structured_content is not None and not any(
+        block["type"] == "text" for block in blocks
+    ):
+        blocks.append(
+            {
+                "type": "text",
+                "text": json.dumps(
+                    result.structured_content,
+                    ensure_ascii=False,
+                ),
+            },
+        )
+    return blocks
 
 
 def _convert_mcp_content(content_blocks: list) -> list[dict[str, Any]]:

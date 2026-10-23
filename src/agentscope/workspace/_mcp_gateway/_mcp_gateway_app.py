@@ -47,7 +47,7 @@ from fastapi.responses import PlainTextResponse
 
 # pylint: disable=protected-access
 from agentscope.mcp import MCPClient
-from agentscope.mcp._content import _convert_mcp_content
+from agentscope.mcp._content import _convert_mcp_result
 
 
 _TERMINAL_CALL_TTL_SECONDS = 300.0
@@ -79,7 +79,7 @@ def _progress_chunk(
 def _result_chunk(result: mcp.types.CallToolResult) -> dict[str, Any]:
     """Convert a raw MCP result to the gateway's ToolChunk wire shape."""
     return {
-        "content": _convert_mcp_content(result.content),
+        "content": _convert_mcp_result(result),
         "state": "error" if result.is_error else "running",
         "is_last": True,
         "metadata": {},
