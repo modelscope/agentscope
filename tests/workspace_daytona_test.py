@@ -60,7 +60,10 @@ from agentscope.workspace._daytona._constants import (
     DEFAULT_GATEWAY_PORT,
     METADATA_WORKSPACE_ID_KEY,
 )
-from agentscope.workspace._utils import _GATEWAY_BASE_REQUIREMENTS
+from agentscope.workspace._utils import (
+    UV_VERSION,
+    _GATEWAY_BASE_REQUIREMENTS,
+)
 
 
 class _NullBus:
@@ -567,9 +570,16 @@ class TestDaytonaBootstrapHelpers(IsolatedAsyncioTestCase):
         self.assertEqual(len(system_commands), 1)
         self.assertIn("apt-get install", system_commands[0])
         self.assertIn("ripgrep", system_commands[0])
+        self.assertIn("ca-certificates", system_commands[0])
+        self.assertIn("update-ca-certificates", system_commands[0])
         self.assertNotIn("ripgrep", "\n".join(commands))
+        self.assertNotIn("update-ca-certificates", "\n".join(commands))
         self.assertEqual(len(commands), 4)
         self.assertIn("UV_INSTALL_DIR=/home/daytona/.local/bin", commands[0])
+        self.assertIn(
+            f"https://astral.sh/uv/{UV_VERSION}/install.sh",
+            commands[0],
+        )
         self.assertEqual(
             commands[1],
             "/home/daytona/.local/bin/uv venv "
@@ -1063,6 +1073,7 @@ class TestDaytonaMcpGatewayLazyInit(IsolatedAsyncioTestCase):
             self.assertFalse(workspace._gateway_ready)
             self.assertEqual(_FakeGateway.instances, [])
             self.assertIn("ripgrep", commands)
+            self.assertIn("update-ca-certificates", commands)
             self.assertNotIn("uv venv", commands)
             self.assertNotIn("astral.sh/uv", commands)
             self.assertNotIn("nohup", commands)
@@ -1111,6 +1122,11 @@ class TestDaytonaMcpGatewayLazyInit(IsolatedAsyncioTestCase):
             self.assertTrue(workspace._gateway_ready)
             self.assertEqual(len(_FakeGateway.instances), 1)
             self.assertIn("ripgrep", commands)
+            self.assertIn("update-ca-certificates", commands)
+            self.assertIn(
+                f"https://astral.sh/uv/{UV_VERSION}/install.sh",
+                commands,
+            )
             self.assertIn("uv venv", commands)
             self.assertIn("nohup", commands)
             self.assertIn(

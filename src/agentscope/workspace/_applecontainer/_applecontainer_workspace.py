@@ -42,7 +42,7 @@ import shlex
 from ..._logging import logger
 from ...mcp import MCPClient
 from .._sandboxed_base import SandboxedWorkspaceBase
-from .._utils import _GATEWAY_BASE_REQUIREMENTS
+from .._utils import UV_VERSION, _GATEWAY_BASE_REQUIREMENTS
 from ._applecontainer_backend import AppleContainerBackend
 from ._constants import (
     CONTAINER_WORKDIR,
@@ -494,11 +494,17 @@ class AppleContainerWorkspace(SandboxedWorkspaceBase):
     # ── internals: bootstrap ────────────────────────────────────
 
     def _system_bootstrap_commands(self) -> list[str]:
-        """Install ripgrep for Grep, plus curl for a later uv install."""
+        """Install ripgrep for Grep, plus curl and refreshed CAs.
+
+        ``ca-certificates`` and ``update-ca-certificates`` run here so
+        a later uv download trusts the current CA set. The gateway
+        itself is not installed.
+        """
         return [
             "apt-get update -qq "
             "&& apt-get install -y --no-install-recommends "
-            "curl ripgrep "
+            "curl ca-certificates ripgrep "
+            "&& update-ca-certificates "
             "&& rm -rf /var/lib/apt/lists/*",
         ]
 
@@ -517,7 +523,7 @@ class AppleContainerWorkspace(SandboxedWorkspaceBase):
         pip_args = " ".join(shlex.quote(p) for p in pip_pkgs)
 
         return [
-            "curl -LsSf https://astral.sh/uv/install.sh "
+            f"curl -LsSf https://astral.sh/uv/{UV_VERSION}/install.sh "
             "| env UV_INSTALL_DIR=/usr/local/bin "
             "INSTALLER_NO_MODIFY_PATH=1 sh",
             f"uv venv {self._gateway_venv}",

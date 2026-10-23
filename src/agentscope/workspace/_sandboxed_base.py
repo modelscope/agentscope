@@ -72,6 +72,9 @@ class SandboxedWorkspaceBase(WorkspaceBase):
     is_alive: bool
     """Inherited lifecycle flag, repeated for file-scoped type checks."""
 
+    _mcp_specs: dict[tuple[str, str], list[MCPClient]]
+    """Inherited MCP declarations, repeated for file-scoped type checks."""
+
     _bootstrap_cmd_timeout: float = 1800.0
     """Per-command timeout for system and gateway bootstrap steps.
 

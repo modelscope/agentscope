@@ -34,7 +34,11 @@ from typing import Any
 from ..._logging import logger
 from ...mcp import MCPClient
 from .._sandboxed_base import SandboxedWorkspaceBase
-from .._utils import _GATEWAY_BASE_REQUIREMENTS, DEFAULT_WORKSPACE_INSTRUCTIONS
+from .._utils import (
+    UV_VERSION,
+    _GATEWAY_BASE_REQUIREMENTS,
+    DEFAULT_WORKSPACE_INSTRUCTIONS,
+)
 from ._k8s_backend import K8sBackend
 from ._constants import (
     DEFAULT_GATEWAY_PORT,
@@ -591,12 +595,14 @@ class K8sWorkspace(SandboxedWorkspaceBase):
 
         Slim base image runs as root, so no ``sudo`` is needed.
         ``curl`` and ``ca-certificates`` share this apt transaction
-        with ``ripgrep``; the gateway installer uses them later.
+        with ``ripgrep``. ``update-ca-certificates`` applies the
+        current trust bundle before a later gateway uv download.
         """
         sys_deps = " ".join(shlex.quote(d) for d in SYSTEM_DEPS)
         return [
             f"apt-get update -qq "
             f"&& apt-get install -y --no-install-recommends {sys_deps} "
+            "&& update-ca-certificates "
             f"&& rm -rf /var/lib/apt/lists/*",
         ]
 
@@ -616,7 +622,7 @@ class K8sWorkspace(SandboxedWorkspaceBase):
         pip_args = " ".join(shlex.quote(p) for p in pip_pkgs)
 
         return [
-            "curl -LsSf https://astral.sh/uv/install.sh "
+            f"curl -LsSf https://astral.sh/uv/{UV_VERSION}/install.sh "
             "| env UV_INSTALL_DIR=/usr/local/bin "
             "INSTALLER_NO_MODIFY_PATH=1 sh",
             f"uv venv {self._gateway_venv}",

@@ -38,6 +38,7 @@ from agentscope.workspace._mcp_gateway._mcp_gateway_app import (
     _State,
     _build_app,
 )
+from agentscope.workspace._utils import UV_VERSION
 
 
 def _stdio_mcp(name: str) -> MCPClient:
@@ -317,6 +318,10 @@ class TestBubblewrapWorkspaceInstructions(IsolatedAsyncioTestCase):
             self.assertNotIn('"$asset.sha256"', system_joined)
             self.assertIn("tmp_installer=$(mktemp)", gateway_joined)
             self.assertIn('sh "$tmp_installer"', gateway_joined)
+            self.assertIn(
+                f"https://astral.sh/uv/{UV_VERSION}/install.sh",
+                gateway_joined,
+            )
             self.assertNotIn("| env UV_INSTALL_DIR", gateway_joined)
         finally:
             workdir.cleanup()

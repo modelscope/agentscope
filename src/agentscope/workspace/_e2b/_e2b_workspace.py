@@ -43,7 +43,11 @@ from typing import Any
 from ..._logging import logger
 from ...mcp import MCPClient
 from .._sandboxed_base import SandboxedWorkspaceBase
-from .._utils import _GATEWAY_BASE_REQUIREMENTS, DEFAULT_WORKSPACE_INSTRUCTIONS
+from .._utils import (
+    UV_VERSION,
+    _GATEWAY_BASE_REQUIREMENTS,
+    DEFAULT_WORKSPACE_INSTRUCTIONS,
+)
 from ._constants import (
     DEFAULT_GATEWAY_PORT,
     DEFAULT_TEMPLATE,
@@ -324,14 +328,18 @@ class E2BWorkspace(SandboxedWorkspaceBase):
     # ── internals: bootstrap ────────────────────────────────────
 
     def _system_bootstrap_commands(self) -> list[str]:
-        """Install ripgrep for the builtin Grep tool.
+        """Install ripgrep and refresh CAs before any later uv download.
 
-        The E2B base template already ships curl. sudo is required
-        because the sandbox user is not root.
+        sudo is required because the sandbox user is not root.
+        ``curl`` and ``ca-certificates`` share this apt transaction;
+        ``update-ca-certificates`` applies the current trust bundle
+        without installing the MCP gateway.
         """
         return [
             "sudo apt-get update -qq "
-            "&& sudo apt-get install -y --no-install-recommends ripgrep "
+            "&& sudo apt-get install -y --no-install-recommends "
+            "curl ca-certificates ripgrep "
+            "&& sudo update-ca-certificates "
             "&& sudo rm -rf /var/lib/apt/lists/*",
         ]
 
@@ -358,7 +366,7 @@ class E2BWorkspace(SandboxedWorkspaceBase):
         return [
             # uv lands at /usr/local/bin (on PATH — no absolute-path
             # plumbing needed downstream).
-            "curl -LsSf https://astral.sh/uv/install.sh "
+            f"curl -LsSf https://astral.sh/uv/{UV_VERSION}/install.sh "
             "| sudo env UV_INSTALL_DIR=/usr/local/bin "
             "INSTALLER_NO_MODIFY_PATH=1 sh",
             # Gateway venv + base requirements + agentscope.

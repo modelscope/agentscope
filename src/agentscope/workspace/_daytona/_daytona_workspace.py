@@ -50,7 +50,11 @@ from typing import Any
 from ..._logging import logger
 from ...mcp import MCPClient
 from .._sandboxed_base import SandboxedWorkspaceBase
-from .._utils import _GATEWAY_BASE_REQUIREMENTS, DEFAULT_WORKSPACE_INSTRUCTIONS
+from .._utils import (
+    UV_VERSION,
+    _GATEWAY_BASE_REQUIREMENTS,
+    DEFAULT_WORKSPACE_INSTRUCTIONS,
+)
 from ._constants import (
     DEFAULT_GATEWAY_PORT,
     DEFAULT_TIMEOUT,
@@ -423,14 +427,19 @@ class DaytonaWorkspace(SandboxedWorkspaceBase):
         self._uv_bin = posixpath.join(self._user_home, ".local", "bin", "uv")
 
     def _system_bootstrap_commands(self) -> list[str]:
-        """Install ripgrep for the builtin Grep tool.
+        """Install ripgrep and refresh CAs before any later uv download.
 
         Daytona snapshots may run as non-root users, so use sudo and
-        avoid assuming the SDK-selected OS user is root.
+        avoid assuming the SDK-selected OS user is root. ``curl`` and
+        ``ca-certificates`` share this apt transaction;
+        ``update-ca-certificates`` applies the current trust bundle
+        without installing the MCP gateway.
         """
         return [
             "sudo apt-get update -qq "
-            "&& sudo apt-get install -y --no-install-recommends ripgrep "
+            "&& sudo apt-get install -y --no-install-recommends "
+            "curl ca-certificates ripgrep "
+            "&& sudo update-ca-certificates "
             "&& sudo rm -rf /var/lib/apt/lists/*",
         ]
 
@@ -465,8 +474,10 @@ class DaytonaWorkspace(SandboxedWorkspaceBase):
         return [
             # Astral uv — same shell installer as Docker/E2B. The
             # SDK-reported user home is the install root so we do not
-            # assume /home/daytona or any fixed OS user.
-            f"curl -LsSf https://astral.sh/uv/install.sh "
+            # assume /home/daytona or any fixed OS user. The version
+            # pin matches the CA-trust upgrade used by the other
+            # sandboxes.
+            f"curl -LsSf https://astral.sh/uv/{UV_VERSION}/install.sh "
             f"| env UV_INSTALL_DIR={shlex.quote(uv_install_dir)} "
             f"INSTALLER_NO_MODIFY_PATH=1 sh",
             # Gateway venv + base requirements.
