@@ -188,7 +188,10 @@ const ChatPageInner = () => {
 	 */
 	const handleCreateSession = async () => {
 		if (!urlAgentId) return;
-		const seedConfig = currentView?.session.config ?? sessions[0]?.session.config;
+		const seedConfig =
+			selectedAgent?.data.backend && selectedAgent.data.backend !== 'agentscope'
+				? undefined
+				: (currentView?.session.config ?? sessions[0]?.session.config);
 		const res = await createSession({
 			agent_id: urlAgentId,
 			...(seedConfig?.chat_model_config
@@ -517,6 +520,7 @@ const ChatPageInner = () => {
 			</Sidebar>
 			<div className="flex flex-1 min-w-0">
 				<ChatViewport
+					agent={focusedMember?.agent.data ?? selectedAgent?.data}
 					agentId={effectiveAgentId}
 					sessionId={effectiveSessionId}
 					onSessionsChanged={refetchSessions}

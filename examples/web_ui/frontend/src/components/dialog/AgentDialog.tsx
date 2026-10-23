@@ -3,6 +3,8 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { ContextConfig, InviteConfig, ReActConfig } from '@/api';
+import type { ExternalAgentConfig, AgentBackend } from '@/api';
+import { AgentBackendFields } from '@/components/form/AgentBackendFields';
 import {
 	AgentFormFields,
 	defaultAgentFormValues,
@@ -38,6 +40,10 @@ export function AgentDialog({ onCreated, children }: Props) {
 	const [submitting, setSubmitting] = useState(false);
 	const [values, setValues] = useState<AgentFormValues | null>(null);
 	const [errorMsg, setErrorMsg] = useState('');
+	const [backend, setBackend] = useState<AgentBackend>('agentscope');
+	const [externalConfig, setExternalAgentConfig] = useState<ExternalAgentConfig>({
+		executable: '',
+	});
 
 	useEffect(() => {
 		if (open && schema && !values) {
@@ -45,6 +51,8 @@ export function AgentDialog({ onCreated, children }: Props) {
 		}
 		if (!open) {
 			setValues(null);
+			setBackend('agentscope');
+			setExternalAgentConfig({ executable: '' });
 			setErrorMsg('');
 		}
 	}, [open, schema, values]);
@@ -66,12 +74,21 @@ export function AgentDialog({ onCreated, children }: Props) {
 			await create(
 				{
 					name,
-					system_prompt: values.identity.system_prompt as string | undefined,
-					chat_config: {
-						context_config: values.context_config as unknown as ContextConfig,
-						react_config: values.react_config as unknown as ReActConfig,
-						invite_config: values.invite_config as unknown as InviteConfig,
-					},
+					backend,
+					...(backend !== 'agentscope' ? { external_config: externalConfig } : {}),
+					system_prompt:
+						backend === 'agentscope'
+							? (values.identity.system_prompt as string | undefined)
+							: undefined,
+					chat_config:
+						backend === 'agentscope'
+							? {
+									context_config:
+										values.context_config as unknown as ContextConfig,
+									react_config: values.react_config as unknown as ReActConfig,
+									invite_config: values.invite_config as unknown as InviteConfig,
+								}
+							: undefined,
 				},
 				{ silent: true },
 			);
@@ -89,16 +106,35 @@ export function AgentDialog({ onCreated, children }: Props) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>{children}</DialogTrigger>
-			<DialogContent className="!w-[500px] !max-w-[500px]">
-				<DialogHeader>
+			<DialogContent className="flex max-h-[calc(100dvh-2rem)] flex-col !w-[calc(100vw-2rem)] !max-w-[640px]">
+				<DialogHeader className="shrink-0">
 					<DialogTitle>{t('dialog-agent-create.title')}</DialogTitle>
 					<DialogDescription className="sr-only">
 						{t('dialog-agent-create.description')}
 					</DialogDescription>
 				</DialogHeader>
-				<div className="no-scrollbar -mx-4 max-h-[75vh] overflow-y-auto px-4">
+				<div className="no-scrollbar -mx-4 min-h-0 flex-1 overflow-y-auto px-4">
 					{schema && values ? (
-						<AgentFormFields schema={schema} values={values} onChange={handleChange} />
+						<div className="space-y-5">
+							<AgentBackendFields
+								backend={backend}
+								config={externalConfig}
+								name={(values.identity.name as string) ?? ''}
+								onBackendChange={(next) => {
+									setBackend(next);
+									setExternalAgentConfig({ executable: '' });
+								}}
+								onConfigChange={setExternalAgentConfig}
+								onNameChange={(name) => handleChange('identity', 'name', name)}
+							/>
+							{backend === 'agentscope' && (
+								<AgentFormFields
+									schema={schema}
+									values={values}
+									onChange={handleChange}
+								/>
+							)}
+						</div>
 					) : (
 						<p className="text-muted-foreground text-sm">{t('common.loading')}</p>
 					)}
@@ -111,7 +147,7 @@ export function AgentDialog({ onCreated, children }: Props) {
 						</AlertDescription>
 					</Alert>
 				)}
-				<DialogFooter>
+				<DialogFooter className="shrink-0">
 					<Button variant="ghost" onClick={() => setOpen(false)} disabled={submitting}>
 						<CircleAlert className="size-3.5" />
 						{t('common.cancel')}

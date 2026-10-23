@@ -14,6 +14,7 @@ from ..deps import (
     get_session_service,
     get_storage,
 )
+from ._external import external_router
 from ._schema import (
     AgentSchemaResponse,
     AgentSchemaV2Response,
@@ -30,6 +31,9 @@ agent_router = APIRouter(
     tags=["agent"],
     responses={404: {"description": "Not found"}},
 )
+
+
+agent_router.include_router(external_router)
 
 
 @agent_router.get(
@@ -204,7 +208,7 @@ async def create_agent(
     except ValidationError as exc:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=exc.errors(),
+            detail=exc.errors(include_context=False),
         ) from exc
     record = AgentRecord(user_id=user_id, data=data)
     agent_id = await storage.upsert_agent(user_id, record)
@@ -271,7 +275,7 @@ async def update_agent(
     except ValidationError as exc:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=exc.errors(),
+            detail=exc.errors(include_context=False),
         ) from exc
     updated_agent = existing.model_copy(
         update={"data": updated_data, "updated_at": datetime.now()},

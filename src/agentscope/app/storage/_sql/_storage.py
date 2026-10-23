@@ -20,7 +20,7 @@ from datetime import datetime, timedelta, timezone
 from typing import TYPE_CHECKING, Any, Self
 
 from .._base import StorageBase
-from .._model._session import _origin_kwargs
+from .._model._session import ExternalSessionState, _origin_kwargs
 from .._model import (
     AgentRecord,
     ChannelRecord,
@@ -1278,6 +1278,27 @@ class AsyncSQLAlchemyStorage(StorageBase):
                 )
                 .values(team_id=team_id, updated_at=now),
             )
+            await sess.commit()
+
+    async def update_session_external_state(
+        self,
+        user_id: str,
+        agent_id: str,
+        session_id: str,
+        state: dict,
+    ) -> None:
+        """Update remote history without replacing config or local state."""
+        async with self._session() as sess:
+            row = await sess.get(SessionRow, session_id)
+            if row is None or row.user_id != user_id:
+                raise KeyError(f"Session {session_id!r} not found")
+            record = _to_record(row, SessionRecord)
+            if record.agent_id != agent_id:
+                raise KeyError(f"Session {session_id!r} not found")
+            record.external_state = ExternalSessionState.model_validate(state)
+            record.updated_at = _utcnow()
+            row.payload = _from_record(SessionRow, record).payload
+            row.updated_at = record.updated_at
             await sess.commit()
 
     async def update_session_state(

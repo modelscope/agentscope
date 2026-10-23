@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
 """The agent storage class."""
 import warnings
+from pathlib import Path
 from typing import Any, Literal, Self
 
-from pydantic import Field, BaseModel, model_validator
+from pydantic import (
+    AliasChoices,
+    Field,
+    BaseModel,
+    field_validator,
+    model_validator,
+)
 from pydantic.json_schema import SkipJsonSchema
 
 from ...._utils._common import _generate_id
@@ -91,6 +98,20 @@ class AgentChatConfig(BaseModel):
     )
 
 
+class ExternalAgentConfig(BaseModel):
+    """Connection settings for a preinstalled third-party native runtime."""
+
+    executable: str = ""
+    cwd: str = ""
+
+    @field_validator("cwd")
+    @classmethod
+    def _normalize_cwd(cls, value: str) -> str:
+        """Use the managed workspace by default; resolve custom paths."""
+        value = value.strip()
+        return str(Path(value).expanduser().resolve()) if value else ""
+
+
 class AgentData(BaseModel):
     """The agent data model."""
 
@@ -106,6 +127,27 @@ class AgentData(BaseModel):
     off that schema) while still being serialised in normal JSON
     dumps (so persisted records keep the id).
     """
+
+    backend: Literal["agentscope", "codex", "qoder"] = "agentscope"
+    external_config: ExternalAgentConfig | None = Field(
+        default=None,
+        validation_alias=AliasChoices("external_config", "acp_config"),
+    )
+
+    @model_validator(mode="after")
+    def _validate_backend(self) -> Self:
+        """Keep third-party settings separate from local execution."""
+        if self.backend == "agentscope":
+            if self.external_config is not None:
+                raise ValueError(
+                    "runtime settings require a third-party agent",
+                )
+        else:
+            if self.external_config is None:
+                raise ValueError("Third-party agents require runtime settings")
+            if self.chat_config.invite_config.invitable:
+                raise ValueError("Third-party agents cannot join teams yet")
+        return self
 
     name: str = Field(
         description="The name of the agent.",

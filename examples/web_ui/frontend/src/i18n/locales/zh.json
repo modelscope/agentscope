@@ -876,5 +876,62 @@
 		"empty": "此文件夹为空",
 		"pressEnter": "先按回车校验该路径",
 		"gitTooltip": "{{staged}} 已暂存 · {{unstaged}} 已修改 · {{untracked}} 未跟踪\n行数不含未跟踪文件"
+	},
+	"external": {
+		"agentType": "智能体类型",
+		"name": "名称",
+		"executable": "可执行文件（可选）",
+		"codexHint": "请在后端运行 pip install \"agentscope[codex]\"，并先执行 codex login 登录。留空使用 Python 包自带的 Codex CLI。",
+		"qoderHint": "请在后端运行 pip install \"agentscope[qoder]\"，并先使用 qodercli 登录或设置 QODER_PERSONAL_ACCESS_TOKEN。留空使用 SDK 自带的 CLI。",
+		"checking": "检测中…",
+		"approval": "工具执行需要你的确认",
+		"plan": "执行计划",
+		"status": {
+			"pending": "待处理",
+			"in_progress": "进行中",
+			"completed": "已完成",
+			"failed": "失败"
+		},
+		"nativeTitle": "AgentScope 原生智能体",
+		"nativeDescription": "使用 AgentScope 的模型、工具和工作区。",
+		"thirdPartyTitle": "第三方智能体",
+		"thirdPartyDescription": "连接 Codex、Qoder 等外部智能体。",
+		"providerTitle": "选择第三方智能体",
+		"binaryPlaceholder": "留空自动查找，或填写可执行文件路径",
+		"detectExecutable": "检测可执行文件",
+		"binaryFound": "已找到可执行文件",
+		"binaryMissing": "未找到可用的程序",
+		"accountTitle": "账户状态",
+		"checkAccount": "检测账户",
+		"accountUnchecked": "尚未检测账户，点击右侧按钮检查。",
+		"detectFirst": "请先检测可执行文件。",
+		"accountHint": "检测的是后端机器使用的账户，不会发起模型请求。",
+		"accountMethod": "认证方式",
+		"configuredHint": "已发现认证配置，尚未验证凭证是否有效。",
+		"loginQoder": "登录 Qoder",
+		"loginWaiting": "等待登录…",
+		"loginTimeout": "登录等待超时，请重试。",
+		"qoderLoginHint": "点击登录后，Qoder CLI 会在后端机器尝试打开浏览器。完成授权后将自动更新账户状态；无桌面环境请在后端配置 Qoder Token。",
+		"loginHint": "请在后端机器完成 {{provider}} CLI 登录后重新检测。",
+		"accountStatus": {
+			"authenticated": "已登录",
+			"not_authenticated": "未登录",
+			"configured": "已配置认证",
+			"error": "账户检测失败"
+		},
+		"accountTypes": {
+			"chatgpt": "ChatGPT",
+			"apiKey": "API Key",
+			"accessToken": "访问令牌",
+			"qodercli": "Qoder CLI",
+			"customProvider": "自定义模型服务"
+		},
+		"workspacePath": "工作区路径（可选）",
+		"workspaceDefault": "默认使用 AgentScope 托管工作区",
+		"workspaceHelp": "留空默认使用 {{path}}；也可填写后端机器上已存在的目录。修改路径后需新建对话。",
+		"workspaceLoading": "正在获取默认工作区目录…",
+		"workspaceLoadError": "无法获取默认工作区目录，请重新打开窗口重试。",
+		"workspaceUnavailable": "当前部署未提供默认本地工作区，第三方智能体需要本地工作区支持。",
+		"managedWorkspace": "AgentScope 托管工作区"
 	}
 }

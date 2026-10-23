@@ -390,6 +390,7 @@ function summarizeToolGroup(calls: ToolCallWithResult[], t: TFunction) {
 
 interface MessageBubbleProps {
 	message: Msg;
+	showErrorDetails?: boolean;
 	onUserConfirm: (
 		toolCallBlock: ToolCallBlock,
 		confirm: boolean,
@@ -415,7 +416,7 @@ interface MessageBubbleProps {
  * When `content` is empty and the message is still running, the bubble
  * body is omitted entirely so only the bottom status row renders.
  */
-function ASMessageBubbleComponent({ message }: MessageBubbleProps) {
+function ASMessageBubbleComponent({ message, showErrorDetails = false }: MessageBubbleProps) {
 	const isUser = message.role === 'user';
 	const { t } = useTranslation();
 
@@ -474,10 +475,13 @@ function ASMessageBubbleComponent({ message }: MessageBubbleProps) {
 						<TriangleAlert />
 						<AlertTitle>{t('messageBubble.error.title')}</AlertTitle>
 						<AlertDescription>
-							{t(`messageBubble.error.${message.error?.type ?? 'unknown'}`, {
-								defaultValue:
-									message.error?.message ?? t('messageBubble.error.unknown'),
-							})}
+							{showErrorDetails && message.error?.message
+								? message.error.message
+								: t(`messageBubble.error.${message.error?.type ?? 'unknown'}`, {
+										defaultValue:
+											message.error?.message ??
+											t('messageBubble.error.unknown'),
+									})}
 						</AlertDescription>
 					</Alert>
 				)}

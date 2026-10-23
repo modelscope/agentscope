@@ -55,6 +55,11 @@ export function AgentSelect({ agents, value, onChange, placeholder, className, .
 					className={`size-3.5 shrink-0 ${isSelected ? 'opacity-100' : 'opacity-0'}`}
 				/>
 				<span className="min-w-0 flex-1 truncate">{agent.data.name}</span>
+				{agent.data.backend && agent.data.backend !== 'agentscope' && (
+					<Badge variant="secondary" className="text-[10px] px-1 py-0">
+						{agent.data.backend === 'codex' ? 'Codex' : 'Qoder'}
+					</Badge>
+				)}
 				{!agent.editable && (
 					<Badge
 						variant="secondary"

@@ -123,7 +123,9 @@ async def _create_realtime_offer(
     realtime_service: RealtimeService,
 ) -> RealtimeOfferResponse:
     """Create one offer while this process serializes session starts."""
-    await access.resolve_agent(user_id, body.agent_id)
+    agent = await access.resolve_agent(user_id, body.agent_id)
+    if agent.data.backend != "agentscope":
+        raise HTTPException(422, "Third-party agents support text chat only")
     session = await storage.get_session(
         user_id,
         body.agent_id,

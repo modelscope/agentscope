@@ -57,3 +57,26 @@ class TestLocalWorkspaceManager(IsolatedAsyncioTestCase):
             [alice.kwargs["workspace_id"], bob.kwargs["workspace_id"]],
             ["982aa9b33217069a", "883053c3e4594c5b"],
         )
+
+    async def test_resolved_workspace_id_reuses_cached_workspace(self) -> None:
+        """Missing, empty and explicit bindings resolve to the same cache."""
+        async with LocalWorkspaceManager(".") as manager:
+            first = await manager.get_workspace("alice", "agent", "first")
+            for workspace_id in (None, "", first.workspace_id):
+                with self.subTest(workspace_id=workspace_id):
+                    current = await manager.get_workspace(
+                        "alice",
+                        "agent",
+                        "next",
+                        workspace_id,
+                    )
+                    self.assertIs(current, first)
+            self.assertEqual(
+                first.kwargs,
+                {
+                    "workspace_id": first.workspace_id,
+                    "workdir": manager.get_workdir("agent"),
+                    "default_mcps": [],
+                    "skill_paths": [],
+                },
+            )
