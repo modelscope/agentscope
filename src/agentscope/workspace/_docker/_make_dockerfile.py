@@ -26,6 +26,7 @@ import tempfile
 from pathlib import Path
 
 from .._utils import (
+    UV_VERSION,
     _GATEWAY_BASE_REQUIREMENTS,
     _read_gateway_script_bytes,
     _read_glob_helper_bytes,
@@ -76,7 +77,7 @@ def render_dockerfile(
         container_workdir: Container-side workdir; bind-mounted from
             the host when the workspace's ``workdir`` is set, else
             an empty in-image directory.
-        node_version: When given (e.g. ``"20"``) a ``node`` and ``npm``
+        node_version: When given (e.g. ``"22.23.4"``) a ``node`` and ``npm``
             of that version are copied from the official Node slim
             image. ``None`` skips Node installation.
         install_agentscope_block: Pre-rendered block that installs
@@ -100,6 +101,7 @@ def render_dockerfile(
         node_copy_block = ""
 
     return _read_template(_DOCKERFILE_TEMPLATE).format(
+        uv_version=UV_VERSION,
         base_image=base_image,
         gateway_home=gateway_home,
         container_workdir=container_workdir,

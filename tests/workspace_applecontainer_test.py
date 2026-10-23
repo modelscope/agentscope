@@ -16,6 +16,8 @@ import unittest
 from unittest.async_case import IsolatedAsyncioTestCase
 from unittest.mock import AsyncMock, MagicMock, call, patch
 
+from sandbox_test_support import CheckoutWheelTestCase
+
 from agentscope.mcp import MCPClient, StdioMCPConfig
 from agentscope.workspace import AppleContainerBackend, AppleContainerWorkspace
 from agentscope.workspace._applecontainer._constants import (
@@ -298,8 +300,10 @@ class TestAppleContainerWorkspaceInternals(IsolatedAsyncioTestCase):
     sys.platform == "darwin",
     "Apple Container requires macOS",
 )
-class TestAppleContainerWorkspaceLifecycle(IsolatedAsyncioTestCase):
+class TestAppleContainerWorkspaceLifecycle(CheckoutWheelTestCase):
     """Lifecycle tests against a real Apple Container."""
+
+    workspace_type = AppleContainerWorkspace
 
     async def test_initialize_and_close(self) -> None:
         """Workspace can be initialized and closed."""
@@ -390,7 +394,7 @@ if __name__ == "__main__":
     sys.platform == "darwin",
     "Apple Container requires macOS",
 )
-class TestAppleContainerWorkspaceLive(IsolatedAsyncioTestCase):
+class TestAppleContainerWorkspaceLive(CheckoutWheelTestCase):
     """Live integration tests — full bootstrap + gateway lifecycle.
 
     Set ``APPLE_CONTAINER_LIVE=1`` to run.  This test pulls an image,
@@ -403,6 +407,8 @@ class TestAppleContainerWorkspaceLive(IsolatedAsyncioTestCase):
     4. A real MCP echo server is registered, listed, and called.
     5. File read/write roundtrip works inside the container.
     """
+
+    workspace_type = AppleContainerWorkspace
 
     async def test_bootstrap_dependencies(self) -> None:
         """Bootstrap installed ``rg``, ``uv``, and ``python3``."""
