@@ -31,6 +31,7 @@ from utils import AnyString
 
 from agentscope.event import (
     ConfirmResult,
+    CustomEvent,
     DataBlockDeltaEvent,
     DataBlockEndEvent,
     DataBlockStartEvent,
@@ -1004,6 +1005,34 @@ class EventToMessageTest(IsolatedAsyncioTestCase):
             self.msg.model_dump(),
             original_dump,
             msg="Msg must not change when event.reply_id does not match",
+        )
+
+    async def test_custom_event_without_reply_id_is_ignored(self) -> None:
+        """A CustomEvent has no reply_id and must not break append_event."""
+        original_dump = self.msg.model_dump()
+        self.msg.append_event(
+            CustomEvent(name="state_updated", value={"tasks": []}),
+        )
+        self.assertDictEqual(
+            self.msg.model_dump(),
+            original_dump,
+            msg="Msg must not change when a CustomEvent is applied",
+        )
+
+    async def test_custom_event_with_wrong_reply_id_is_skipped(self) -> None:
+        """A CustomEvent targeting another reply must be skipped."""
+        original_dump = self.msg.model_dump()
+        self.msg.append_event(
+            CustomEvent(
+                reply_id="totally_wrong_id",
+                name="state_updated",
+                value={},
+            ),
+        )
+        self.assertDictEqual(
+            self.msg.model_dump(),
+            original_dump,
+            msg="Msg must not change when CustomEvent.reply_id does not match",
         )
 
     async def test_missing_block_does_not_crash(self) -> None:
