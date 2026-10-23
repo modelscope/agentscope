@@ -204,10 +204,6 @@ class JevClassifierModelTest(IsolatedAsyncioTestCase):
             ):
                 JevClassifierModel(TypeSafeCredential(api_key="secret"))
 
-
-class JevClassifierModelPerCallOptionTest(IsolatedAsyncioTestCase):
-    """Test that per-call options reach the System One request."""
-
     @staticmethod
     def _response(model: str) -> SimpleNamespace:
         """Build a System One response carrying one noul answer."""
