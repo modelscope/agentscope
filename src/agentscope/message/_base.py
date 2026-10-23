@@ -251,8 +251,9 @@ class Msg(BaseModel):
         ``finished_at`` is stamped by ``REPLY_END``, and ``usage`` is
         initialized then accumulated across each ``MODEL_CALL_END``.
         Events whose ``reply_id`` does not match ``self.id`` are skipped with
-        a warning. Block-level delta/end events whose target block cannot be
-        found are also skipped with a warning.
+        a warning; events without a ``reply_id`` (e.g. ``CustomEvent``) are
+        ignored as well. Block-level delta/end events whose target block
+        cannot be found are also skipped with a warning.
 
         Args:
             event (`AgentEvent`):
@@ -260,12 +261,13 @@ class Msg(BaseModel):
         """
         from ..event import EventType  # local import to avoid circular dep
 
-        if event.reply_id != self.id:
+        reply_id = getattr(event, "reply_id", None)
+        if reply_id is not None and reply_id != self.id:
             logger.warning(
                 "Event %s with reply_id %r does not match message id %r, "
                 "skipping.",
                 event.__class__.__name__,
-                event.reply_id,
+                reply_id,
                 self.id,
             )
             return self

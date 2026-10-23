@@ -562,6 +562,14 @@ class CustomEvent(EventBase):
     """Kind of notification — see class docstring for well-known values."""
     value: dict = Field(default_factory=dict)
     """Arbitrary payload."""
+    reply_id: str | None = None
+    """ID of the reply this event belongs to, if any.
+
+    Optional because custom events can also be published outside a reply
+    (e.g. directly on the message bus by service-layer middleware).
+    ``Msg.append_event`` ignores events without a ``reply_id`` instead of
+    failing on the missing attribute.
+    """
 
 
 AgentEvent: TypeAlias = (
