@@ -39,51 +39,21 @@ import secrets
 import uuid
 from collections import deque
 from contextlib import asynccontextmanager
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
-import mcp.types
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.responses import PlainTextResponse
 
-# pylint: disable=protected-access
 from agentscope.mcp import MCPClient
-from agentscope.mcp._content import _convert_mcp_result
+
+if TYPE_CHECKING:
+    from agentscope.tool import MCPTool
 
 
 _TERMINAL_CALL_TTL_SECONDS = 300.0
 _ACTIVE_CALL_IDLE_TTL_SECONDS = 300.0
 _CALL_REAPER_INTERVAL_SECONDS = 30.0
 _MAX_UNACKNOWLEDGED_EVENTS = 1024
-
-
-def _progress_chunk(
-    progress: float,
-    total: float | None,
-    message: str | None,
-) -> dict[str, Any]:
-    """Build the wire representation of one MCP progress update."""
-    return {
-        "content": [],
-        "state": "running",
-        "is_last": False,
-        "metadata": {
-            "mcp_progress": {
-                "progress": progress,
-                "total": total,
-                "message": message,
-            },
-        },
-    }
-
-
-def _result_chunk(result: mcp.types.CallToolResult) -> dict[str, Any]:
-    """Convert a raw MCP result to the gateway's ToolChunk wire shape."""
-    return {
-        "content": _convert_mcp_result(result),
-        "state": "error" if result.is_error else "running",
-        "is_last": True,
-        "metadata": {},
-    }
 
 
 class _ToolCall:
@@ -268,26 +238,13 @@ def _build_app(
 
     async def _run_tool_call(
         call: _ToolCall,
-        client: MCPClient,
-        tool: str,
+        tool: "MCPTool",
         arguments: dict[str, Any],
     ) -> None:
-        """Relay raw MCP progress and result data into a call record."""
-
-        async def _on_progress(
-            progress: float,
-            total: float | None,
-            message: str | None,
-        ) -> None:
-            call.append(_progress_chunk(progress, total, message))
-
+        """Relay the MCP tool's progress stream into a call record."""
         try:
-            result = await client._call_raw_tool(
-                tool,
-                arguments,
-                progress_callback=_on_progress,
-            )
-            call.append(_result_chunk(result))
+            async for chunk in await tool(**arguments):
+                call.append(chunk.model_dump(mode="json"))
         except asyncio.CancelledError:
             call.finish(cancelled=True)
             raise
@@ -438,7 +395,8 @@ def _build_app(
         body = await request.json()
         arguments = body.get("arguments") or {}
         try:
-            await client._get_raw_tool(tool)
+            tool_obj = await client.get_tool(tool)
+            tool_obj.stream_progress = True
         except ValueError as e:
             raise HTTPException(404, str(e)) from e
 
@@ -447,7 +405,7 @@ def _build_app(
         call = _ToolCall(name)
         state.tool_calls[(agent_id, session_id, call_id)] = call
         call.task = asyncio.create_task(
-            _run_tool_call(call, client, tool, arguments),
+            _run_tool_call(call, tool_obj, arguments),
         )
         return {"call_id": call_id}
 
@@ -516,13 +474,14 @@ def _build_app(
         body = await request.json()
         arguments = body.get("arguments") or {}
         try:
-            result = await client._call_raw_tool(tool, arguments)
-            chunk = _result_chunk(result)
+            tool_obj = await client.get_tool(tool)
+            tool_obj.stream_progress = False
+            chunk = await tool_obj(**arguments)
         except ValueError as e:
             raise HTTPException(404, str(e)) from e
         except Exception as e:  # noqa: BLE001
             raise HTTPException(500, str(e)) from e
-        return {"chunk": chunk}
+        return {"chunk": chunk.model_dump(mode="json")}
 
     return app
 

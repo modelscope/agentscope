@@ -517,81 +517,6 @@ class MCPClient(BaseModel):
         raw_tools = await self.list_raw_tools()
         return [await self.get_tool(_.name) for _ in raw_tools]
 
-    async def _get_raw_tool(self, name: str) -> mcp.types.Tool:
-        """Get one raw MCP tool descriptor by its upstream name.
-
-        This entry point intentionally does not import ``agentscope.tool``.
-        It is used by the standalone workspace gateway, whose minimal virtual
-        environment contains only the MCP transport dependencies.
-
-        Args:
-            name (`str`):
-                The upstream MCP tool name.
-
-        Returns:
-            `mcp.types.Tool`:
-                The matching raw MCP tool descriptor.
-
-        Raises:
-            `ValueError`:
-                No tool with the requested name exists.
-            `RuntimeError`:
-                The stateful MCP client is not connected.
-        """
-        if self._cached_tools is None:
-            await self.list_raw_tools()
-
-        for tool in self._cached_tools or []:
-            if tool.name == name:
-                return tool
-
-        raise ValueError(
-            f"Tool {name!r} not found in MCP server {self.name!r}",
-        )
-
-    async def _call_raw_tool(
-        self,
-        name: str,
-        arguments: dict[str, Any] | None = None,
-        progress_callback: Any | None = None,
-    ) -> mcp.types.CallToolResult:
-        """Call an MCP tool without constructing an AgentScope tool adapter.
-
-        Internal contract shared with the standalone workspace gateway.
-        GatewayMCPClient overrides this method to reject host-side transport
-        execution. Changes must keep both gateway callers and that override
-        in sync; this is not a public tool invocation API.
-
-        Args:
-            name (`str`):
-                The upstream MCP tool name.
-            arguments (`dict[str, Any] | None`):
-                Arguments forwarded to the MCP server.
-            progress_callback (`Any | None`):
-                Optional MCP SDK progress callback.
-
-        Returns:
-            `mcp.types.CallToolResult`:
-                The raw MCP SDK result.
-        """
-        await self._get_raw_tool(name)
-        if not self.is_stateful:
-            async with self._get_client_gen() as client:
-                return await client.call_tool(
-                    name,
-                    arguments=arguments,
-                    read_timeout_seconds=self.execution_timeout,
-                    progress_callback=progress_callback,
-                )
-
-        self._validate_connection()
-        return await self._client.call_tool(
-            name,
-            arguments=arguments,
-            read_timeout_seconds=self.execution_timeout,
-            progress_callback=progress_callback,
-        )
-
     async def get_tool(
         self,
         name: str,
@@ -617,7 +542,16 @@ class MCPClient(BaseModel):
         # Avoid circular import by importing here
         from ..tool import MCPTool
 
-        target_tool = await self._get_raw_tool(name)
+        if self._cached_tools is None:
+            await self.list_raw_tools()
+        target_tool = next(
+            (tool for tool in self._cached_tools or [] if tool.name == name),
+            None,
+        )
+        if target_tool is None:
+            raise ValueError(
+                f"Tool {name!r} not found in MCP server {self.name!r}",
+            )
 
         # Create MCPTool based on stateful/stateless
         if not self.is_stateful:

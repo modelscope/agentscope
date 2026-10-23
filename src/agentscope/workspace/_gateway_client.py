@@ -481,17 +481,6 @@ class GatewayMCPClient(MCPClient):
 
     # ── tool discovery ────────────────────────────────────────────
 
-    async def _call_raw_tool(
-        self,
-        name: str,
-        arguments: dict[str, Any] | None = None,
-        progress_callback: Any | None = None,
-    ) -> mcp.types.CallToolResult:
-        """Reject internal raw calls that would open a host transport."""
-        raise NotImplementedError(
-            f"Gateway MCP {self.name!r} must call tools through get_tool().",
-        )
-
     async def list_raw_tools(self) -> list[mcp.types.Tool]:
         """Fetch upstream tools via ``GET /mcps/{name}/tools``.
 

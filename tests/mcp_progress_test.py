@@ -44,12 +44,10 @@ from agentscope.tool import (
 from agentscope.workspace._gateway_client import (
     GatewayClient,
     GatewayMCPTool,
-    GatewayMCPClient,
 )
 from agentscope.workspace._mcp_gateway._mcp_gateway_app import (
     _build_app,
     _State,
-    _result_chunk,
 )
 
 
@@ -154,34 +152,19 @@ class _ResourceLinkClient(_ProgressClient):
 
 
 class _RegisteredClient:
-    """Gateway registry stand-in exposing the lightweight raw call API."""
+    """Gateway registry stand-in returning an AgentScope MCP tool."""
 
     def __init__(self, client: _ProgressClient) -> None:
         self.client = client
 
-    async def _get_raw_tool(self, name: str) -> Tool:
-        """Return the registered raw tool descriptor."""
+    async def get_tool(self, name: str) -> MCPTool:
+        """Wrap the SDK stand-in using the real MCP adapter."""
         if name != "work":
             raise ValueError(f"Unknown tool {name!r}.")
-        return Tool(
-            name="work",
-            description="Work with progress.",
-            input_schema={"type": "object"},
-        )
-
-    async def _call_raw_tool(
-        self,
-        name: str,
-        arguments: dict[str, Any] | None = None,
-        progress_callback: Any | None = None,
-    ) -> CallToolResult:
-        """Call the underlying SDK stand-in without an AgentScope adapter."""
-        await self._get_raw_tool(name)
-        return await self.client.call_tool(
-            name,
-            arguments or {},
-            None,
-            progress_callback,
+        return MCPTool(
+            mcp_name="remote",
+            tool=Tool(name=name, input_schema={"type": "object"}),
+            session=self.client,
         )
 
 
@@ -712,22 +695,6 @@ class MCPProgressTest(unittest.IsolatedAsyncioTestCase):
             {"sdk": {}, "gateway": []},
         )
 
-    async def test_gateway_rejects_internal_raw_calls(self) -> None:
-        """Internal raw APIs never fall back to a proxy's host transport."""
-        for stateful in (False, True):
-            proxy = GatewayMCPClient(
-                name="remote",
-                is_stateful=stateful,
-                mcp_config={"type": "http_mcp", "url": "http://unused/mcp"},
-            )
-            with patch.object(
-                GatewayMCPClient,
-                "_get_client_gen",
-            ) as transport:
-                with self.assertRaises(NotImplementedError):
-                    await proxy._call_raw_tool("work", {})
-                transport.assert_not_called()
-
     async def test_local_progress_buffer_retains_latest_snapshots(
         self,
     ) -> None:
@@ -832,7 +799,19 @@ class MCPProgressTest(unittest.IsolatedAsyncioTestCase):
                     new=AsyncMock(return_value=result),
                 ):
                     local = await _make_tool(client, stream_progress=False)()
-                gateway = ToolChunk.model_validate(_result_chunk(result))
+                    state = _State()
+                    state.clients[("", "")] = {
+                        "remote": _RegisteredClient(client),
+                    }
+                    with TestClient(_build_app(state)) as http:
+                        response = http.post(
+                            "/mcps/remote/tools/work",
+                            json={"arguments": {}},
+                        )
+                    self.assertEqual(response.status_code, 200)
+                    gateway = ToolChunk.model_validate(
+                        response.json()["chunk"],
+                    )
                 expected = {
                     "content": [
                         {"type": "text", "text": "before"},
@@ -1046,6 +1025,7 @@ class GatewayProgressRouteTest(unittest.TestCase):
                             "data": "aW1hZ2U=",
                             "media_type": "image/png",
                         },
+                        "name": None,
                     },
                     text,
                 ],
@@ -1076,8 +1056,8 @@ class GatewayProgressRouteTest(unittest.TestCase):
                 }
                 with (
                     patch.object(
-                        registered,
-                        "_call_raw_tool",
+                        registered.client,
+                        "call_tool",
                         new=AsyncMock(return_value=result),
                     ),
                     TestClient(_build_app(state)) as client,
@@ -1088,7 +1068,16 @@ class GatewayProgressRouteTest(unittest.TestCase):
                         json={"arguments": {}},
                     )
                     self.assertEqual(
-                        (direct.status_code, direct.json()),
+                        (
+                            direct.status_code,
+                            {
+                                "chunk": _chunk_view(
+                                    ToolChunk.model_validate(
+                                        direct.json()["chunk"],
+                                    ),
+                                ),
+                            },
+                        ),
                         (200, {"chunk": expected}),
                     )
                     start = client.post(
@@ -1102,8 +1091,13 @@ class GatewayProgressRouteTest(unittest.TestCase):
                         f"/tool-calls/{call_id}/events",
                         params={**params, "after": 0, "wait": 1.0},
                     )
+                    payload = poll.json()
+                    for event in payload["events"]:
+                        event["chunk"] = _chunk_view(
+                            ToolChunk.model_validate(event["chunk"]),
+                        )
                     self.assertEqual(
-                        (poll.status_code, poll.json()),
+                        (poll.status_code, payload),
                         (
                             200,
                             {
