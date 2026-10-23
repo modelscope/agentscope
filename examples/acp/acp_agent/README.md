@@ -21,21 +21,21 @@ From the repository root, run:
 
 ```bash
 export DASHSCOPE_API_KEY="your-api-key"
-python examples/acp/client.py
+python examples/acp/acp_agent/client.py
 ```
 
 On Windows PowerShell, set the environment variable with
 `$env:DASHSCOPE_API_KEY = "your-api-key"`, then run the same Python command.
 
-The client starts `server.py` automatically, initializes ACP, creates a session,
+The client starts `agent.py` automatically, initializes ACP, creates a session,
 sends `hello`, and prints the streamed answer. It then closes the session and
-server process. This calls the real DashScope model using your key.
+agent process. This calls the real DashScope model using your key.
 The final line is `[stop_reason: end_turn]` on normal completion.
 
 You can supply another prompt and a project directory:
 
 ```bash
-python examples/acp/client.py "Explain the project structure" --cwd /absolute/project
+python examples/acp/acp_agent/client.py "Explain the project structure" --cwd /absolute/project
 ```
 
 The default project directory is your current directory. If a tool needs
@@ -45,10 +45,10 @@ prompt per run; use QwenPaw for an ongoing conversation.
 
 ## Agent entry point
 
-ACP clients such as QwenPaw can launch the server directly:
+ACP clients such as QwenPaw can launch the agent directly:
 
 ```bash
-python /absolute/path/to/agentscope/examples/acp/server.py
+python /absolute/path/to/agentscope/examples/acp/acp_agent/agent.py
 ```
 
 It waits for ACP JSON-RPC on stdin, not interactive keyboard input. Stdout is
@@ -62,7 +62,7 @@ In QwenPaw's ACP runner configuration, enable a runner named `agentscope`:
 | Field | Value |
 | --- | --- |
 | command | Absolute path to the Python interpreter containing `agentscope[acp]` |
-| args | Absolute path to `examples/acp/server.py`, as one argument |
+| args | Absolute path to `examples/acp/acp_agent/agent.py`, as one argument |
 | env | `DASHSCOPE_API_KEY` and optionally `AGENTSCOPE_MODEL` |
 | trusted | `false` to forward permission choices to the user |
 

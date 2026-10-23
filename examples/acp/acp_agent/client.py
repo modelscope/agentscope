@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Send one prompt to the example ACP server and print its streamed reply."""
+"""Send one prompt to the example ACP agent and print its streamed reply."""
 
 import argparse
 import asyncio
@@ -28,7 +28,7 @@ class TerminalClient:
         update: Any,
         **_: Any,
     ) -> None:
-        """Print text chunks as they arrive from the server."""
+        """Print text chunks as they arrive from the agent."""
         del session_id
         if (
             update.session_update == "agent_message_chunk"
@@ -69,11 +69,11 @@ class TerminalClient:
 
 
 async def run(prompt: str, cwd: Path) -> None:
-    """Start the server, send one prompt, and close the session and process."""
+    """Start the agent, send one prompt, and close the session and process."""
     async with spawn_agent_process(
         TerminalClient(),
         sys.executable,
-        str(Path(__file__).with_name("server.py").resolve()),
+        str(Path(__file__).with_name("agent.py").resolve()),
         cwd=cwd,
         env=dict(os.environ),
         transport_kwargs={"stderr": None},
