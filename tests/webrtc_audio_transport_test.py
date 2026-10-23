@@ -769,7 +769,13 @@ class RealtimeOfferTest(unittest.IsolatedAsyncioTestCase):
         self.storage = SimpleNamespace(
             get_session=AsyncMock(return_value=self.session),
         )
-        self.access = SimpleNamespace(resolve_agent=AsyncMock())
+        self.access = SimpleNamespace(
+            resolve_agent=AsyncMock(
+                return_value=SimpleNamespace(
+                    data=SimpleNamespace(backend="agentscope"),
+                ),
+            ),
+        )
         self.connections: dict[tuple[str, str], object] = {}
         self.request = SimpleNamespace(
             app=SimpleNamespace(
