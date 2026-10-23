@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """Credential router — CRUD endpoints for API key credentials."""
-from fastapi import APIRouter, Depends, status
+import asyncio
+
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from ..access import ResourceKind
 from ..deps import (
@@ -13,11 +15,15 @@ from ._schema import (
     CreateCredentialResponse,
     ListCredentialsResponse,
     ListCredentialSchemasResponse,
+    ListRemoteModelsResponse,
     UpdateCredentialRequest,
+    VerifyModelRequest,
+    VerifyModelResponse,
 )
 from .._service import CredentialView, ResourceAccessService
 from ..storage import StorageBase
 from ...credential import CredentialFactory
+from ...message import UserMsg
 
 credential_router = APIRouter(
     prefix="/credential",
@@ -193,3 +199,112 @@ async def delete_credential(
         credential_id,
     )
     await storage.delete_credential(owner_id, credential_id)
+
+
+@credential_router.get(
+    "/{credential_id}/remote-models",
+    response_model=ListRemoteModelsResponse,
+    summary="List the models the credential's endpoint actually serves",
+)
+async def list_remote_models(
+    credential_id: str,
+    user_id: str = Depends(get_current_user_id),
+    access: ResourceAccessService = Depends(get_resource_access_service),
+) -> ListRemoteModelsResponse:
+    """Query the endpoint behind a credential for its live model list.
+
+    The static model cards surfaced by ``GET /model`` describe curated
+    candidates per credential type; this endpoint asks the configured
+    provider endpoint what it actually serves, so the frontend can flag
+    catalog entries the endpoint does not support (and vice versa).
+
+    Args:
+        credential_id (`str`): The credential to probe.
+        user_id (`str`): Injected authenticated user ID.
+        access (`ResourceAccessService`): Injected access service —
+            resolves the raw (unmasked) credential payload, the same
+            trust level the chat runtime uses.
+
+    Returns:
+        `ListRemoteModelsResponse`: Sorted model IDs and their count.
+
+    Raises:
+        `HTTPException`: 404 if the credential is not visible to the
+            caller; 400 if the credential type has no remote listing
+            support; 502 if the remote endpoint fails or errors.
+    """
+    record = await access.resolve_credential(user_id, credential_id)
+    credential = CredentialFactory.from_dict(record.data)
+    try:
+        models = await credential.list_remote_models()
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=(
+                f"Failed to list models from the endpoint configured on "
+                f"credential {credential_id!r}: {exc}"
+            ),
+        ) from exc
+    if models is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                f"Credential type {credential.type!r} does not support "
+                "remote model listing."
+            ),
+        )
+    return ListRemoteModelsResponse(models=models, total=len(models))
+
+
+@credential_router.post(
+    "/{credential_id}/verify-model",
+    response_model=VerifyModelResponse,
+    summary="Probe one model with a 1-token request",
+)
+async def verify_model(
+    credential_id: str,
+    body: VerifyModelRequest,
+    user_id: str = Depends(get_current_user_id),
+    access: ResourceAccessService = Depends(get_resource_access_service),
+) -> VerifyModelResponse:
+    """Answer one question about one model: does it answer, yes or no.
+
+    A tiny real request (max 1 output token) is sent through the
+    credential's own chat model, so quota, product activation and key
+    validity are all exercised exactly as a real chat would. No error
+    taxonomy — the caller only gets ``ok``; the reason lives upstream.
+
+    Args:
+        credential_id (`str`): The credential making the call.
+        body (VerifyModelRequest): The model ID to probe.
+        user_id (`str`): Injected authenticated user ID.
+        access (`ResourceAccessService`): Injected access service —
+            resolves the raw (unmasked) credential payload.
+
+    Returns:
+        `VerifyModelResponse`: ``ok=True`` when the model answered.
+    """
+    record = await access.resolve_credential(user_id, credential_id)
+    credential = CredentialFactory.from_dict(record.data)
+    model_cls = credential.get_chat_model_class()
+
+    try:
+        parameters = model_cls.Parameters(**{"max_tokens": 1})
+    except Exception:  # pylint: disable=broad-except
+        parameters = None
+
+    model = model_cls(
+        credential=credential,
+        model=body.model,
+        parameters=parameters,
+        stream=False,
+    )
+
+    try:
+        await asyncio.wait_for(
+            model([UserMsg(name="user", content="ping")]),
+            timeout=30,
+        )
+    except Exception:  # pylint: disable=broad-except
+        return VerifyModelResponse(ok=False)
+    return VerifyModelResponse(ok=True)
