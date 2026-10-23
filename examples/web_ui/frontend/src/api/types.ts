@@ -57,7 +57,35 @@ export interface ChatConfig {
 /** Partial text-mode settings accepted by create and update requests. */
 export type ChatConfigInput = Partial<ChatConfig>;
 
+export type AgentBackend = 'agentscope' | 'codex' | 'qoder';
+
+export interface ExternalAgentConfig {
+	executable: string;
+	cwd?: string;
+}
+
+export interface ExternalExecutableStatus {
+	installed: boolean;
+	executable: string | null;
+	error: string | null;
+}
+
+export interface ExternalAccountStatus {
+	status: 'authenticated' | 'not_authenticated' | 'configured' | 'error';
+	account: { type?: string; email?: string; username?: string; planType?: string } | null;
+	error: string | null;
+}
+
+export interface ExternalPermission {
+	request_id: string;
+	reply_id: string;
+	tool_call: { title?: string; tool_call_id: string; raw_input?: unknown };
+	options: Array<{ option_id: string; name: string; kind: string }>;
+}
+
 export interface AgentData {
+	backend?: AgentBackend;
+	external_config?: ExternalAgentConfig | null;
 	id: string;
 	name: string;
 	system_prompt: string;
@@ -75,6 +103,8 @@ export interface AgentView extends RecordBase {
 }
 
 export interface CreateAgentRequest {
+	backend?: AgentBackend;
+	external_config?: ExternalAgentConfig;
 	name: string;
 	system_prompt?: string;
 	chat_config?: ChatConfigInput;
@@ -91,6 +121,7 @@ export interface CreateAgentResponse {
 }
 
 export interface UpdateAgentRequest {
+	external_config?: ExternalAgentConfig;
 	name?: string;
 	system_prompt?: string;
 	chat_config?: ChatConfigInput;

@@ -12,6 +12,7 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type {
+	AgentData,
 	ChatModelConfig,
 	PermissionMode,
 	RealtimeModelConfig,
@@ -22,6 +23,7 @@ import type {
 import { sessionApi } from '@/api';
 import MCPSvg from '@/assets/images/mcp.svg?react';
 import { ChatContent } from '@/components/chat/ChatContent.tsx';
+import { ExternalPermissionCard } from '@/components/chat/ExternalPermissionCard';
 import { SubagentHitlCard } from '@/components/chat/SubagentHitlCard';
 import { CreateCredentialDialog } from '@/components/dialog/CreateCredentialDialog';
 import { KnowledgeBasePanel } from '@/components/panel/KnowledgeBasePanel';
@@ -66,6 +68,7 @@ const REALTIME_EXCLUDED_ENUM_VALUES: Record<string, unknown[]> = {
 };
 
 interface ChatViewportProps {
+	agent?: AgentData;
 	/**
 	 * The agent that owns the session being viewed. May be the
 	 * user-facing leader agent or — when drilled into a team member
@@ -176,7 +179,8 @@ function closePanelInLayout(layout: PanelKey[][], key: PanelKey): PanelKey[][] {
  *   session is selected yet.
  * @returns The right-side main JSX of the chat page.
  */
-export function ChatViewport({ agentId, sessionId, onSessionsChanged }: ChatViewportProps) {
+export function ChatViewport({ agentId, sessionId, agent, onSessionsChanged }: ChatViewportProps) {
+	const external = !!agent?.backend && agent.backend !== 'agentscope';
 	const { t } = useTranslation();
 	const { sessions, refetch: refetchSessions } = useSessions(agentId);
 	const { groups } = useAvailableModels();
@@ -620,7 +624,7 @@ export function ChatViewport({ agentId, sessionId, onSessionsChanged }: ChatView
 	// we would racily auto-select + persist the first available
 	// model, clobbering whatever the user had configured.
 	useEffect(() => {
-		if (!view) return;
+		if (!view || !agent || external) return;
 		const sessionModel = view.session.config.chat_model_config;
 
 		if (sessionModel) {
@@ -652,7 +656,7 @@ export function ChatViewport({ agentId, sessionId, onSessionsChanged }: ChatView
 		setSelectedTTSModel(view.session.config.tts_model_config ?? null);
 		setSelectedRealtimeModel(view.session.config.realtime_model_config ?? null);
 		setSelectedKnowledgeConfig(view.session.config.knowledge_config ?? null);
-	}, [view, groups, sessionId, agentId]);
+	}, [view, groups, sessionId, agentId, agent, external]);
 
 	// Sync selectedPermissionMode when the session changes. Same
 	// loading-window guard as above — don't reset the displayed mode
@@ -794,112 +798,124 @@ export function ChatViewport({ agentId, sessionId, onSessionsChanged }: ChatView
 								{/* Never squeezed by a long session name: the
 								    name truncates instead. */}
 								<div className="flex shrink-0 flex-row gap-x-1">
-									<RealtimeModelSelect
-										value={selectedRealtimeModel}
-										onChange={handleRealtimeModelChange}
-										onAddCredential={() => setCredentialOpen(true)}
-										disabled={configPending || voiceBusy}
-										className="text-muted-foreground hover:text-foreground"
-									/>
-									<ModelParametersPopover
-										selectedModel={selectedRealtimeModel}
-										modelCard={selectedRealtimeModelCard}
-										onChange={handleRealtimeParametersChange}
-										idPrefix="realtime"
-										triggerLabel={t('realtime.parameters')}
-										disabled={configPending || voiceBusy}
-										hideArrayParameters
-										excludedEnumValues={REALTIME_EXCLUDED_ENUM_VALUES}
-									/>
-									<LlmSelect
-										id="tour-llm-select"
-										variant="ghost"
-										className="font-mono text-muted-foreground hover:text-foreground"
-										value={selectedModel}
-										onChange={handleLlmChange}
-										onAddCredential={() => setCredentialOpen(true)}
-										disabled={configPending}
-									/>
-									<ModelParametersPopover
-										selectedModel={selectedModel}
-										modelCard={selectedModelCard}
-										onChange={handleParametersChange}
-										selectedFallbackModel={selectedFallbackModel}
-										onFallbackChange={handleFallbackChange}
-										selectedTTSModel={selectedTTSModel}
-										onTTSChange={handleTTSChange}
-										disabled={configPending}
-									/>
-									<PermissionModeSelect
-										id="tour-permission-mode"
-										variant={'ghost'}
-										className="font-mono text-muted-foreground hover:text-foreground"
-										value={selectedPermissionMode}
-										disabled={!sessionId || configPending}
-										onChange={handlePermissionModeChange}
-									/>
-									<DropdownMenu>
-										<DropdownMenuTrigger asChild>
-											<Button
+									{external ? (
+										<Badge variant="secondary" className="self-center">
+											{agent?.backend === 'codex' ? 'Codex' : 'Qoder'}
+										</Badge>
+									) : (
+										<>
+											<RealtimeModelSelect
+												value={selectedRealtimeModel}
+												onChange={handleRealtimeModelChange}
+												onAddCredential={() => setCredentialOpen(true)}
+												disabled={configPending || voiceBusy}
+												className="text-muted-foreground hover:text-foreground"
+											/>
+											<ModelParametersPopover
+												selectedModel={selectedRealtimeModel}
+												modelCard={selectedRealtimeModelCard}
+												onChange={handleRealtimeParametersChange}
+												idPrefix="realtime"
+												triggerLabel={t('realtime.parameters')}
+												disabled={configPending || voiceBusy}
+												hideArrayParameters
+												excludedEnumValues={REALTIME_EXCLUDED_ENUM_VALUES}
+											/>
+											<LlmSelect
+												id="tour-llm-select"
 												variant="ghost"
-												size="sm"
-												className="gap-1 px-2"
-											>
-												<PanelRight />
-												<ChevronDown className="size-3 text-muted-foreground" />
-											</Button>
-										</DropdownMenuTrigger>
-										<DropdownMenuContent align="end" className="w-auto">
-											<DropdownMenuCheckboxItem
-												checked={isPanelOpen('plan')}
-												onCheckedChange={() => togglePanel('plan')}
-												onSelect={(e) => e.preventDefault()}
-											>
-												<ListTodo />
-												{t('panel.plan.title')}
-											</DropdownMenuCheckboxItem>
-											<DropdownMenuCheckboxItem
-												checked={isPanelOpen('mcp')}
-												onCheckedChange={() => togglePanel('mcp')}
-												onSelect={(e) => e.preventDefault()}
-											>
-												<MCPSvg className="size-4" />
-												MCP
-											</DropdownMenuCheckboxItem>
-											<DropdownMenuCheckboxItem
-												checked={isPanelOpen('skill')}
-												onCheckedChange={() => togglePanel('skill')}
-												onSelect={(e) => e.preventDefault()}
-											>
-												<BookText />
-												{t('panel.skill.title')}
-											</DropdownMenuCheckboxItem>
-											<DropdownMenuCheckboxItem
-												checked={isPanelOpen('permission')}
-												onCheckedChange={() => togglePanel('permission')}
-												onSelect={(e) => e.preventDefault()}
-											>
-												<ShieldCheck />
-												{t('panel.permission.title')}
-											</DropdownMenuCheckboxItem>
-											<DropdownMenuCheckboxItem
-												checked={isPanelOpen('knowledge')}
-												onCheckedChange={() => togglePanel('knowledge')}
-												onSelect={(e) => e.preventDefault()}
-											>
-												<Database />
-												{t('panel.knowledge.title')}
-											</DropdownMenuCheckboxItem>
-											<DropdownMenuCheckboxItem
-												checked={isPanelOpen('team')}
-												onCheckedChange={() => togglePanel('team')}
-												onSelect={(e) => e.preventDefault()}
-											>
-												<UsersRound />
-												{t('common.team')}
-											</DropdownMenuCheckboxItem>
-										</DropdownMenuContent>
-									</DropdownMenu>
+												className="font-mono text-muted-foreground hover:text-foreground"
+												value={selectedModel}
+												onChange={handleLlmChange}
+												onAddCredential={() => setCredentialOpen(true)}
+												disabled={configPending}
+											/>
+											<ModelParametersPopover
+												selectedModel={selectedModel}
+												modelCard={selectedModelCard}
+												onChange={handleParametersChange}
+												selectedFallbackModel={selectedFallbackModel}
+												onFallbackChange={handleFallbackChange}
+												selectedTTSModel={selectedTTSModel}
+												onTTSChange={handleTTSChange}
+												disabled={configPending}
+											/>
+											<PermissionModeSelect
+												id="tour-permission-mode"
+												variant={'ghost'}
+												className="font-mono text-muted-foreground hover:text-foreground"
+												value={selectedPermissionMode}
+												disabled={!sessionId || configPending}
+												onChange={handlePermissionModeChange}
+											/>
+											<DropdownMenu>
+												<DropdownMenuTrigger asChild>
+													<Button
+														variant="ghost"
+														size="sm"
+														className="gap-1 px-2"
+													>
+														<PanelRight />
+														<ChevronDown className="size-3 text-muted-foreground" />
+													</Button>
+												</DropdownMenuTrigger>
+												<DropdownMenuContent align="end" className="w-auto">
+													<DropdownMenuCheckboxItem
+														checked={isPanelOpen('plan')}
+														onCheckedChange={() => togglePanel('plan')}
+														onSelect={(e) => e.preventDefault()}
+													>
+														<ListTodo />
+														{t('panel.plan.title')}
+													</DropdownMenuCheckboxItem>
+													<DropdownMenuCheckboxItem
+														checked={isPanelOpen('mcp')}
+														onCheckedChange={() => togglePanel('mcp')}
+														onSelect={(e) => e.preventDefault()}
+													>
+														<MCPSvg className="size-4" />
+														MCP
+													</DropdownMenuCheckboxItem>
+													<DropdownMenuCheckboxItem
+														checked={isPanelOpen('skill')}
+														onCheckedChange={() => togglePanel('skill')}
+														onSelect={(e) => e.preventDefault()}
+													>
+														<BookText />
+														{t('panel.skill.title')}
+													</DropdownMenuCheckboxItem>
+													<DropdownMenuCheckboxItem
+														checked={isPanelOpen('permission')}
+														onCheckedChange={() =>
+															togglePanel('permission')
+														}
+														onSelect={(e) => e.preventDefault()}
+													>
+														<ShieldCheck />
+														{t('panel.permission.title')}
+													</DropdownMenuCheckboxItem>
+													<DropdownMenuCheckboxItem
+														checked={isPanelOpen('knowledge')}
+														onCheckedChange={() =>
+															togglePanel('knowledge')
+														}
+														onSelect={(e) => e.preventDefault()}
+													>
+														<Database />
+														{t('panel.knowledge.title')}
+													</DropdownMenuCheckboxItem>
+													<DropdownMenuCheckboxItem
+														checked={isPanelOpen('team')}
+														onCheckedChange={() => togglePanel('team')}
+														onSelect={(e) => e.preventDefault()}
+													>
+														<UsersRound />
+														{t('common.team')}
+													</DropdownMenuCheckboxItem>
+												</DropdownMenuContent>
+											</DropdownMenu>
+										</>
+									)}
 								</div>
 							</div>
 							<div className="flex flex-1 justify-center min-h-0 overflow-hidden relative [--chat-content-w:48rem]">
@@ -909,18 +925,34 @@ export function ChatViewport({ agentId, sessionId, onSessionsChanged }: ChatView
 									loading={messagesLoading}
 									agentId={agentId}
 									sessionId={sessionId}
+									externalCwd={
+										external
+											? agent?.external_config?.cwd ||
+												workspaceStatus?.workdir ||
+												null
+											: undefined
+									}
 									cwd={view?.session.config.cwd ?? null}
 									onCwdChange={handleCwdChange}
-									git={workspaceStatus?.git ?? null}
+									git={external ? null : (workspaceStatus?.git ?? null)}
 									onRefreshGit={refetchWorkspaceStatus}
 									phase={phase}
-									disabled={selectedModel === null || voiceBusy}
+									disabled={
+										!sessionId ||
+										(!external && selectedModel === null) ||
+										voiceBusy ||
+										!agent
+									}
 									onSend={send}
 									onUserConfirm={onUserConfirm}
 									onInterrupt={interrupt}
 									voiceState={realtimeVoice.state}
-									onVoiceToggle={() => void realtimeVoice.toggle()}
-									voiceDisabled={!selectedRealtimeModel || !agentId || !sessionId}
+									onVoiceToggle={
+										external ? undefined : () => void realtimeVoice.toggle()
+									}
+									voiceDisabled={
+										external || !selectedRealtimeModel || !agentId || !sessionId
+									}
 									// cwd={
 									// 	{cwd: view?.session.config.cwd, git: {
 									// 		branch: 'main',
@@ -929,7 +961,14 @@ export function ChatViewport({ agentId, sessionId, onSessionsChanged }: ChatView
 									// 	}}
 									// }
 									footerSlot={
-										subagentHitl.length > 0 ? (
+										external && agentId && sessionId ? (
+											<ExternalPermissionCard
+												key={sessionId}
+												agentId={agentId}
+												sessionId={sessionId}
+												active={phase !== 'idle'}
+											/>
+										) : subagentHitl.length > 0 ? (
 											<SubagentHitlCard
 												key={`${subagentHitl[0].worker_session_id}:${subagentHitl[0].reply_id}`}
 												entry={subagentHitl[0]}
@@ -944,16 +983,20 @@ export function ChatViewport({ agentId, sessionId, onSessionsChanged }: ChatView
 											/>
 										) : null
 									}
-									allowedInputTypes={(
-										selectedModelCard?.input_types ?? []
-									).filter(
-										(t) =>
-											/^(image|video|audio|text)\/.+/.test(t) ||
-											t === 'application/pdf' ||
-											t.startsWith('application/vnd.') ||
-											t.startsWith('application/msword') ||
-											t.startsWith('application/vnd.openxmlformats'),
-									)}
+									allowedInputTypes={
+										external
+											? []
+											: (selectedModelCard?.input_types ?? []).filter(
+													(t) =>
+														/^(image|video|audio|text)\/.+/.test(t) ||
+														t === 'application/pdf' ||
+														t.startsWith('application/vnd.') ||
+														t.startsWith('application/msword') ||
+														t.startsWith(
+															'application/vnd.openxmlformats',
+														),
+												)
+									}
 									fileProcessor={async (file) => {
 										const filePath = (file as File & { path?: string }).path;
 										if (filePath) {
@@ -1002,10 +1045,14 @@ export function ChatViewport({ agentId, sessionId, onSessionsChanged }: ChatView
 							</div>
 						</div>
 					</ResizablePanel>
-					{panelLayout.length > 0 && (
+					{!external && panelLayout.length > 0 && (
 						<ResizableHandle withHandle className="bg-transparent w-1.5" />
 					)}
-					<PanelDock layout={panelLayout} panels={panels} onClosePanel={closePanel} />
+					<PanelDock
+						layout={external ? [] : panelLayout}
+						panels={panels}
+						onClosePanel={closePanel}
+					/>
 				</ResizablePanelGroup>
 			</main>
 			<CreateCredentialDialog open={credentialOpen} onOpenChange={setCredentialOpen} />

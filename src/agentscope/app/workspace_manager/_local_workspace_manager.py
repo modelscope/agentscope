@@ -55,6 +55,10 @@ class LocalWorkspaceManager(WorkspaceManagerBase):
         self._lock = asyncio.Lock()
         super().__init__(isolation=isolation)
 
+    def get_workdir(self, agent_id: str) -> str:
+        """Return the default agent directory without creating a workspace."""
+        return os.path.join(self._basedir, agent_id)
+
     def _pop_expired(self, now: float) -> list[LocalWorkspace]:
         """Pop every cache entry whose last-access exceeds ``ttl``.
 
@@ -85,21 +89,20 @@ class LocalWorkspaceManager(WorkspaceManagerBase):
         cache misses for the same ``workspace_id`` cannot create two
         workspaces.
         """
-        if not workspace_id:
-            workspace_id = await self.assign_workspace_id(
-                user_id=user_id,
-                agent_id=agent_id,
-                session_id="",
-            )
+        resolved_id: str = workspace_id or await self.assign_workspace_id(
+            user_id=user_id,
+            agent_id=agent_id,
+            session_id="",
+        )
 
         # Phase 1: cache hit + collect expired.
         async with self._lock:
             now = time.monotonic()
             expired = self._pop_expired(now)
-            cached = self._cache.get(workspace_id)
+            cached = self._cache.get(resolved_id)
             if cached is not None:
                 ws, _ = cached
-                self._cache[workspace_id] = (ws, now)
+                self._cache[resolved_id] = (ws, now)
                 hit: LocalWorkspace | None = ws
             else:
                 hit = None
@@ -119,22 +122,22 @@ class LocalWorkspaceManager(WorkspaceManagerBase):
         # get_workspace(workspace_id=X) calls from creating two
         # workspaces for the same id.
         async with self._lock:
-            cached = self._cache.get(workspace_id)
+            cached = self._cache.get(resolved_id)
             if cached is not None:
                 ws, _ = cached
-                self._cache[workspace_id] = (ws, time.monotonic())
+                self._cache[resolved_id] = (ws, time.monotonic())
                 return ws
 
             # Workdir is deterministic for local workspaces — no storage needed
-            workdir = os.path.join(self._basedir, agent_id)
+            workdir = self.get_workdir(agent_id)
             ws = LocalWorkspace(
-                workspace_id=workspace_id,
+                workspace_id=resolved_id,
                 workdir=workdir,
                 default_mcps=self._default_mcps,
                 skill_paths=self._skill_paths,
             )
             await ws.initialize()
-            self._cache[workspace_id] = (ws, time.monotonic())
+            self._cache[resolved_id] = (ws, time.monotonic())
             return ws
 
     @deprecated(
@@ -157,7 +160,7 @@ class LocalWorkspaceManager(WorkspaceManagerBase):
         """
         del user_id, session_id  # accepted for interface parity
 
-        workdir = os.path.join(self._basedir, agent_id)
+        workdir = self.get_workdir(agent_id)
         os.makedirs(workdir, exist_ok=True)
         ws = LocalWorkspace(
             workdir=workdir,

@@ -186,7 +186,32 @@ export function useMessages(
 			// reply content — route them to callbacks and skip appendEvent.
 			if (event.type === EventType.CUSTOM) {
 				const custom = event as CustomEvent;
-				if (custom.name === 'team_updated') {
+				if (custom.name === 'external_tool' || custom.name === 'external_plan') {
+					const value = custom.value as {
+						reply_id: string;
+						tool?: { tool_call_id: string };
+						plan?: unknown;
+					};
+					const reply = msgsRef.current.find((msg) => msg.id === value.reply_id);
+					if (reply) {
+						const metadata = { ...reply.metadata };
+						if (value.tool) {
+							metadata.external_tools = {
+								...((metadata.external_tools as object) ?? {}),
+								[value.tool.tool_call_id]: value.tool,
+							};
+						} else {
+							metadata.external_plan = value.plan as typeof metadata.external_plan;
+						}
+						const updated = { ...reply, metadata };
+						msgsRef.current = msgsRef.current.map((msg) =>
+							msg.id === reply.id ? updated : msg,
+						);
+						if (currentReplyRef.current?.id === reply.id)
+							currentReplyRef.current = updated;
+						scheduleUpdate();
+					}
+				} else if (custom.name === 'team_updated') {
 					optionsRef.current?.onTeamUpdated?.();
 				} else if (custom.name === 'state_updated' && custom.value) {
 					optionsRef.current?.onStateUpdated?.(custom.value as Record<string, unknown>);

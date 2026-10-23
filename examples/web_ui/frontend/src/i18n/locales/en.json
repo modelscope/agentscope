@@ -876,5 +876,62 @@
 		"empty": "This folder is empty",
 		"pressEnter": "Press Enter to check this path first",
 		"gitTooltip": "{{staged}} staged · {{unstaged}} modified · {{untracked}} untracked\nLine counts exclude untracked files"
+	},
+	"external": {
+		"agentType": "Agent type",
+		"name": "Name",
+		"executable": "Executable (optional)",
+		"codexHint": "Run pip install \"agentscope[codex]\" on the backend and run codex login first. Leave blank to use the bundled Codex CLI.",
+		"qoderHint": "Run pip install \"agentscope[qoder]\" on the backend and sign in with qodercli, or set QODER_PERSONAL_ACCESS_TOKEN. Leave blank to use the bundled CLI.",
+		"checking": "Checking…",
+		"approval": "Tool execution needs your approval",
+		"plan": "Plan",
+		"status": {
+			"pending": "Pending",
+			"in_progress": "In progress",
+			"completed": "Completed",
+			"failed": "Failed"
+		},
+		"nativeTitle": "AgentScope native agent",
+		"nativeDescription": "Use AgentScope models, tools, and workspaces.",
+		"thirdPartyTitle": "Third-party agent",
+		"thirdPartyDescription": "Connect an external agent such as Codex or Qoder.",
+		"providerTitle": "Choose a third-party agent",
+		"binaryPlaceholder": "Auto-detect, or enter an executable path",
+		"detectExecutable": "Detect executable",
+		"binaryFound": "Executable found",
+		"binaryMissing": "Executable not available",
+		"accountTitle": "Account status",
+		"checkAccount": "Check account",
+		"accountUnchecked": "Check the account using the button above.",
+		"detectFirst": "Detect the executable first.",
+		"accountHint": "Checks the backend machine’s account without a model request.",
+		"accountMethod": "Authentication",
+		"configuredHint": "Authentication is configured; credential validity has not been verified.",
+		"loginQoder": "Log in to Qoder",
+		"loginWaiting": "Waiting for login…",
+		"loginTimeout": "Login timed out. Please try again.",
+		"qoderLoginHint": "Qoder CLI will try to open a browser on the backend machine. Account status updates automatically after authorization. For headless servers, configure a Qoder token on the backend.",
+		"loginHint": "Sign in to {{provider}} CLI on the backend machine, then check again.",
+		"accountStatus": {
+			"authenticated": "Signed in",
+			"not_authenticated": "Not signed in",
+			"configured": "Authentication configured",
+			"error": "Account check failed"
+		},
+		"accountTypes": {
+			"chatgpt": "ChatGPT",
+			"apiKey": "API key",
+			"accessToken": "Access token",
+			"qodercli": "Qoder CLI",
+			"customProvider": "Custom model provider"
+		},
+		"workspacePath": "Workspace path (optional)",
+		"workspaceDefault": "Use the AgentScope managed workspace by default",
+		"workspaceHelp": "Leave blank to use {{path}}, or enter an existing directory on the backend machine. Start a new conversation after changing the path.",
+		"workspaceLoading": "Loading the default workspace directory…",
+		"workspaceLoadError": "Could not load the default workspace directory. Reopen this dialog to retry.",
+		"workspaceUnavailable": "This deployment has no default local workspace. Third-party agents require a local workspace.",
+		"managedWorkspace": "AgentScope managed workspace"
 	}
 }

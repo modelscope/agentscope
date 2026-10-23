@@ -5,7 +5,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Annotated, Any, Literal, Union
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import AliasChoices, BaseModel, Field, model_validator
 from typing_extensions import deprecated
 
 from ._base import _RecordBase
@@ -312,6 +312,14 @@ class SessionConfig(BaseModel):
     ``None`` means no knowledge base is wired."""
 
 
+class ExternalSessionState(BaseModel):
+    """Remote history identity; never supplied through session PATCH."""
+
+    session_id: str
+    binding: str
+    in_flight: bool = False
+
+
 class SessionRecord(_RecordBase):
     """The session record."""
 
@@ -444,6 +452,11 @@ class SessionRecord(_RecordBase):
             if isinstance(self.origin, ChannelOrigin)
             else None
         )
+
+    external_state: ExternalSessionState | None = Field(
+        default=None,
+        validation_alias=AliasChoices("external_state", "acp_state"),
+    )
 
     state: AgentState = Field(default_factory=AgentState)
     """Mutable runtime state, updated after each chat turn."""

@@ -14,6 +14,7 @@ import { DiffStats } from './tool-renderers/_shared';
 import type { GitStatus } from '@/api';
 import { ASMessageBubble } from '@/components/chat/ASMessageBubble.tsx';
 import { ConfirmCard } from '@/components/chat/ConfirmCard.tsx';
+import { ExternalActivity } from '@/components/chat/ExternalActivity';
 import { FlipCard } from '@/components/chat/FlipCard.tsx';
 import { TextInput } from '@/components/chat/TextInput.tsx';
 import { WorkingDirectoryDialog } from '@/components/dialog/WorkingDirectoryDialog';
@@ -61,6 +62,7 @@ function markerStamp(at: Date, previous: Date, language: string): string {
 }
 
 interface ChatContentProps {
+	externalCwd?: string | null;
 	msgs: Msg[];
 	/**
 	 * Whether the history for the currently selected session is still on
@@ -117,6 +119,7 @@ interface ChatContentProps {
 
 const ChatContentComponent: React.FC<ChatContentProps> = ({
 	msgs,
+	externalCwd,
 	loading = false,
 	phase,
 	disabled,
@@ -214,8 +217,10 @@ const ChatContentComponent: React.FC<ChatContentProps> = ({
 											)}
 											<ASMessageBubble
 												message={message}
+												showErrorDetails={externalCwd !== undefined}
 												onUserConfirm={onUserConfirm}
 											/>
+											<ExternalActivity message={message} />
 										</MessageScrollerItem>
 									);
 								})}
@@ -307,12 +312,21 @@ const ChatContentComponent: React.FC<ChatContentProps> = ({
 						voiceDisabled={voiceDisabled}
 						headerSlot={
 							<div className="flex w-full items-center justify-between px-2 py-1 text-sm text-muted-foreground">
-								<WorkingDirectoryDialog
-									agentId={agentId}
-									sessionId={sessionId}
-									value={cwd}
-									onChange={onCwdChange}
-								/>
+								{externalCwd !== undefined ? (
+									<span
+										className="truncate text-xs"
+										title={externalCwd ?? undefined}
+									>
+										{externalCwd ?? t('external.managedWorkspace')}
+									</span>
+								) : (
+									<WorkingDirectoryDialog
+										agentId={agentId}
+										sessionId={sessionId}
+										value={cwd}
+										onChange={onCwdChange}
+									/>
+								)}
 								{git && (
 									<Button
 										className="font-mono"

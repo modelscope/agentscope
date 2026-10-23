@@ -37,7 +37,7 @@ const NESTED_SECTIONS: Array<{ key: Exclude<AgentSection, 'identity'>; i18n: str
 ];
 
 /** Top-level `AgentData` properties that group one mode's settings. */
-const MODE_BLOCKS = ['chat_config'];
+const MODE_BLOCKS = ['chat_config', 'backend', 'external_config'];
 
 const IDENTITY_I18N = 'identity';
 

@@ -9,7 +9,7 @@ from typing import Any, TYPE_CHECKING, Self
 from pydantic import BaseModel
 
 from ._base import StorageBase
-from ._model._session import _origin_kwargs
+from ._model._session import ExternalSessionState, _origin_kwargs
 from ._model import (
     AgentRecord,
     ChannelRecord,
@@ -965,6 +965,29 @@ class RedisStorage(StorageBase):
             await self._client.sadd(channel_session_key, record.id)
 
         return record
+
+    async def update_session_external_state(
+        self,
+        user_id: str,
+        agent_id: str,
+        session_id: str,
+        state: dict,
+    ) -> None:
+        """Update remote history without replacing config or local state."""
+        key = self._key(
+            self.key_config.session,
+            user_id=user_id,
+            session_id=session_id,
+        )
+        raw = await self._client.get(key)
+        if raw is None:
+            raise KeyError(f"Session {session_id!r} not found")
+        record = SessionRecord.model_validate_json(raw)
+        if record.agent_id != agent_id:
+            raise KeyError(f"Session {session_id!r} not found")
+        record.external_state = ExternalSessionState.model_validate(state)
+        record.updated_at = datetime.now()
+        await self._set_with_ttl(key, record.model_dump_json())
 
     async def update_session_state(
         self,

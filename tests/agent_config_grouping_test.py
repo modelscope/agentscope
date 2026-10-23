@@ -31,19 +31,27 @@ class AgentConfigGroupingTest(IsolatedAsyncioTestCase):
         self.redis = redis
 
         class _Storage(RedisStorage):
+            # The base initializer already defines _client.
+            # pylint: disable=attribute-defined-outside-init
+
             async def __aenter__(self) -> Any:
                 self._client = redis
                 return self
 
             async def aclose(self) -> None:
+                """Detach the client without closing the shared fake Redis."""
                 self._client = None
 
         class _Bus(RedisMessageBus):
+            # The base initializer already defines _client.
+            # pylint: disable=attribute-defined-outside-init
+
             async def __aenter__(self) -> Any:
                 self._client = redis
                 return self
 
             async def aclose(self) -> None:
+                """Detach the client without closing the shared fake Redis."""
                 self._client = None
 
         app = create_app(
@@ -145,11 +153,26 @@ class AgentConfigGroupingTest(IsolatedAsyncioTestCase):
         self.assertListEqual(
             sorted(by_name["legacy"]),
             [
+                "backend",
                 "chat_config",
+                "external_config",
                 "id",
                 "name",
                 "system_prompt",
             ],
+        )
+        self.assertDictEqual(
+            {
+                name: {
+                    "backend": data["backend"],
+                    "external_config": data["external_config"],
+                }
+                for name, data in by_name.items()
+            },
+            {
+                "nested": {"backend": "agentscope", "external_config": None},
+                "legacy": {"backend": "agentscope", "external_config": None},
+            },
         )
 
     def test_update_keeps_untouched_sub_configs(self) -> None:
@@ -278,7 +301,13 @@ class AgentConfigGroupingTest(IsolatedAsyncioTestCase):
 
         self.assertListEqual(
             sorted(schema["properties"]),
-            ["chat_config", "name", "system_prompt"],
+            [
+                "backend",
+                "chat_config",
+                "external_config",
+                "name",
+                "system_prompt",
+            ],
         )
         chat_config = schema["properties"]["chat_config"]
         self.assertListEqual(

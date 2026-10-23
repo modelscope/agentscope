@@ -365,6 +365,21 @@ class StorageBase(ABC):
                 True if deleted, False if not found.
         """
 
+    async def update_session_external_state(
+        self,
+        user_id: str,
+        agent_id: str,
+        session_id: str,
+        state: dict,
+    ) -> None:
+        """Persist remote agent history without replacing session settings.
+
+        Storage extensions enabling third-party agents must implement this.
+        """
+        raise NotImplementedError(
+            "This storage does not support external session state",
+        )
+
     @abstractmethod
     async def upsert_session(
         self,

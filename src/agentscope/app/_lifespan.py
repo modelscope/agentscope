@@ -6,6 +6,7 @@ import uuid
 from contextlib import AsyncExitStack, asynccontextmanager
 from typing import TYPE_CHECKING, Any, AsyncIterator
 
+from ._service._external_runtime._login import QoderLogin
 from ._manager import (
     BackgroundTaskManager,
     CancelDispatcher,
@@ -61,6 +62,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         await stack.enter_async_context(storage)
         await stack.enter_async_context(message_bus)
         await stack.enter_async_context(workspace_manager)
+        app.state.qoder_login = QoderLogin()
+        stack.push_async_callback(app.state.qoder_login.aclose)
         if knowledge_base_manager is not None:
             # ``KnowledgeBaseManagerBase.__aenter__`` enters the bound
             # vector store too, so a single context covers both.

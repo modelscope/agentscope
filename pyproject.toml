@@ -124,6 +124,11 @@ tui = [
 a2a = [
     "a2a-sdk>=1.1.1",
 ]
+# ------------ ACP ------------
+acp = ["agent-client-protocol>=0.10.1,<0.11"]
+# Native third-party agent runtimes, including their platform CLI binaries.
+codex = ["openai-codex-cli-bin==0.163.0"]
+qoder = ["qoder-agent-sdk==1.0.9"]
 # ------------ Vector stores ------------
 vdb-qdrant = ["qdrant-client"]
 vdb-milvus = [
@@ -186,6 +191,7 @@ full = [
     "agentscope[tools]",
     "agentscope[tui]",
     "agentscope[a2a]",
+    "agentscope[acp]",
     "agentscope[rag]",
     "agentscope[vdb-qdrant]",
     "agentscope[vdb-milvus]",

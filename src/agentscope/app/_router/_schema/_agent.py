@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 """Request / response schemas for the agent router."""
 import warnings
+from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import AliasChoices, BaseModel, Field
 
 from ....agent import ContextConfig, ReActConfig
 from ...storage import AgentChatConfig, InviteConfig
+from ...storage._model._agent import ExternalAgentConfig
 from ..._service import AgentView
 
 
@@ -17,6 +19,12 @@ class CreateAgentRequest(BaseModel):
     still accepted and are folded into it by
     :class:`AgentData`; sending both puts the flat one on top.
     """
+
+    backend: Literal["agentscope", "codex", "qoder"] = "agentscope"
+    external_config: ExternalAgentConfig | None = Field(
+        default=None,
+        validation_alias=AliasChoices("external_config", "acp_config"),
+    )
 
     name: str = Field(description="Display name of the agent.")
     system_prompt: str = Field(
@@ -55,6 +63,11 @@ class UpdateAgentRequest(BaseModel):
 
     Omit any field to keep its current value.
     """
+
+    external_config: ExternalAgentConfig | None = Field(
+        default=None,
+        validation_alias=AliasChoices("external_config", "acp_config"),
+    )
 
     name: str | None = Field(default=None, description="New display name.")
     system_prompt: str | None = Field(

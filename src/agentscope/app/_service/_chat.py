@@ -59,6 +59,8 @@ from .._types import (
     SubAgentTemplate,
 )
 from ._access import ResourceAccessService
+from ._external import ExternalChatRun
+from ...workspace import LocalWorkspace
 from ._model import get_model
 from ._tts_model import get_tts_model
 from ._toolkit import get_toolkit
@@ -924,6 +926,20 @@ class ChatService:
                     session_id,
                     session_record.config.workspace_id,
                 )
+
+                if agent_record.data.backend != "agentscope":
+                    await ExternalChatRun(
+                        self._storage,
+                        self._message_bus,
+                        agent_record,
+                        session_record,
+                    ).run(
+                        input_msg,
+                        workdir=workspace.workdir
+                        if isinstance(workspace, LocalWorkspace)
+                        else None,
+                    )
+                    return
 
                 # Add workspace working directory to the permission context
                 working_dirs = (
