@@ -32,6 +32,7 @@ class TestCheckoutWheelBuild(unittest.TestCase):
 
     def setUp(self) -> None:
         """Use an isolated cache without invalidating real live-test wheels."""
+        self.enterContext(patch.object(support, "_WHEEL_BUILD_ERROR", None))
         self.enterContext(
             patch.object(support.shutil, "which", return_value="/tools/uv"),
         )
@@ -139,6 +140,8 @@ class TestCheckoutWheelBuild(unittest.TestCase):
         """Reject outdated or unrecognized uv versions before any build."""
         for output in ("uv 0.0.1", f"uv {support.UV_VERSION}-rc.1", "unknown"):
             with self.subTest(output=output):
+                support._WHEEL_BUILD_ERROR = None
+                self.uv_version.reset_mock()
                 self.uv_version.return_value = output
                 with (
                     patch.object(support.subprocess, "run") as run,
@@ -154,8 +157,37 @@ class TestCheckoutWheelBuild(unittest.TestCase):
                     f"Checkout wheel tests require uv>={support.UV_VERSION}; "
                     f"found {output!r}. Upgrade uv on the host PATH.",
                 )
+                with self.assertRaises(RuntimeError) as repeated:
+                    support.checkout_wheel()
+                self.assertIs(repeated.exception, raised.exception)
+                self.uv_version.assert_called_once()
                 directory.assert_not_called()
                 run.assert_not_called()
+
+    def test_uv_version_query_failure_is_cached(self) -> None:
+        """Explain failed host checks and avoid retrying them per class."""
+        for error in (
+            subprocess.CalledProcessError(1, ["uv", "--version"]),
+            subprocess.TimeoutExpired(["uv", "--version"], 10),
+            OSError("cannot execute uv"),
+        ):
+            with self.subTest(error=type(error).__name__):
+                support._WHEEL_BUILD_ERROR = None
+                self.uv_version.reset_mock()
+                self.uv_version.side_effect = error
+                with patch.object(support.subprocess, "run") as run:
+                    for _ in range(2):
+                        with self.assertRaises(RuntimeError) as raised:
+                            support.checkout_wheel()
+                        self.assertEqual(
+                            str(raised.exception),
+                            "Could not check host uv version. Check or "
+                            "upgrade uv on the host PATH "
+                            f"(requires uv>={support.UV_VERSION}): {error}",
+                        )
+                        self.assertIs(raised.exception.__cause__, error)
+                    run.assert_not_called()
+                self.uv_version.assert_called_once()
 
     def test_missing_uv_skips_live_class_before_build(self) -> None:
         """A reachable Docker daemon alone is insufficient to build wheels."""
@@ -190,7 +222,9 @@ class TestCheckoutWheelBuild(unittest.TestCase):
                 "errors": [],
                 "failures": [],
                 "skip_reasons": [
-                    "Checkout wheel tests require uv on the host PATH",
+                    "Checkout wheel tests require uv on the host PATH. "
+                    "Install it with: python -m pip install "
+                    f'"uv>={support.UV_VERSION}"',
                 ],
             },
         )
@@ -201,6 +235,7 @@ class TestCheckoutWheelBuild(unittest.TestCase):
         """Reject incomplete artifacts even if the build command succeeded."""
         for content in (None, b"truncated license"):
             with self.subTest(content=content):
+                support._WHEEL_BUILD_ERROR = None
 
                 def build(
                     args: list[str],
@@ -228,9 +263,8 @@ class TestCheckoutWheelBuild(unittest.TestCase):
                     support.checkout_wheel()
                 register.assert_not_called()
 
-    def test_build_failure_is_not_cached(self) -> None:
-        """Build errors include diagnostics and can be retried."""
-        support.checkout_wheel.cache_clear()
+    def test_build_failure_is_cached(self) -> None:
+        """Build errors retain diagnostics without repeating the build."""
         error = subprocess.CalledProcessError(
             1,
             "uv",
@@ -243,9 +277,29 @@ class TestCheckoutWheelBuild(unittest.TestCase):
             side_effect=error,
         ) as run:
             for _ in range(2):
-                with self.assertRaisesRegex(RuntimeError, "build error"):
+                with self.assertRaises(RuntimeError) as raised:
                     support.checkout_wheel()
-            self.assertEqual(run.call_count, 2)
+                self.assertEqual(
+                    str(raised.exception),
+                    "Checkout wheel build failed:\nbuild output\nbuild error",
+                )
+                self.assertIs(raised.exception.__cause__, error)
+            self.assertEqual(run.call_count, 1)
+
+    def test_process_control_exceptions_are_not_cached(self) -> None:
+        """Interrupting a build must not poison the process cache."""
+        for error in (KeyboardInterrupt(), SystemExit()):
+            with self.subTest(error=type(error).__name__):
+                with patch.object(
+                    support.subprocess,
+                    "run",
+                    side_effect=error,
+                ) as run:
+                    for _ in range(2):
+                        with self.assertRaises(type(error)):
+                            support.checkout_wheel()
+                    self.assertEqual(run.call_count, 2)
+                self.assertIsNone(support._WHEEL_BUILD_ERROR)
 
     def test_missing_workspace_type_fails_before_build(self) -> None:
         """Report missing configuration before spending time building."""
@@ -328,7 +382,11 @@ class TestCheckoutWheelBuild(unittest.TestCase):
 
     def test_class_patches_are_restored(self) -> None:
         """Live-class adapters do not alter later production unit tests."""
-        for workspace_type in (DockerWorkspace, E2BWorkspace):
+
+        class CustomDocker(DockerWorkspace):
+            """A Docker subclass must keep using the image build adapter."""
+
+        for workspace_type in (DockerWorkspace, CustomDocker, E2BWorkspace):
             with self.subTest(workspace_type=workspace_type):
                 original = workspace_type._setup_mcp_gateway
                 prepare = support.docker_module.prepare_build_context
@@ -344,7 +402,7 @@ class TestCheckoutWheelBuild(unittest.TestCase):
                 ):
                     try:
                         Live.setUpClass()
-                        if workspace_type is DockerWorkspace:
+                        if issubclass(workspace_type, DockerWorkspace):
                             self.assertIsNot(
                                 support.docker_module.prepare_build_context,
                                 prepare,
@@ -364,7 +422,7 @@ class TestCheckoutWheelBuild(unittest.TestCase):
 
 
 class TestCheckoutGateway(unittest.IsolatedAsyncioTestCase):
-    """Fresh and resumed gateways install before starting."""
+    """Fresh and resumed gateways verify the checkout before starting."""
 
     async def asyncSetUp(self) -> None:
         """Create a fake backend and a wheel artifact."""
@@ -401,8 +459,8 @@ class TestCheckoutGateway(unittest.IsolatedAsyncioTestCase):
         self.workspace = E2BWorkspace()
         self.workspace._backend = self.backend
 
-    async def test_fresh_and_resumed_install_before_launch(self) -> None:
-        """Retain dependency commands only when bootstrap is needed."""
+    async def test_fresh_and_resumed_verify_before_launch(self) -> None:
+        """Only fresh bootstrap installs; resume verifies without repair."""
         original = self.workspace._bootstrap_commands()
         for ready in (False, True):
             with self.subTest(ready=ready):
@@ -428,9 +486,21 @@ class TestCheckoutGateway(unittest.IsolatedAsyncioTestCase):
                     commands[:-1],
                     [] if ready else original[:-1],
                 )
-                self.assertEqual(
-                    support.shlex.split(commands[-1].split(" && ")[0]),
-                    [
+                wheel_path = (
+                    f"{self.workspace.workdir}/.checkout-wheel-test/"
+                    f"{self.wheel.name}"
+                )
+                verify = [
+                    self.workspace._gateway_python,
+                    "-I",
+                    f"{self.workspace.workdir}/.checkout-wheel-test/"
+                    "_verify_wheel.py",
+                    wheel_path,
+                ]
+                expected = (
+                    verify
+                    if ready
+                    else [
                         "uv",
                         "pip",
                         "install",
@@ -438,35 +508,54 @@ class TestCheckoutGateway(unittest.IsolatedAsyncioTestCase):
                         self.workspace._gateway_python,
                         "--no-deps",
                         "--reinstall",
-                        f"{self.workspace.workdir}/.checkout-wheel-test/"
-                        f"{self.wheel.name}",
-                    ],
+                        wheel_path,
+                        "&&",
+                        *verify,
+                    ]
                 )
-                self.assertIn(" -I ", commands[-1])
+                self.assertEqual(
+                    support.shlex.split(commands[-1]),
+                    expected,
+                )
                 self.assertEqual(self.events[-1], "launch")
                 self.assertEqual(
                     self.workspace._bootstrap_commands(),
                     original,
                 )
 
-    async def test_install_failure_prevents_gateway_launch(self) -> None:
-        """Never continue with a published or partially installed package."""
+    async def test_resume_verification_failure_prevents_gateway_launch(
+        self,
+    ) -> None:
+        """Resume detects corruption without silently repairing the venv."""
         self.backend.file_exists.return_value = True
         failure = SimpleNamespace(
             ok=lambda: False,
             exit_code=1,
             stdout=b"",
-            stderr=b"install failed",
+            stderr=b"checkout mismatch",
         )
         self.backend.exec_shell.side_effect = [self.success, failure, failure]
         launch = AsyncMock()
-        with self.assertRaisesRegex(RuntimeError, "install failed"):
+        with self.assertRaisesRegex(RuntimeError, "checkout mismatch"):
             await support.setup_checkout_gateway(
                 self.workspace,
                 self.wheel,
                 launch,
             )
         launch.assert_not_awaited()
+        self.assertEqual(
+            support.shlex.split(
+                self.backend.exec_shell.await_args_list[1].args[0][2],
+            ),
+            [
+                self.workspace._gateway_python,
+                "-I",
+                f"{self.workspace.workdir}/.checkout-wheel-test/"
+                "_verify_wheel.py",
+                f"{self.workspace.workdir}/.checkout-wheel-test/"
+                f"{self.wheel.name}",
+            ],
+        )
         self.backend.exec_shell.assert_awaited_with(
             [
                 "rm",
@@ -585,7 +674,7 @@ class TestCheckoutGateway(unittest.IsolatedAsyncioTestCase):
                 )
 
     async def test_bubblewrap_uses_readiness_probe(self) -> None:
-        """Persisted Bubblewrap environments still reinstall the wheel."""
+        """Persisted Bubblewrap environments verify without reinstalling."""
         workspace = BubblewrapWorkspace()
         workspace._backend = self.backend
         with patch.object(
@@ -601,7 +690,15 @@ class TestCheckoutGateway(unittest.IsolatedAsyncioTestCase):
         ready.assert_awaited_once()
         self.backend.file_exists.assert_not_awaited()
         self.assertEqual(len(self.events), 3)
-        self.assertIn("--reinstall", self.events[1][2])
+        self.assertEqual(
+            support.shlex.split(self.events[1][2]),
+            [
+                workspace._gateway_python,
+                "-I",
+                f"{workspace.workdir}/.checkout-wheel-test/_verify_wheel.py",
+                f"{workspace.workdir}/.checkout-wheel-test/{self.wheel.name}",
+            ],
+        )
 
     async def test_provider_commands_preserve_paths_and_dependencies(
         self,

@@ -25,19 +25,46 @@ from agentscope.workspace._docker._make_dockerfile import compute_image_tag
 from agentscope.workspace._utils import UV_VERSION
 
 _VERIFY_SCRIPT = Path(__file__).with_name("_verify_wheel.py")
+_WHEEL_BUILD_ERROR: Exception | None = None
 
 
 @cache
 def checkout_wheel() -> Path:
     """Build once per process without leaving build artifacts in the repo."""
+    global _WHEEL_BUILD_ERROR
+    if _WHEEL_BUILD_ERROR is not None:
+        raise _WHEEL_BUILD_ERROR
+    try:
+        return _build_checkout_wheel()
+    except Exception as exc:
+        _WHEEL_BUILD_ERROR = exc
+        raise
+
+
+def _build_checkout_wheel() -> Path:
+    """Build the checkout with the host toolchain and retain the artifact."""
     uv = shutil.which("uv")
     if uv is None:
-        raise SkipTest("Checkout wheel tests require uv on the host PATH")
-    output = subprocess.check_output(
-        [uv, "--version"],
-        text=True,
-        timeout=10,
-    ).strip()
+        raise SkipTest(
+            "Checkout wheel tests require uv on the host PATH. "
+            f'Install it with: python -m pip install "uv>={UV_VERSION}"',
+        )
+    # Use the sandbox CA baseline: uv fetches build backends with bundled CAs.
+    try:
+        output = subprocess.check_output(
+            [uv, "--version"],
+            text=True,
+            timeout=10,
+        ).strip()
+    except (
+        OSError,
+        subprocess.CalledProcessError,
+        subprocess.TimeoutExpired,
+    ) as exc:
+        raise RuntimeError(
+            "Could not check host uv version. Check or upgrade uv on the "
+            f"host PATH (requires uv>={UV_VERSION}): {exc}",
+        ) from exc
     version = re.match(r"uv (\d+)\.(\d+)\.(\d+)(?:\s|$)", output)
     if version is None or tuple(map(int, version.groups())) < tuple(
         map(int, UV_VERSION.split(".")),
@@ -167,18 +194,18 @@ async def setup_checkout_gateway(
     index = installs[0]
     install_args = shlex.split(commands[index])
     install_args[-1:] = ["--reinstall", wheel_path]
-    install = (
-        f"{shlex.join(install_args)} && "
+    verify = (
         f"{shlex.quote(workspace._gateway_python)} -I "
         f"{shlex.quote(verify_path)} {shlex.quote(wheel_path)}"
     )
-    commands[index] = install
+    commands[index] = f"{shlex.join(install_args)} && {verify}"
     if isinstance(workspace, BubblewrapWorkspace):
         ready = await workspace._bootstrap_is_ready()
     else:
         ready = await backend.file_exists(workspace._gateway_script)
     if ready:
-        commands = [install]
+        # Preserve resume failures instead of repairing a damaged package.
+        commands = [verify]
     result = await backend.exec_shell(["mkdir", upload_dir])
     if not result.ok():
         raise RuntimeError(
@@ -229,7 +256,7 @@ class CheckoutWheelTestCase(IsolatedAsyncioTestCase):
         wheel = checkout_wheel()
         stack = ExitStack()
         cls.addClassCleanup(stack.close)
-        if cls.workspace_type is DockerWorkspace:
+        if issubclass(cls.workspace_type, DockerWorkspace):
             prepare = docker_module.prepare_build_context
 
             def prepare_checkout(**kwargs: Any) -> Any:
