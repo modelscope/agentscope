@@ -25,6 +25,7 @@ class _FakeSession:
         name: str,
         arguments: dict[str, Any] | None = None,
         read_timeout_seconds: float | None = None,
+        progress_callback: Any | None = None,
     ) -> mcp.types.CallToolResult:
         """Record the call and return the prepared result."""
         self.calls.append((name, arguments or {}))
@@ -71,7 +72,7 @@ class MCPStructuredResultTest(IsolatedAsyncioTestCase):
                 content=[],
                 structured_content=structured,
             ),
-        ).call(city="Paris")
+        )(city="Paris")
 
         self.assertEqual(
             chunk.model_dump(),

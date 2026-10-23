@@ -24,6 +24,7 @@ from .._utils import (
     _GATEWAY_BASE_REQUIREMENTS,
     _read_gateway_script_bytes,
     _read_glob_helper_bytes,
+    GATEWAY_RUNTIME_VERSION,
 )
 from ._bubblewrap_backend import BubblewrapBackend
 from ._constants import (
@@ -371,6 +372,10 @@ class BubblewrapWorkspace(SandboxedWorkspaceBase):
             self._gateway_script,
             _read_gateway_script_bytes(),
         )
+        await backend.write_file(
+            self._gateway_version_file,
+            GATEWAY_RUNTIME_VERSION.encode("utf-8"),
+        )
 
         max_attempts = 3 if self._gateway_port_input is None else 1
         health_timeout = 30.0
@@ -434,7 +439,15 @@ class BubblewrapWorkspace(SandboxedWorkspaceBase):
             ],
             timeout=30.0,
         )
-        return result.ok()
+        if not result.ok():
+            return False
+        try:
+            installed_version = await self.get_backend().read_file(
+                self._gateway_version_file,
+            )
+        except Exception:
+            return False
+        return installed_version.decode().strip() == GATEWAY_RUNTIME_VERSION
 
     def _rotate_gateway_credentials(self) -> None:
         """Rotate per-launch gateway auth token and health nonce."""
@@ -542,7 +555,7 @@ class BubblewrapWorkspace(SandboxedWorkspaceBase):
             "fi",
             f"{rg_path} --version",
             f"{uv_path} pip install --python {python_path} "
-            "--no-deps 'agentscope'",
+            f"--no-deps 'agentscope'",
         ]
 
     @staticmethod
