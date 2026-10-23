@@ -274,6 +274,7 @@ class ExternalChatRun:
                 self.session.id,
                 msg,
             )
+        assert self.agent.data.external_config is not None
         command, cwd = runtime_command(
             self.agent.data.backend,
             self.agent.data.external_config,
@@ -356,6 +357,7 @@ class ExternalChatRun:
 
     async def save_remote_state(self) -> None:
         """Record identity independently of user-editable settings."""
+        assert self.remote_state is not None
         await self.storage.update_session_external_state(
             self.session.user_id,
             self.agent.id,
