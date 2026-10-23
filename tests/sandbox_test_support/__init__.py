@@ -4,6 +4,7 @@
 
 import atexit
 import os
+import re
 import shlex
 import shutil
 import subprocess
@@ -21,6 +22,7 @@ from zipfile import ZipFile
 from agentscope.workspace import BubblewrapWorkspace, DockerWorkspace
 from agentscope.workspace._docker import _docker_workspace as docker_module
 from agentscope.workspace._docker._make_dockerfile import compute_image_tag
+from agentscope.workspace._utils import UV_VERSION
 
 _VERIFY_SCRIPT = Path(__file__).with_name("_verify_wheel.py")
 
@@ -31,6 +33,19 @@ def checkout_wheel() -> Path:
     uv = shutil.which("uv")
     if uv is None:
         raise SkipTest("Checkout wheel tests require uv on the host PATH")
+    output = subprocess.check_output(
+        [uv, "--version"],
+        text=True,
+        timeout=10,
+    ).strip()
+    version = re.match(r"uv (\d+)\.(\d+)\.(\d+)(?:\s|$)", output)
+    if version is None or tuple(map(int, version.groups())) < tuple(
+        map(int, UV_VERSION.split(".")),
+    ):
+        raise RuntimeError(
+            f"Checkout wheel tests require uv>={UV_VERSION}; "
+            f"found {output!r}. Upgrade uv on the host PATH.",
+        )
     repo = Path(__file__).resolve().parents[2]
     # Keep the wheel alive across test classes until the process exits.
     # pylint: disable=consider-using-with

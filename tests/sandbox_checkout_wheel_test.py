@@ -35,6 +35,13 @@ class TestCheckoutWheelBuild(unittest.TestCase):
         self.enterContext(
             patch.object(support.shutil, "which", return_value="/tools/uv"),
         )
+        self.uv_version = self.enterContext(
+            patch.object(
+                support.subprocess,
+                "check_output",
+                return_value=f"uv {support.UV_VERSION} (test build)\n",
+            ),
+        )
         self.enterContext(
             patch.object(
                 support,
@@ -84,7 +91,11 @@ class TestCheckoutWheelBuild(unittest.TestCase):
                     "agentscope-1.0.dist-info/licenses/LICENSE",
                 )
 
-        support.checkout_wheel.cache_clear()
+        major, minor, patch_version = map(int, support.UV_VERSION.split("."))
+        versions = (
+            support.UV_VERSION,
+            f"{major}.{minor}.{patch_version + 10}",
+        )
         with (
             patch.dict(
                 support.os.environ,
@@ -98,19 +109,53 @@ class TestCheckoutWheelBuild(unittest.TestCase):
                 side_effect=cleanups.append,
             ),
         ):
-            try:
-                first = support.checkout_wheel()
-                self.assertEqual(support.checkout_wheel(), first)
-                self.assertEqual(run.call_count, 1)
-                with ZipFile(first) as archive:
-                    self.assertEqual(
-                        archive.namelist(),
-                        ["agentscope-1.0.dist-info/licenses/LICENSE"],
-                    )
-            finally:
-                for cleanup in cleanups:
-                    cleanup()
-        self.assertFalse(first.exists())
+            for version in versions:
+                with self.subTest(uv_version=version):
+                    support.checkout_wheel.cache_clear()
+                    run.reset_mock()
+                    self.uv_version.reset_mock()
+                    self.uv_version.return_value = f"uv {version} (test build)"
+                    cleanups.clear()
+                    try:
+                        first = support.checkout_wheel()
+                        self.assertEqual(support.checkout_wheel(), first)
+                        self.assertEqual(run.call_count, 1)
+                        self.uv_version.assert_called_once_with(
+                            ["/tools/uv", "--version"],
+                            text=True,
+                            timeout=10,
+                        )
+                        with ZipFile(first) as archive:
+                            self.assertEqual(
+                                archive.namelist(),
+                                ["agentscope-1.0.dist-info/licenses/LICENSE"],
+                            )
+                    finally:
+                        for cleanup in cleanups:
+                            cleanup()
+                    self.assertFalse(first.exists())
+
+    def test_old_uv_is_rejected_before_build(self) -> None:
+        """Reject outdated or unrecognized uv versions before any build."""
+        for output in ("uv 0.0.1", f"uv {support.UV_VERSION}-rc.1", "unknown"):
+            with self.subTest(output=output):
+                self.uv_version.return_value = output
+                with (
+                    patch.object(support.subprocess, "run") as run,
+                    patch.object(
+                        support.tempfile,
+                        "TemporaryDirectory",
+                    ) as directory,
+                    self.assertRaises(RuntimeError) as raised,
+                ):
+                    support.checkout_wheel()
+                self.assertEqual(
+                    str(raised.exception),
+                    f"Checkout wheel tests require uv>={support.UV_VERSION}; "
+                    f"found {output!r}. Upgrade uv on the host PATH.",
+                )
+                directory.assert_not_called()
+                run.assert_not_called()
 
     def test_missing_uv_skips_live_class_before_build(self) -> None:
         """A reachable Docker daemon alone is insufficient to build wheels."""
