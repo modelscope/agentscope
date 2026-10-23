@@ -320,6 +320,9 @@ class MCPTool(ToolBase):
     ) -> ToolChunk:
         """Invoke the MCP tool and convert the result to ToolChunk.
 
+        Preserve structured JSON alongside text unless an identical serialized
+        payload is already present.
+
         Args:
             **kwargs: Arguments to pass to the MCP tool.
 
@@ -350,19 +353,18 @@ class MCPTool(ToolBase):
         # Convert MCP result to AgentScope blocks
         content = self._convert_mcp_content_to_blocks(result.content)
 
-        # Fall back to structured JSON when no text block is available.
-        # Preserve existing text content without appending JSON.
-        if result.structured_content is not None and not any(
-            isinstance(block, TextBlock) for block in content
-        ):
-            content.append(
-                TextBlock(
-                    text=json.dumps(
-                        result.structured_content,
-                        ensure_ascii=False,
-                    ),
-                ),
+        if result.structured_content is not None:
+            structured_text = json.dumps(
+                result.structured_content,
+                ensure_ascii=False,
             )
+            # shortcut: differently formatted JSON may repeat; normalize if
+            # duplicate payloads cause token-budget issues.
+            if not any(
+                isinstance(block, TextBlock) and block.text == structured_text
+                for block in content
+            ):
+                content.append(TextBlock(text=structured_text))
 
         return ToolChunk(
             content=content,
