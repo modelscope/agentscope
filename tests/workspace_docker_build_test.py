@@ -49,7 +49,12 @@ class DockerGatewayInstallTest(unittest.TestCase):
         try:
             self.assertEqual(
                 sorted(copy_files),
-                ["_glob_helper.py", "_mcp_gateway_app.py", "requirements.txt"],
+                [
+                    ".gateway-version",
+                    "_glob_helper.py",
+                    "_mcp_gateway_app.py",
+                    "requirements.txt",
+                ],
             )
             requirements = (ctx_dir / "requirements.txt").read_text()
             dockerfile = (ctx_dir / "Dockerfile").read_text()
