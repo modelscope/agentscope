@@ -40,6 +40,7 @@ from agentscope.message import (
     UserMsg,
     AssistantMsg,
     DataBlock,
+    HintBlock,
     Base64Source,
     URLSource,
     TextBlock,
@@ -266,6 +267,27 @@ class TestLocalWorkspaceOffload(IsolatedAsyncioTestCase):
             msg = Msg.model_validate_json(line)
             self.assertIsNotNone(msg)
 
+    async def test_offload_context_empty_msgs_appends_nothing(self) -> None:
+        """Offloading an empty batch must not append a blank JSONL line.
+
+        The empty join used to be written as a standalone ``\\n``, which
+        is not a JSON record and broke every line-oriented consumer of
+        ``context.jsonl``.
+        """
+        session_id = "test_session_empty_batch"
+        msgs1 = [UserMsg(name="user", content="First message")]
+        file_path = await self.workspace.offload_context(session_id, msgs1)
+        await self.workspace.offload_context(session_id, [])
+
+        async with aiofiles.open(file_path, "rb") as f:
+            content = await f.read()
+
+        self.assertFalse(content.endswith(b"\n\n"))
+        for line in content.decode("utf-8").splitlines():
+            self.assertTrue(line.strip())
+            Msg.model_validate_json(line)
+            json.loads(line)
+
     async def test_offload_context_with_datablock(self) -> None:
         """Test offloading messages with DataBlock content.
 
@@ -348,6 +370,62 @@ class TestLocalWorkspaceOffload(IsolatedAsyncioTestCase):
             loaded_msg.model_dump_json(),
             expected_msg.model_dump_json(),
         )
+
+    async def test_offload_context_nested_media(self) -> None:
+        """Offload nested media without changing the caller's message."""
+        data = base64.b64encode(b"nested media").decode()
+        media = DataBlock(
+            id="media",
+            source=Base64Source(data=data, media_type="image/png"),
+            created_at="2026-01-01T00:00:00",
+        )
+        msg = AssistantMsg(
+            name="assistant",
+            content=[
+                ToolResultBlock(
+                    id="tool-call",
+                    name="get_media",
+                    output=[media],
+                    state=ToolResultState.SUCCESS,
+                    created_at="2026-01-01T00:00:00",
+                ),
+                HintBlock(
+                    id="hint",
+                    hint=[media],
+                    created_at="2026-01-01T00:00:00",
+                ),
+            ],
+            id="message",
+            created_at="2026-01-01T00:00:00",
+        )
+        original = msg.model_dump(mode="json")
+
+        path = await self.workspace.offload_context("nested-media", [msg])
+        saved = Msg.model_validate_json(
+            await self.workspace.get_backend().read_file(path),
+        )
+
+        url = (
+            "workspace:///data/"
+            f"{hashlib.sha256(data.encode()).hexdigest()}.png"
+        )
+        expected = msg.model_dump(mode="json")
+        for index, field in ((0, "output"), (1, "hint")):
+            expected["content"][index][field][0] = {
+                "type": "data",
+                "id": "media",
+                "source": {
+                    "type": "url",
+                    "url": url,
+                    "media_type": "image/png",
+                },
+                "name": None,
+                "created_at": AnyString(),
+                "finished_at": None,
+            }
+
+        self.assertEqual(saved.model_dump(mode="json"), expected)
+        self.assertEqual(msg.model_dump(mode="json"), original)
 
     async def test_offload_data_block_deduplication(self) -> None:
         """Test that duplicate DataBlocks are deduplicated.
@@ -1738,6 +1816,38 @@ class TestLocalWorkspaceMCPScoping(IsolatedAsyncioTestCase):
                 )
             ],
             ["seed"],
+        )
+
+    async def test_mcp_file_with_utf8_bom_is_restored(self) -> None:
+        """A BOM-prefixed .mcp still restores the persisted declarations.
+
+        The file is ordinary JSON in the workspace; a Windows editor may
+        re-save it with a byte order mark. Plain UTF-8 used to fail to
+        parse, silently dropping every declaration and falling back to
+        ``default_mcps``.
+        """
+        ws = await self._workspace(default_mcps=[self._make_mcp("seed")])
+        await ws.add_mcp(
+            self._make_mcp("extra"),
+            agent_id="agent-A",
+            session_id="sess-1",
+        )
+        with open(self.mcp_file, "rb") as f:
+            payload = f.read()
+        with open(self.mcp_file, "wb") as f:
+            f.write(b"\xef\xbb\xbf" + payload)
+        await ws.close()
+
+        ws2 = await self._workspace(default_mcps=[self._make_mcp("seed")])
+        self.assertEqual(
+            [
+                m.name
+                for m in await ws2.list_mcps(
+                    agent_id="agent-A",
+                    session_id="sess-1",
+                )
+            ],
+            ["seed", "extra"],
         )
 
     async def test_reset_returns_to_factory_defaults(self) -> None:
