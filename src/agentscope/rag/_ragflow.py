@@ -82,7 +82,7 @@ class RAGFlowKnowledgeBase(KnowledgeBaseBase):
         path: str,
         **kwargs: Any,
     ) -> Any:
-        """Send one request and unwrap RAGFlow's ``code/data`` envelope."""
+        """Unwrap a RAGFlow response, allowing data-less acknowledgements."""
         headers = dict(kwargs.pop("headers", {}))
         api_key = self._config.api_key.get_secret_value()
         headers["Authorization"] = f"Bearer {api_key}"
@@ -98,7 +98,7 @@ class RAGFlowKnowledgeBase(KnowledgeBaseBase):
             raise RuntimeError(
                 payload.get("message", "RAGFlow request failed."),
             )
-        return payload["data"]
+        return payload.get("data")
 
     async def _retrieve(self, question: str, page_size: int) -> dict[str, Any]:
         """Retrieve one query's result envelope."""

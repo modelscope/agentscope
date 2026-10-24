@@ -250,7 +250,7 @@ class RAGFlowKnowledgeBaseTest(unittest.IsolatedAsyncioTestCase):
                         },
                     },
                 )
-            return httpx.Response(200, json={"code": 0, "data": None})
+            return httpx.Response(200, json={"code": 0})
 
         client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
         with patch("httpx.AsyncClient", return_value=client):
@@ -367,6 +367,38 @@ class RAGFlowKnowledgeBaseTest(unittest.IsolatedAsyncioTestCase):
                 },
             ],
         )
+
+    async def test_delete_accepts_success_without_data(self) -> None:
+        """The documented delete acknowledgement does not contain data."""
+        requests: list[httpx.Request] = []
+
+        async def handler(request: httpx.Request) -> httpx.Response:
+            requests.append(request)
+            return httpx.Response(200, json={"code": 0})
+
+        client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+        with patch("httpx.AsyncClient", return_value=client):
+            knowledge = RAGFlowKnowledgeBase(
+                name="handbook",
+                description="Company policies.",
+                config=RAGFlowConfig(
+                    api_key="secret",
+                    base_url="https://ragflow.example",
+                    dataset_id="dataset-1",
+                ),
+            )
+        try:
+            self.assertIsNone(await knowledge.delete_document("doc-1"))
+        finally:
+            await knowledge.aclose()
+
+        self.assertEqual(len(requests), 1)
+        self.assertEqual(requests[0].method, "DELETE")
+        self.assertEqual(
+            requests[0].url.path,
+            "/api/v1/datasets/dataset-1/documents",
+        )
+        self.assertEqual(json.loads(requests[0].content), {"ids": ["doc-1"]})
 
     async def test_api_errors_and_client_ownership(self) -> None:
         """API errors are surfaced and the managed client closes."""
