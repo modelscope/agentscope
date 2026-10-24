@@ -236,6 +236,62 @@ class DashScopeTextCallTest(IsolatedAsyncioTestCase):
         with self.assertRaises(RuntimeError):
             await model(["hello"])
 
+    @patch("dashscope.embeddings.TextEmbedding.call")
+    async def test_text_per_call_api_key_overrides(self, mock_api: Any) -> None:
+        """A per-call api_key overrides the instance key without colliding."""
+        mock_api.return_value = _text_resp([[0.1]], 1)
+        model = DashScopeEmbeddingModel(
+            credential=_cred(),
+            model="text-embedding-v4",
+            dimensions=2,
+        )
+        await model(["hello"], api_key="per-call-key")
+        self.assertEqual(
+            mock_api.call_args.kwargs["api_key"],
+            "per-call-key",
+        )
+
+    @patch("dashscope.embeddings.TextEmbedding.call")
+    async def test_text_uses_instance_api_key_by_default(
+        self,
+        mock_api: Any,
+    ) -> None:
+        """Without a per-call key the instance key reaches the API."""
+        mock_api.return_value = _text_resp([[0.1]], 1)
+        model = DashScopeEmbeddingModel(
+            credential=_cred(),
+            model="text-embedding-v4",
+            dimensions=2,
+        )
+        await model(["hello"])
+        self.assertEqual(mock_api.call_args.kwargs["api_key"], "k")
+
+    @patch("dashscope.embeddings.TextEmbedding.call")
+    async def test_text_cache_identifier_excludes_api_key(
+        self,
+        mock_api: Any,
+    ) -> None:
+        """The embedding cache identifier never contains an api_key."""
+        mock_api.return_value = _text_resp([[0.1]], 1)
+        cache = AsyncMock()
+        cache.retrieve.return_value = None
+        model = DashScopeEmbeddingModel(
+            credential=_cred(),
+            model="text-embedding-v4",
+            dimensions=2,
+            embedding_cache=cache,
+            max_retries=0,
+        )
+        await model(["hello"], api_key="per-call-key")
+        identifiers = [
+            cache.retrieve.await_args.kwargs["identifier"],
+            cache.store.await_args.kwargs["identifier"],
+        ]
+        for identifier in identifiers:
+            self.assertNotIn("api_key", identifier)
+            self.assertNotIn("per-call-key", str(identifier))
+        self.assertEqual(*identifiers)
+
 
 class DashScopeMultimodalCallTest(IsolatedAsyncioTestCase):
     """Test multimodal batching, SDK requests, and embedding caches."""

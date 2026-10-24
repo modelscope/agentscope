@@ -350,13 +350,20 @@ class DashScopeEmbeddingModel(EmbeddingModelBase[str | TextBlock | DataBlock]):
         api_kwargs: dict[str, Any] = {
             "input": texts,
             "model": self.model,
+            "api_key": self.api_key,
             "dimension": self.dimensions,
             **kwargs,
         }
 
+        # Exclude api_key from cache identifier to avoid persisting secrets
+        # and to keep cache valid across key rotations.
+        cache_identifier = {
+            k: v for k, v in api_kwargs.items() if k != "api_key"
+        }
+
         if self.embedding_cache:
             cached = await self.embedding_cache.retrieve(
-                identifier=api_kwargs,
+                identifier=cache_identifier,
             )
             if cached:
                 return EmbeddingResponse(
@@ -370,7 +377,6 @@ class DashScopeEmbeddingModel(EmbeddingModelBase[str | TextBlock | DataBlock]):
         start_time = datetime.now()
         response = await asyncio.to_thread(
             dashscope.embeddings.TextEmbedding.call,
-            api_key=self.api_key,
             **api_kwargs,
         )
         time = (datetime.now() - start_time).total_seconds()
@@ -385,7 +391,7 @@ class DashScopeEmbeddingModel(EmbeddingModelBase[str | TextBlock | DataBlock]):
         ]
         if self.embedding_cache:
             await self.embedding_cache.store(
-                identifier=api_kwargs,
+                identifier=cache_identifier,
                 embeddings=embeddings,
             )
         return EmbeddingResponse(
