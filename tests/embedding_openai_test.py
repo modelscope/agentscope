@@ -263,3 +263,49 @@ class OpenAIEmbeddingCallTest(IsolatedAsyncioTestCase):
 
         self.assertEqual(result["embeddings"], [[0.1]])
         self.assertEqual(mock_client.embeddings.create.await_count, 2)
+
+    @patch("openai.AsyncClient")
+    async def test_per_call_dimensions_override(
+        self,
+        mock_client_cls: Any,
+    ) -> None:
+        """A per-call dimensions keyword overrides the instance default."""
+        mock_client = MagicMock()
+        mock_client.embeddings.create = AsyncMock(
+            return_value=_make_response([[0.1, 0.2, 0.3]], 5),
+        )
+        mock_client_cls.return_value = mock_client
+
+        model = OpenAIEmbeddingModel(
+            credential=OpenAICredential(api_key="k"),
+            model="text-embedding-3-small",
+            dimensions=2,
+        )
+        await model(["hello"], dimensions=3)
+
+        mock_client.embeddings.create.assert_awaited_once()
+        _, kwargs = mock_client.embeddings.create.await_args
+        self.assertEqual(kwargs.get("dimensions"), 3)
+
+    @patch("openai.AsyncClient")
+    async def test_instance_default_dimensions(
+        self,
+        mock_client_cls: Any,
+    ) -> None:
+        """When not overridden, instance default dimensions is forwarded."""
+        mock_client = MagicMock()
+        mock_client.embeddings.create = AsyncMock(
+            return_value=_make_response([[0.1, 0.2]], 4),
+        )
+        mock_client_cls.return_value = mock_client
+
+        model = OpenAIEmbeddingModel(
+            credential=OpenAICredential(api_key="k"),
+            model="text-embedding-3-small",
+            dimensions=2,
+        )
+        await model(["hello"])
+
+        mock_client.embeddings.create.assert_awaited_once()
+        _, kwargs = mock_client.embeddings.create.await_args
+        self.assertEqual(kwargs.get("dimensions"), 2)

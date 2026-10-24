@@ -134,10 +134,9 @@ class OpenAIEmbeddingModel(EmbeddingModelBase[str | TextBlock]):
             "input": inputs,
             "model": self.model,
             "encoding_format": "float",
+            **({"dimensions": self.dimensions} if self.pass_dimensions else {}),
             **kwargs,
         }
-        if self.pass_dimensions:
-            api_kwargs["dimensions"] = self.dimensions
 
         if self.embedding_cache:
             cached = await self.embedding_cache.retrieve(
