@@ -24,6 +24,7 @@ from ._service import (
     RealtimeService,
     ResourceAccessService,
     SessionService,
+    SOPService,
     WorkspaceService,
 )
 
@@ -197,6 +198,20 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             workspace_manager=workspace_manager,
         )
 
+        # On the stack so its detached advances stop before storage closes.
+        sop_service = await stack.enter_async_context(
+            SOPService(
+                storage=storage,
+                workspace_manager=workspace_manager,
+                message_bus=message_bus,
+                chat=chat_service,
+                session_service=app.state.session_service,
+            ),
+        )
+        app.state.sop_service = sop_service
+        # So a turn resuming a step carries its run on.
+        chat_service.sop_service = sop_service
+
         app.state.workspace_service = WorkspaceService(
             storage=storage,
             workspace_manager=workspace_manager,
@@ -279,6 +294,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
                 message_bus=message_bus,
                 registry=chat_run_registry,
                 bg_manager=bg_manager,
+                realtime_connections=app.state.realtime_connections,
             ),
         )
 

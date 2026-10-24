@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Events emitted by a realtime model.
 
 These are internal to :mod:`agentscope.realtime`: adapters normalise
@@ -38,6 +39,12 @@ class InputTranscriptionEvent(ModelEvent):
 
     item_id: str = ""
     text: str
+
+
+class InputTranscriptionFailedEvent(ModelEvent):
+    """The provider could not transcribe one committed user turn."""
+
+    item_id: str = ""
 
 
 class ResponseCreatedEvent(ModelEvent):

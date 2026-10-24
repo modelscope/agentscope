@@ -76,14 +76,30 @@ class RealtimeService:
             )
 
         team_role = await self._resolve_team_role(user_id, session)
-        channel = (
-            await self._channel_clients.get(session.origin.channel_id)
+        channel_origin = (
+            session.origin
             if isinstance(session.origin, ChannelOrigin)
-            and self._channel_clients is not None
+            else None
+        )
+        channel = (
+            await self._channel_clients.get(channel_origin.channel_id)
+            if channel_origin is not None and self._channel_clients is not None
+            else None
+        )
+        chat_kind = (
+            await channel.chat_kind(channel_origin.chat_id)
+            if channel is not None and channel_origin is not None
             else None
         )
         channel_tools = (
-            await channel.list_tools(workspace) if channel is not None else []
+            await channel.list_tools(
+                workspace,
+                channel_origin.channel_user_id
+                if chat_kind is ChatKind.PRIVATE
+                else None,
+            )
+            if channel is not None and channel_origin is not None
+            else []
         )
         toolkit = await get_toolkit(
             storage=self._storage,
@@ -109,6 +125,7 @@ class RealtimeService:
             session,
             channel,
             channel_tools,
+            chat_kind,
         )
         return RealtimeAgent(
             name=agent_record.data.name,
@@ -143,22 +160,22 @@ class RealtimeService:
         session: SessionRecord,
         channel: ChannelBase | None,
         channel_tools: list[ToolBase],
+        chat_kind: ChatKind | None,
     ) -> str:
         """Attach the session and optional channel identity to the prompt."""
         attachment = f"You're within a session (id={session.id})."
         if channel is not None and isinstance(session.origin, ChannelOrigin):
             tools = ", ".join(tool.name for tool in channel_tools)
             chat_id = session.origin.chat_id
-            kind = await channel.chat_kind(chat_id)
             name = session.origin.chat_name or await channel.chat_name(chat_id)
             where = f' named "{name}"' if name else ""
             attachment += (
                 f" This session is bound to a chat{where} (id "
                 f"{chat_id!r}) on the {channel.display_name} platform."
             )
-            if kind is ChatKind.GROUP:
+            if chat_kind is ChatKind.GROUP:
                 attachment += " It is a group chat with multiple people."
-            elif kind is ChatKind.PRIVATE:
+            elif chat_kind is ChatKind.PRIVATE:
                 attachment += " It is a one-to-one private chat."
             if tools:
                 attachment += (

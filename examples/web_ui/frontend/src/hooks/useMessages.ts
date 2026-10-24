@@ -6,11 +6,10 @@ import type {
 	DataBlockDeltaEvent,
 	DataBlockEndEvent,
 	ReplyStartEvent,
-	TextBlockEndEvent,
 	UserConfirmResultEvent,
 } from '@agentscope-ai/agentscope/event';
 import { appendEvent, AssistantMsg, UserMsg } from '@agentscope-ai/agentscope/message';
-import type { Msg, ContentBlock, TextBlock } from '@agentscope-ai/agentscope/message';
+import type { Msg, ContentBlock } from '@agentscope-ai/agentscope/message';
 import type { ToolCallBlock } from '@agentscope-ai/agentscope/message';
 import { useState, useCallback, useRef, useEffect } from 'react';
 
@@ -55,10 +54,6 @@ const hasPendingToolCall = (msg: Msg | undefined): boolean => {
 
 const hitlKey = (e: { worker_session_id: string; reply_id: string }) =>
 	`${e.worker_session_id}:${e.reply_id}`;
-
-type FinalTextBlockEndEvent = TextBlockEndEvent & {
-	text?: string | null;
-};
 
 /**
  * Lifecycle phase of the reply currently owned by this session.
@@ -157,7 +152,6 @@ export function useMessages(
 
 	const msgsRef = useRef<Msg[]>([]);
 	const currentReplyRef = useRef<Msg | null>(null);
-	const realtimeAudioBlocksRef = useRef(new Set<string>());
 	const abortRef = useRef<AbortController | null>(null);
 	const rafRef = useRef<number | null>(null);
 	// Timer that reverts ``interrupting`` back to ``idle`` if the
@@ -188,26 +182,6 @@ export function useMessages(
 	/** Apply a single AgentEvent to the in-progress reply. */
 	const processEvent = useCallback(
 		(event: AgentEvent) => {
-			let appendToMessage = true;
-			if (
-				event.type === EventType.DATA_BLOCK_START &&
-				(event as DataBlockStartEvent).media_type.startsWith('audio/') &&
-				optionsRef.current?.isRealtimeAudioActive?.()
-			) {
-				realtimeAudioBlocksRef.current.add((event as DataBlockStartEvent).block_id);
-				appendToMessage = false;
-			} else if (
-				(event.type === EventType.DATA_BLOCK_DELTA ||
-					event.type === EventType.DATA_BLOCK_END) &&
-				realtimeAudioBlocksRef.current.has(
-					(event as DataBlockDeltaEvent | DataBlockEndEvent).block_id,
-				)
-			) {
-				appendToMessage = false;
-				if (event.type === EventType.DATA_BLOCK_END) {
-					realtimeAudioBlocksRef.current.delete((event as DataBlockEndEvent).block_id);
-				}
-			}
 			// Custom events are service-layer notifications, not agent
 			// reply content — route them to callbacks and skip appendEvent.
 			if (event.type === EventType.CUSTOM) {
@@ -263,24 +237,11 @@ export function useMessages(
 				// user's final transcription arrives. Route every identified event
 				// to its own reply instead of assuming event streams never overlap.
 				const reply = event.reply_id
-					? (msgsRef.current.find((message) => message.id === event.reply_id) ?? null)
+					? currentReplyRef.current?.id === event.reply_id
+						? currentReplyRef.current
+						: (msgsRef.current.find((message) => message.id === event.reply_id) ?? null)
 					: currentReplyRef.current;
-				if (reply && appendToMessage) {
-					// The Python event schema can correct a completed realtime
-					// transcript to the prefix that was actually played. The
-					// published TypeScript SDK does not expose that optional field
-					// yet, so apply it before its generic event reducer marks the
-					// block complete.
-					if (event.type === EventType.TEXT_BLOCK_END) {
-						const finalEvent = event as FinalTextBlockEndEvent;
-						if (finalEvent.text !== undefined && finalEvent.text !== null) {
-							const block = reply.content.find(
-								(content): content is TextBlock =>
-									content.type === 'text' && content.id === finalEvent.block_id,
-							);
-							if (block) block.text = finalEvent.text;
-						}
-					}
+				if (reply) {
 					appendEvent(reply, event);
 					// ``appendEvent`` mutates in place, which would leave
 					// every Msg identical across renders and force the whole
@@ -312,7 +273,7 @@ export function useMessages(
 			// flow through `appendEvent` above (which builds up `source.data`
 			// in the Msg), but MessageBubble reads playback state from the
 			// manager so it can show progress and autoplay on completion.
-			if (audioManager && !optionsRef.current?.isRealtimeAudioActive?.()) {
+			if (audioManager) {
 				if (event.type === EventType.DATA_BLOCK_START) {
 					const e = event as DataBlockStartEvent;
 					if (e.media_type.startsWith('audio/')) {
@@ -341,7 +302,6 @@ export function useMessages(
 		setLoadedKey(null);
 		msgsRef.current = [];
 		currentReplyRef.current = null;
-		realtimeAudioBlocksRef.current.clear();
 		setMsgs([]);
 		setError(null);
 		clearInterruptTimer();
@@ -356,14 +316,19 @@ export function useMessages(
 		let cancelled = false;
 
 		(async () => {
+			let eventCursor: string | null = null;
 			// 1. Fetch persisted history — unless this tab just created the
 			// session, in which case there is provably none.
 			if (takeFreshlyCreated(sessionId)) {
 				if (!cancelled) setLoadedKey(`${agentId}:${sessionId}`);
 			} else {
 				try {
-					const { messages, is_running } = await sessionApi.messages(sessionId, agentId);
+					const { messages, is_running, event_cursor } = await sessionApi.messages(
+						sessionId,
+						agentId,
+					);
 					if (cancelled) return;
+					eventCursor = event_cursor;
 					msgsRef.current = messages;
 					// If a reply is in flight (running on a worker) OR the
 					// tail msg is parked on a pending tool_call (awaiting
@@ -408,6 +373,7 @@ export function useMessages(
 					sessionId,
 					agentId,
 					controller.signal,
+					eventCursor,
 				)) {
 					if (cancelled) break;
 					processEvent(event);

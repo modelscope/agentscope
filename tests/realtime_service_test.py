@@ -3,6 +3,7 @@
 
 import unittest
 from types import SimpleNamespace
+from typing import cast
 from unittest.mock import AsyncMock, patch
 
 from agentscope.app._service._realtime import RealtimeService
@@ -14,6 +15,7 @@ from agentscope.app.storage import (
     SessionConfig,
     SessionRecord,
 )
+from agentscope.realtime import RealtimeModelBase
 
 
 class RealtimeServiceTest(unittest.IsolatedAsyncioTestCase):
@@ -40,6 +42,7 @@ class RealtimeServiceTest(unittest.IsolatedAsyncioTestCase):
             origin=ChannelOrigin(
                 channel_id="channel-1",
                 chat_id="chat-1",
+                channel_user_id="staff-1",
             ),
             config=SessionConfig(workspace_id="workspace-1"),
         )
@@ -96,7 +99,7 @@ class RealtimeServiceTest(unittest.IsolatedAsyncioTestCase):
                 model=model,  # type: ignore[arg-type]
             )
 
-        self.assertEqual(
+        self.assertDictEqual(
             {
                 "name": agent.name,
                 "system_prompt": agent.system_prompt,
@@ -146,7 +149,7 @@ class RealtimeServiceTest(unittest.IsolatedAsyncioTestCase):
             "workspace-1",
         )
         channel_clients.get.assert_awaited_once_with("channel-1")
-        channel.list_tools.assert_awaited_once_with(workspace)
+        channel.list_tools.assert_awaited_once_with(workspace, None)
         channel.chat_kind.assert_awaited_once_with("chat-1")
         channel.chat_name.assert_awaited_once_with("chat-1")
         get_toolkit_mock.assert_awaited_once_with(
@@ -166,6 +169,96 @@ class RealtimeServiceTest(unittest.IsolatedAsyncioTestCase):
             team_role="leader",
             channel_tools=[channel_tool],
         )
+
+    async def test_private_chat_tools_receive_channel_user_id(self) -> None:
+        """Bind identity-dependent channel tools to the private-chat user."""
+        user_id = "user-1"
+        agent_id = "agent-1"
+        session_id = "session-1"
+        agent_record = AgentRecord(
+            id=agent_id,
+            user_id=user_id,
+            data=AgentData(name="Friday", system_prompt="Be concise."),
+        )
+        session = SessionRecord(
+            id=session_id,
+            user_id=user_id,
+            agent_id=agent_id,
+            origin=ChannelOrigin(
+                channel_id="channel-1",
+                chat_id="chat-1",
+                chat_name="Direct Message",
+                channel_user_id="staff-1",
+            ),
+            config=SessionConfig(workspace_id="workspace-1"),
+        )
+        storage = SimpleNamespace(
+            get_session=AsyncMock(return_value=session),
+        )
+        workspace = SimpleNamespace(workdir="/workspace/session-1")
+        workspace_manager = SimpleNamespace(
+            get_workspace=AsyncMock(return_value=workspace),
+        )
+        channel_tool = SimpleNamespace(name="list_wiki_spaces")
+        channel = SimpleNamespace(
+            display_name="ExampleChat",
+            list_tools=AsyncMock(return_value=[channel_tool]),
+            chat_kind=AsyncMock(return_value=ChatKind.PRIVATE),
+            chat_name=AsyncMock(),
+        )
+        service = RealtimeService(
+            storage=storage,
+            workspace_manager=workspace_manager,
+            scheduler_manager=object(),
+            background_task_manager=object(),
+            message_bus=object(),
+            resource_access_service=SimpleNamespace(
+                resolve_agent=AsyncMock(return_value=agent_record),
+            ),
+            channel_clients=SimpleNamespace(
+                get=AsyncMock(return_value=channel),
+            ),
+        )
+        toolkit = object()
+        model = cast(RealtimeModelBase, object())
+
+        with patch(
+            "agentscope.app._service._realtime.get_toolkit",
+            new=AsyncMock(return_value=toolkit),
+        ) as get_toolkit_mock:
+            agent = await service.create_agent(
+                user_id=user_id,
+                agent_id=agent_id,
+                session_id=session_id,
+                model=model,
+            )
+
+        self.assertDictEqual(
+            {
+                "system_prompt": agent.system_prompt,
+                "toolkit": agent.toolkit,
+                "channel_tools": get_toolkit_mock.await_args.kwargs[
+                    "channel_tools"
+                ],
+                "list_tools_args": channel.list_tools.await_args.args,
+            },
+            {
+                "system_prompt": (
+                    "Be concise.\n\n<system-notification>You're within a "
+                    "session (id=session-1). This session is bound to a "
+                    "chat named \"Direct Message\" (id 'chat-1') on the "
+                    "ExampleChat platform. It is a one-to-one private chat. "
+                    "These ExampleChat tools are available: "
+                    "list_wiki_spaces. Use this chat's id as their target."
+                    "</system-notification>"
+                ),
+                "toolkit": toolkit,
+                "channel_tools": [channel_tool],
+                "list_tools_args": (workspace, "staff-1"),
+            },
+        )
+        channel.chat_kind.assert_awaited_once_with("chat-1")
+        channel.chat_name.assert_not_awaited()
 
 
 if __name__ == "__main__":

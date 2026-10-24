@@ -1,22 +1,18 @@
+# -*- coding: utf-8 -*-
 """The xAI Grok voice realtime model."""
 import asyncio
 import base64
 import json
-from collections.abc import AsyncIterator
-from typing import Any, Literal
+from typing import Any, AsyncIterator, Literal
 
 from pydantic import Field
 
+from .. import _events as me
+from .._base import ModelDisconnectedError, RealtimeModelBase
+from .._model_card import RealtimeModelCard
 from ..._logging import logger
 from ...credential import XAICredential
 from ...message import TextBlock, ToolCallBlock, ToolResultBlock
-from .. import _events as me
-from .._base import (
-    ModelDisconnectedError,
-    RealtimeModelBase,
-    TruncationSupport,
-)
-from .._model_card import RealtimeModelCard
 
 
 class XAIRealtimeModel(RealtimeModelBase):
@@ -57,8 +53,12 @@ class XAIRealtimeModel(RealtimeModelBase):
         )
 
     type = "xai_realtime"
-    truncation = TruncationSupport.NONE
     supports_text_input = True
+
+    @property
+    def input_transcription_enabled(self) -> bool:
+        """xAI always reports settled input transcription events."""
+        return True
 
     def __init__(
         self,
@@ -205,14 +205,6 @@ class XAIRealtimeModel(RealtimeModelBase):
         if self._response_id:
             await self._send({"type": "response.cancel"})
 
-    async def truncate(
-        self,
-        item_id: str,
-        played_ms: int,
-        played_text: str,
-    ) -> None:
-        """No-op: the protocol documents no truncate frame."""
-
     # ------------------------------------------------------------------
     # Wire
     # ------------------------------------------------------------------
@@ -337,6 +329,9 @@ class XAIRealtimeModel(RealtimeModelBase):
                     item_id=item_id,
                     text=data.get("transcript", ""),
                 )
+
+            case "conversation.item.input_audio_transcription.failed":
+                return me.InputTranscriptionFailedEvent(item_id=item_id)
 
             case "input_audio_buffer.speech_started":
                 return me.SpeechStartedEvent(

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Unit tests for the Gemini Live realtime adapter: cards, the setup
 message and frame parsing. Nothing here opens a connection."""
 # pylint: disable=protected-access
@@ -12,7 +13,6 @@ from agentscope.message import ToolResultBlock
 from agentscope.realtime import (
     GeminiRealtimeModel,
     ModelDisconnectedError,
-    TruncationSupport,
 )
 
 CRED = GeminiCredential(api_key="key-x")
@@ -102,14 +102,12 @@ class GeminiCardsTest(unittest.TestCase):
         self.assertListEqual(
             [
                 model.type,
-                model.truncation,
                 model.supports_text_input,
                 model.input_sample_rate,
                 model.output_sample_rate,
             ],
             [
                 "gemini_realtime",
-                TruncationSupport.SERVER,
                 True,
                 16000,
                 24000,

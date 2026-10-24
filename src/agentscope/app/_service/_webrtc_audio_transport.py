@@ -53,7 +53,7 @@ class WebRTCAudioTrack(MediaStreamTrack):
             rate=_WEBRTC_SAMPLE_RATE,
         )
         self._chunks: deque[tuple[str, bytearray]] = deque()
-        self._started_items: set[str] = set()
+        self._started_item_id = ""
         self._pts = 0
         self._started_at: float | None = None
 
@@ -105,8 +105,8 @@ class WebRTCAudioTrack(MediaStreamTrack):
             if not chunk:
                 self._chunks.popleft()
 
-        if frame_item and frame_item not in self._started_items:
-            self._started_items.add(frame_item)
+        if frame_item and frame_item != self._started_item_id:
+            self._started_item_id = frame_item
             self._on_item_started(
                 frame_item,
                 self._pts * 1_000 // _WEBRTC_SAMPLE_RATE,
@@ -296,6 +296,7 @@ class WebRTCAudioTransport(TransportBase):
             layout="mono",
             rate=self.input_sample_rate,
         )
+        cancelled = False
         try:
             while True:
                 frame = await track.recv()
@@ -307,10 +308,12 @@ class WebRTCAudioTransport(TransportBase):
                     )
                     if pcm:
                         self._enqueue_incoming(AudioFrame(pcm=pcm))
-        except (MediaStreamError, asyncio.CancelledError):
+        except asyncio.CancelledError:
+            cancelled = True
+        except MediaStreamError:
             pass
         finally:
-            if not self._closed:
+            if not cancelled and not self._closed:
                 self._notify_disconnect()
 
     def _enqueue_incoming(self, frame: TransportFrame) -> None:
@@ -341,8 +344,12 @@ class WebRTCAudioTransport(TransportBase):
 
         frame_type = payload.get("type")
         if frame_type == "control":
+            control_value = payload.get("control")
+            if not isinstance(control_value, str):
+                self.send_error("Unknown realtime control frame.")
+                return
             try:
-                control = ControlFrameType(payload.get("control"))
+                control = ControlFrameType(control_value)
             except ValueError:
                 self.send_error("Unknown realtime control frame.")
                 return
@@ -390,7 +397,7 @@ class WebRTCAudioTransport(TransportBase):
             return
         if played_ms < 0:
             return
-        if not item_id and self._position.item_id:
+        if not item_id and played_ms > 0 and self._position.item_id:
             item_id = self._position.item_id
         first_played_at = self._position.first_played_at
         if item_id != self._position.item_id:

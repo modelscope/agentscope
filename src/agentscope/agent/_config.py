@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """The agent config classes."""
 
 from pydantic import BaseModel, Field, field_validator
@@ -375,6 +376,7 @@ class RealtimeContextConfig(BaseModel):
     tool_result_limit: int = Field(
         title="Tool Result Limit",
         default=50_000,
+        gt=0,
         description=(
             "The maximum length of a single tool result in tokens. "
             "If exceeded, the tool result will be truncated before it "
@@ -389,8 +391,8 @@ class RealtimeContextConfig(BaseModel):
     is maintained by the realtime agent's usage tracker."""
 
     compression_model: ChatModelBase | None = Field(default=None)
-    """Chat model used to produce compression summaries. Falls back to
-    the session's own model when unset."""
+    """Chat model used for summaries. None disables automatic compression;
+    the realtime model does not implement the chat model interface."""
 
     compression_prompt: str = Field(
         default=(
@@ -404,7 +406,9 @@ class RealtimeContextConfig(BaseModel):
     )
     """Prompt template for generating the compression summary."""
 
-    compression_schema: dict = Field(default_factory=dict)
+    compression_schema: dict = Field(
+        default_factory=SummarySchema.model_json_schema,
+    )
     """Structured-output schema guiding the compression summary."""
 
     summary_template: str = Field(
@@ -420,7 +424,6 @@ class RealtimeContextConfig(BaseModel):
         json_schema_extra={"format": "textarea"},
     )
     """Template used to present the compressed summary to the agent."""
-
 
 
 class ReActConfig(BaseModel):

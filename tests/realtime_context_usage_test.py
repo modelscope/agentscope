@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Unit tests for the realtime context-usage tracker.
 
 Pure state-machine tests: no model, no transport, no event harness.
@@ -14,6 +15,16 @@ from agentscope.agent._realtime._context_usage import (
     estimate_context_tokens,
 )
 from agentscope.message import AssistantMsg, UserMsg
+from agentscope.credential import (
+    DashScopeCredential,
+    OpenAICredential,
+    XAICredential,
+)
+from agentscope.realtime import (
+    DashScopeRealtimeModel,
+    OpenAIRealtimeModel,
+    XAIRealtimeModel,
+)
 
 
 def test_provider_report_sets_estimate_and_provenance() -> None:
@@ -23,6 +34,25 @@ def test_provider_report_sets_estimate_and_provenance() -> None:
     assert tracker.estimate_tokens == 500
     assert tracker.provenance == UsageProvenance.PROVIDER
     assert not tracker.is_stale
+
+
+def test_adapters_preserve_missing_and_explicit_zero_usage() -> None:
+    """Absent provider usage must reach the estimator, including OpenAI."""
+    for adapter, credential in [
+        (DashScopeRealtimeModel, DashScopeCredential(api_key="sk-test")),
+        (OpenAIRealtimeModel, OpenAICredential(api_key="sk-test")),
+        (XAIRealtimeModel, XAICredential(api_key="sk-test")),
+    ]:
+        model = adapter(adapter.list_models()[0].name, credential)
+        for usage, expected in [
+            ({}, (None, None)),
+            ({"input_tokens": 0, "output_tokens": 0}, (0, 0)),
+            ({"output_tokens": 7}, (None, 7)),
+        ]:
+            event = model._parse(  # pylint: disable=protected-access
+                {"type": "response.done", "response": {"usage": usage}},
+            )
+            assert (event.input_tokens, event.output_tokens) == expected
 
 
 def test_latest_report_replaces_not_accumulates() -> None:

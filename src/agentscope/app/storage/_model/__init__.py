@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Storage models for persisted resources."""
 
-from ._agent import AgentRecord, AgentData, ChatConfig, InviteConfig
+from ._agent import AgentChatConfig, AgentData, AgentRecord, InviteConfig
 from ._channel import (
     ChannelBinding,
     ChannelRecord,
@@ -37,8 +37,20 @@ from ._session import (
     ScheduleOrigin,
     ChannelOrigin,
     TeamOrigin,
+    SOPOrigin,
 )
 from ._skill import SkillRecord
+from ._sop import (
+    AgentVerifier,
+    HumanVerifier,
+    SOPAgentRef,
+    SOPData,
+    SOPRecord,
+    SOPRunRecord,
+    SOPStepDataV1,
+    SOPVerifier,
+    SOPWorkspaceGrain,
+)
 from ._team import TeamRecord, TeamData, TeamMember
 from ._user import UserRecord
 
@@ -72,6 +84,16 @@ __all__ = [
     "ChannelOrigin",
     "TeamOrigin",
     "SkillRecord",
+    "AgentVerifier",
+    "HumanVerifier",
+    "SOPAgentRef",
+    "SOPData",
+    "SOPOrigin",
+    "SOPRecord",
+    "SOPRunRecord",
+    "SOPStepDataV1",
+    "SOPVerifier",
+    "SOPWorkspaceGrain",
     "ChatModelConfig",
     "RealtimeModelConfig",
     "TTSModelConfig",
@@ -80,6 +102,6 @@ __all__ = [
     "TeamRecord",
     "TeamMember",
     "UserRecord",
-    "ChatConfig",
+    "AgentChatConfig",
     "InviteConfig",
 ]

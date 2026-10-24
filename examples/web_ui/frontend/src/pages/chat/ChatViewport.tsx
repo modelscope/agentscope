@@ -61,6 +61,10 @@ import { useWorkspace } from '@/hooks/useWorkspace.ts';
 import { useWorkspaceStatus } from '@/hooks/useWorkspaceStatus';
 import { useTranslation } from '@/i18n/useI18n';
 
+const REALTIME_EXCLUDED_ENUM_VALUES: Record<string, unknown[]> = {
+	turn_detection: ['none'],
+};
+
 interface ChatViewportProps {
 	/**
 	 * The agent that owns the session being viewed. May be the
@@ -190,7 +194,6 @@ export function ChatViewport({ agentId, sessionId, onSessionsChanged }: ChatView
 		useState<SessionKnowledgeConfig | null>(null);
 	const [selectedPermissionMode, setSelectedPermissionMode] = useState<string>('default');
 	const [credentialOpen, setCredentialOpen] = useState(false);
-	const [credentialRefetchTrigger, setCredentialRefetchTrigger] = useState(0);
 	const [tasksContext, setTasksContext] = useState<TaskContext | null>(null);
 	const [permissionContext, setPermissionContext] = useState<PermissionContext | null>(null);
 	const [configPending, setConfigPending] = useState(false);
@@ -256,6 +259,7 @@ export function ChatViewport({ agentId, sessionId, onSessionsChanged }: ChatView
 	);
 
 	const realtimeVoice = useRealtimeVoice(agentId, sessionId);
+	const voiceBusy = realtimeVoice.state === 'active' || realtimeVoice.state === 'connecting';
 	const {
 		msgs,
 		loading: messagesLoading,
@@ -269,8 +273,7 @@ export function ChatViewport({ agentId, sessionId, onSessionsChanged }: ChatView
 		onTeamUpdated: handleTeamUpdated,
 		onStateUpdated: handleStateUpdated,
 		onSessionUpdated: handleSessionUpdated,
-		isRealtimeAudioActive: () =>
-			realtimeVoice.state === 'active' || realtimeVoice.state === 'connecting',
+		isRealtimeAudioActive: () => voiceBusy,
 		sendRealtimeUserConfirm: realtimeVoice.userConfirm,
 	});
 	const {
@@ -795,8 +798,7 @@ export function ChatViewport({ agentId, sessionId, onSessionsChanged }: ChatView
 										value={selectedRealtimeModel}
 										onChange={handleRealtimeModelChange}
 										onAddCredential={() => setCredentialOpen(true)}
-										refetchTrigger={credentialRefetchTrigger}
-										disabled={configPending || realtimeVoice.state !== 'idle'}
+										disabled={configPending || voiceBusy}
 										className="text-muted-foreground hover:text-foreground"
 									/>
 									<ModelParametersPopover
@@ -805,7 +807,9 @@ export function ChatViewport({ agentId, sessionId, onSessionsChanged }: ChatView
 										onChange={handleRealtimeParametersChange}
 										idPrefix="realtime"
 										triggerLabel={t('realtime.parameters')}
-										disabled={configPending || realtimeVoice.state !== 'idle'}
+										disabled={configPending || voiceBusy}
+										hideArrayParameters
+										excludedEnumValues={REALTIME_EXCLUDED_ENUM_VALUES}
 									/>
 									<LlmSelect
 										id="tour-llm-select"
@@ -814,7 +818,6 @@ export function ChatViewport({ agentId, sessionId, onSessionsChanged }: ChatView
 										value={selectedModel}
 										onChange={handleLlmChange}
 										onAddCredential={() => setCredentialOpen(true)}
-										refetchTrigger={credentialRefetchTrigger}
 										disabled={configPending}
 									/>
 									<ModelParametersPopover
@@ -911,26 +914,13 @@ export function ChatViewport({ agentId, sessionId, onSessionsChanged }: ChatView
 									git={workspaceStatus?.git ?? null}
 									onRefreshGit={refetchWorkspaceStatus}
 									phase={phase}
-									disabled={
-										selectedModel === null ||
-										realtimeVoice.state === 'active' ||
-										realtimeVoice.state === 'connecting'
-									}
+									disabled={selectedModel === null || voiceBusy}
 									onSend={send}
 									onUserConfirm={onUserConfirm}
-									onInterrupt={
-										realtimeVoice.state === 'active'
-											? realtimeVoice.interrupt
-											: interrupt
-									}
+									onInterrupt={interrupt}
 									voiceState={realtimeVoice.state}
 									onVoiceToggle={() => void realtimeVoice.toggle()}
-									voiceDisabled={
-										!selectedRealtimeModel ||
-										!agentId ||
-										!sessionId ||
-										(realtimeVoice.state === 'idle' && phase !== 'idle')
-									}
+									voiceDisabled={!selectedRealtimeModel || !agentId || !sessionId}
 									// cwd={
 									// 	{cwd: view?.session.config.cwd, git: {
 									// 		branch: 'main',
@@ -1018,11 +1008,7 @@ export function ChatViewport({ agentId, sessionId, onSessionsChanged }: ChatView
 					<PanelDock layout={panelLayout} panels={panels} onClosePanel={closePanel} />
 				</ResizablePanelGroup>
 			</main>
-			<CreateCredentialDialog
-				open={credentialOpen}
-				onOpenChange={setCredentialOpen}
-				onCreated={() => setCredentialRefetchTrigger((n) => n + 1)}
-			/>
+			<CreateCredentialDialog open={credentialOpen} onOpenChange={setCredentialOpen} />
 		</>
 	);
 }

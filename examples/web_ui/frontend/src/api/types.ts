@@ -882,7 +882,6 @@ export interface RealtimeOfferRequest {
 }
 
 export interface RealtimeOfferResponse {
-	connection_id: string;
 	sdp: string;
 	type: 'answer';
 }

@@ -53,8 +53,7 @@ export class BrowserWebRTCTransport {
 	private playoutFenceTimer: number | null = null;
 	private playoutFenceAudio: HTMLAudioElement | null = null;
 	private playoutFenceListener: (() => void) | null = null;
-	private itemId = '';
-	private itemTrackStartMs = 0;
+	private readonly itemStarts: AudioStartFrame[] = [];
 	private readonly durationsMs = new Map<string, number>();
 	private intentionalClose = false;
 	private failed = false;
@@ -139,7 +138,6 @@ export class BrowserWebRTCTransport {
 		});
 		await channelReady;
 		this.throwIfStopped();
-		if (this.failureError) throw this.failureError;
 
 		this.progressTimer = window.setInterval(() => this.reportPlayout(), 100);
 		this.active = true;
@@ -167,15 +165,10 @@ export class BrowserWebRTCTransport {
 		this.localStream = null;
 		this.remoteStream = null;
 		this.audioElement = null;
-		this.itemId = '';
-		this.itemTrackStartMs = 0;
+		this.itemStarts.length = 0;
 		this.durationsMs.clear();
 		this.active = false;
 		this.options.onStateChange('idle');
-	}
-
-	interrupt(): void {
-		this.sendJson({ type: 'control', control: 'interrupt', data: {} });
 	}
 
 	userConfirm(event: UserConfirmResultEvent): void {
@@ -211,8 +204,8 @@ export class BrowserWebRTCTransport {
 		}
 
 		if (frame.type === 'audio_start') {
-			this.itemId = frame.item_id;
-			this.itemTrackStartMs = frame.track_time_ms;
+			this.itemStarts.push(frame);
+			this.itemStarts.sort((left, right) => left.track_time_ms - right.track_time_ms);
 		} else if (frame.type === 'audio_duration') {
 			this.durationsMs.set(frame.item_id, frame.duration_ms);
 		} else if (frame.type === 'clear_audio') {
@@ -230,9 +223,8 @@ export class BrowserWebRTCTransport {
 			request_id: frame.request_id,
 			...position,
 		});
-		if (position.item_id) this.durationsMs.delete(position.item_id);
-		this.itemId = '';
-		this.itemTrackStartMs = 0;
+		this.itemStarts.length = 0;
+		this.durationsMs.clear();
 	}
 
 	private muteUntilTrackTime(trackTimeMs: number): void {
@@ -283,13 +275,25 @@ export class BrowserWebRTCTransport {
 
 	private currentPosition(): { item_id: string; played_ms: number } {
 		const currentTimeMs = (this.audioElement?.currentTime ?? 0) * 1000;
-		if (!this.itemId || !Number.isFinite(currentTimeMs)) {
+		if (!Number.isFinite(currentTimeMs)) {
 			return { item_id: '', played_ms: 0 };
 		}
-		const elapsed = Math.max(0, currentTimeMs - this.itemTrackStartMs);
-		const duration = this.durationsMs.get(this.itemId) ?? 0;
+
+		let currentIndex = -1;
+		for (let index = 0; index < this.itemStarts.length; index += 1) {
+			if (this.itemStarts[index].track_time_ms > currentTimeMs) break;
+			currentIndex = index;
+		}
+		if (currentIndex < 0) return { item_id: '', played_ms: 0 };
+
+		const current = this.itemStarts[currentIndex];
+		for (const completed of this.itemStarts.splice(0, currentIndex)) {
+			this.durationsMs.delete(completed.item_id);
+		}
+		const elapsed = Math.max(0, currentTimeMs - current.track_time_ms);
+		const duration = this.durationsMs.get(current.item_id) ?? 0;
 		return {
-			item_id: this.itemId,
+			item_id: current.item_id,
 			played_ms: Math.round(Math.min(elapsed, duration)),
 		};
 	}
@@ -307,7 +311,7 @@ export class BrowserWebRTCTransport {
 
 	private throwIfStopped(): void {
 		if (this.intentionalClose) {
-			throw new Error('The realtime connection was stopped.');
+			throw this.failureError ?? new Error('The realtime connection was stopped.');
 		}
 	}
 

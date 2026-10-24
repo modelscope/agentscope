@@ -5,7 +5,7 @@ import warnings
 from pydantic import BaseModel, Field
 
 from ....agent import ContextConfig, ReActConfig
-from ...storage import ChatConfig, InviteConfig
+from ...storage import AgentChatConfig, InviteConfig
 from ..._service import AgentView
 
 
@@ -23,21 +23,24 @@ class CreateAgentRequest(BaseModel):
         default="You're a helpful assistant.",
         description="Base system prompt fed to the agent.",
     )
-    chat_config: ChatConfig = Field(
-        default_factory=ChatConfig,
+    chat_config: AgentChatConfig = Field(
+        default_factory=AgentChatConfig,
         description="Settings for the agent's text conversations.",
     )
     context_config: ContextConfig | None = Field(
         default=None,
         description="**Deprecated.** Use ``chat_config.context_config``.",
+        deprecated=True,
     )
     react_config: ReActConfig | None = Field(
         default=None,
         description="**Deprecated.** Use ``chat_config.react_config``.",
+        deprecated=True,
     )
     invite_config: InviteConfig | None = Field(
         default=None,
         description="**Deprecated.** Use ``chat_config.invite_config``.",
+        deprecated=True,
     )
 
 
@@ -58,7 +61,7 @@ class UpdateAgentRequest(BaseModel):
         default=None,
         description="New system prompt.",
     )
-    chat_config: ChatConfig | None = Field(
+    chat_config: AgentChatConfig | None = Field(
         default=None,
         description=(
             "New text-conversation settings. Only supplied sub-configs "
@@ -71,14 +74,17 @@ class UpdateAgentRequest(BaseModel):
             "**Deprecated.** Use ``chat_config``. Still honoured, and "
             "narrower: it replaces only this sub-config."
         ),
+        deprecated=True,
     )
     react_config: ReActConfig | None = Field(
         default=None,
         description="**Deprecated.** Use ``chat_config``.",
+        deprecated=True,
     )
     invite_config: InviteConfig | None = Field(
         default=None,
         description="**Deprecated.** Use ``chat_config``.",
+        deprecated=True,
     )
 
 

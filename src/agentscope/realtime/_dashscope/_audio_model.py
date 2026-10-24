@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """The DashScope Qwen-Audio realtime model."""
-import asyncio
 from pathlib import Path
 from typing import Any, Literal, Sequence
 
@@ -12,8 +11,6 @@ from .._base import RealtimeModelBase
 from .._model_card import RealtimeModelCard
 from ..._logging import logger
 from ...message import Msg, TextBlock, ToolCallBlock, ToolResultBlock
-
-_SESSION_READY_TIMEOUT_S = 15.0
 
 
 class DashScopeAudioRealtimeModel(DashScopeRealtimeModel):
@@ -48,6 +45,11 @@ class DashScopeAudioRealtimeModel(DashScopeRealtimeModel):
 
     parameters: "DashScopeAudioRealtimeModel.Parameters"
 
+    @property
+    def input_transcription_enabled(self) -> bool:
+        """Qwen Audio does not emit settled input transcription."""
+        return False
+
     @classmethod
     def list_models(
         cls,
@@ -74,18 +76,6 @@ class DashScopeAudioRealtimeModel(DashScopeRealtimeModel):
 
     async def replay_history(self, messages: Sequence[Msg]) -> None:
         """Insert completed history without asking the model to respond."""
-        await asyncio.wait_for(
-            self._session_ready.wait(),
-            timeout=_SESSION_READY_TIMEOUT_S,
-        )
-        if self._session_setup_error is not None:
-            raise self._session_setup_error
-        for payload in self._history_payloads(messages):
-            await self._send(payload)
-
-    @staticmethod
-    def _history_payloads(messages: Sequence[Msg]) -> list[dict]:
-        """Convert AgentScope messages to ordered DashScope items."""
         call_ids = {
             block.id
             for message in messages
@@ -99,7 +89,6 @@ class DashScopeAudioRealtimeModel(DashScopeRealtimeModel):
             if isinstance(block, ToolResultBlock) and block.state != "running"
         }
         paired_ids = call_ids & result_ids
-        payloads: list[dict] = []
 
         for message in messages:
             text_parts: list[str] = []
@@ -110,15 +99,32 @@ class DashScopeAudioRealtimeModel(DashScopeRealtimeModel):
                         text_parts.append(block.text)
                     continue
 
-                DashScopeAudioRealtimeModel._flush_history_text(
-                    payloads,
-                    message.role,
-                    text_parts,
-                )
+                if text_parts:
+                    content_type = (
+                        "output_text"
+                        if message.role == "assistant"
+                        else "input_text"
+                    )
+                    await self._send(
+                        {
+                            "type": "conversation.item.create",
+                            "item": {
+                                "type": "message",
+                                "role": message.role,
+                                "content": [
+                                    {
+                                        "type": content_type,
+                                        "text": "\n".join(text_parts),
+                                    },
+                                ],
+                            },
+                        },
+                    )
+                    text_parts.clear()
                 if isinstance(block, ToolCallBlock):
                     if block.id not in paired_ids:
                         continue
-                    payloads.append(
+                    await self._send(
                         {
                             "type": "conversation.item.create",
                             "item": {
@@ -130,7 +136,7 @@ class DashScopeAudioRealtimeModel(DashScopeRealtimeModel):
                         },
                     )
                 elif isinstance(block, ToolResultBlock):
-                    if block.id not in paired_ids or block.state == "running":
+                    if block.id not in paired_ids:
                         continue
                     output = (
                         block.output
@@ -141,7 +147,7 @@ class DashScopeAudioRealtimeModel(DashScopeRealtimeModel):
                             if isinstance(part, TextBlock)
                         )
                     )
-                    payloads.append(
+                    await self._send(
                         {
                             "type": "conversation.item.create",
                             "item": {
@@ -152,40 +158,38 @@ class DashScopeAudioRealtimeModel(DashScopeRealtimeModel):
                         },
                     )
 
-            DashScopeAudioRealtimeModel._flush_history_text(
-                payloads,
-                message.role,
-                text_parts,
-            )
-
-        return payloads
-
-    @staticmethod
-    def _flush_history_text(
-        payloads: list[dict],
-        role: str,
-        text_parts: list[str],
-    ) -> None:
-        """Append buffered history text as one conversation item."""
-        if not text_parts:
-            return
-        content_type = "output_text" if role == "assistant" else "input_text"
-        payloads.append(
-            {
-                "type": "conversation.item.create",
-                "item": {
-                    "type": "message",
-                    "role": role,
-                    "content": [
-                        {
-                            "type": content_type,
-                            "text": "\n".join(text_parts),
+            if text_parts:
+                content_type = (
+                    "output_text"
+                    if message.role == "assistant"
+                    else "input_text"
+                )
+                await self._send(
+                    {
+                        "type": "conversation.item.create",
+                        "item": {
+                            "type": "message",
+                            "role": message.role,
+                            "content": [
+                                {
+                                    "type": content_type,
+                                    "text": "\n".join(text_parts),
+                                },
+                            ],
                         },
-                    ],
-                },
+                    },
+                )
+
+    async def request_response(self) -> None:
+        """Ask for a reply with the Qwen-Audio modality override."""
+        if self._item_id:
+            await self.cancel_response()
+        await self._send(
+            {
+                "type": "response.create",
+                "response": {"modalities": ["text", "audio"]},
             },
         )
-        text_parts.clear()
 
     def _session_update(
         self,
